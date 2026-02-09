@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Course Catalog - EduLearn</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f0f2f4] dark:border-slate-800 bg-white dark:bg-slate-900 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#111318] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">EduLearn</h2>
+</div>
+<div class="flex items-center gap-9 hidden md:flex">
+<a class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Courses</a>
+<a class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">My Learning</a>
+<a class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Resources</a>
+<a class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+<span>Sign In</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200" data-alt="User profile avatar placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuChjBlRNhqsd7_SRIz1q2SrkdusVeQ6h_F09lCKIJ-3Siq83FG1QO-X8VRGy4PvxpDZK-mzv_Zds86IM1Xhpq3qYpM23Cnut0klkycY8jzmuPwBabFKfiFt_W7MJPKZ0Tj1aEYlGJPle0TZh1Cd6IHrEkZ9e5_DyxA-o0tSqTEHqXmkpecqPG__Jjd4tnPwN3510wbBcDuCkjOEatY2AhT8kaaLRVl9GJhaO6Ydzue6RVJleVuE97eG6rvgGVdtH1UZXwA5uRmO9ek");'></div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="max-w-[1280px] mx-auto px-6 md:px-10 py-8">
+<!-- Hero Section -->
+<div class="mb-8">
+<h1 class="text-[#111318] dark:text-white tracking-light text-[36px] font-bold leading-tight text-left pb-2">Explore our Courses</h1>
+<p class="text-[#616f89] dark:text-slate-400 text-lg font-normal leading-normal max-w-2xl text-left">Master new skills with our professional e-learning paths. High-quality content curated by industry experts.</p>
+</div>
+<!-- Search and Filter Bar -->
+<div class="flex flex-col gap-6 mb-10 bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="w-full">
+<label class="flex flex-col w-full h-12">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#616f89] flex border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg" data-icon="search">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 rounded-r-lg text-[#111318] dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-full placeholder:text-[#616f89] px-4 pl-2 text-base font-normal leading-normal" placeholder="Search for skills, topics, or software..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary px-5 cursor-pointer">
+<p class="text-white text-sm font-medium leading-normal">All Courses</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Development</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Design</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Business</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Marketing</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Data Science</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-5 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<p class="text-[#111318] dark:text-slate-300 text-sm font-medium leading-normal">Soft Skills</p>
+</div>
+</div>
+</div>
+<!-- Course Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Course Card 1 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Code on a laptop screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDerIdTGcwkOFFNNLAN0p3tc13DgPnuKVcWC-xGVm6OA_FdK7UOlJ2to2dZrNh-YO9skEY4z1V-hb19dNmf6YEFliSKoFwO3YhBrezvqxzGV_8krHy5vy48Ma7rJu94D9eI2jKpgf0gl7zMzAiHzlfzV6KZMGbA1Hc3aUZNP_3P3xWvpLpVKtvnRcHn_q2bSG-NF4E4FKY1Vcrv3C0U77oVtifLe2H7jPPH7e1GqoyLWEIg_UlAJHw_3tlKMTswKLzLeN5bYsmi3LQ"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Development</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Full-Stack Web Development Boot Camp</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Learn React, Node.js, and Supabase by building real-world applications from scratch.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">42 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">18h 30m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="UI/UX design sketches" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXCpLPg8jrOhjoZatp5sCx0uKCxTy_N7-UO-DmHnCuh6WCNu1WCyQc8mZXhOHDcDTWlho46unGoxsJH329PfD6OllxAUTzi59XySD3SaKhx4O-vl4vfPVdR3BFy2Hb6bVumb0grUObZUTfQe4jnqK__XEqmAIMEpbROYG3YLqFfCD79Ri-00R2KyggstImywdcWRtE13BpzneoLFfFVdtC3Z48hR3viRAj3_PXohE_Kaev0YCKAN8TbI0ykALDUDHmxjRTTUo7reU"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Design</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Modern UI/UX Principles</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Master Figma and learn the psychology behind conversion-driven interface designs.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">28 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">12h 15m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Business analytics dashboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0QmIoPTjn_30rs3-ZBRXiQGE_POoQFl8-52H7mroR1Ub6iqBIzvn0MhekDMDcqCcmt48jGulhaw60npHgby6Oz30B2_7omNWV6e5Nh4gYBeHQNtE9-nscVgD7SgkfEIBNhnrD0YUpSK5O5vI5w8tlftvO4dBX_mV8cDzvGSG_CNk0SPWw96r5ORWLQ2fKzZtYUkyMxaeMj5iSZei1ZneWC98vTK0vytMV6bDPjrEuLkVctepk0WqeU0rVffQPbenGMLdE5JKhbuY"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Business</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Product Strategy for SaaS</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Learn how to define, build and scale successful software products in competitive markets.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">15 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">6h 45m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 4 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Data visualization charts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIQXBtM-fD5ySUzf2gj4_ZZL2-S4AYZOgvZtN0XydaP-re7Dajgvpkf-5RgzrKSTjhb2t_B_p9cZR4_ZN9ZHgdXfoHYC1Zi7vDx4sOZ9IhHL23Bl8mpC-yxEp4lrFtYMG8dQV0TE4Sc8RvK2mAjOpbSJgXBlTU52xmwvw657sPHUyh75OMQNJCGyaAwQkqm7tDOU6PO5LRvmhBnaIGrc_KG5h14m8h_KbjBtHijHVNfVLas6gEW4w3ejcedgxmR3BS-FSAphW9FjM"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Data Science</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Introduction to Data Science</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">A comprehensive guide to statistics, probability, and machine learning using Python.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">54 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">24h 00m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 5 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Marketing planning on board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV_6xo_C6Kk1UaDMt8Ph9Wko0fnjoHapEt7UMsiUgHAvH0ijEy29gCDIp8ta421YhM_bh-Gwp30lmebYhK0ltZSM-K5NAyByUH0ILtVVGJL50JkahnR9wdhjhhKcw7HisDNqgkhOW0GNqFlMgHES5mkgmfs5pH-DZS6I1B1VMORsRtGPJmw0hVmvcO-_dU6OMHcgE6QSI_nigdw0O-oKX-BMvzvPCfYaD2eVROo0__wwmTgDO9chx7Yk_50CUlNnLoevz8542007s"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Marketing</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Digital Marketing Masterclass</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Go from beginner to expert in SEO, SEM, and social media advertising strategies.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">36 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">14h 20m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 6 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of code" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbnLhOT82pTyJqOT6F5_uBipl1pqs98MldWRMOu66gai0msmrOQcDDz_PTJo7JEjZOpisE8fUxaARZWn4m5im1f1T0rkNS3S8bdivLSAYx6sYb28nZTPxgQqvT9DY87BPL80Wzqy-NFcavuVtP8RvFdgI9ZqMXsJFfdsspgcf2qBd06HN6tfjo_6odMFWF27JFgLrnSjVqLmTtiCuHnvSVIE3sDiirPbkcTXwfKsGpza3dTkkXArW-p3C3F4UEHiSRidGIbkmGQoI"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Development</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Advanced JavaScript Patterns</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Level up your coding skills with functional programming, closures, and advanced design patterns.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">22 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">9h 10m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 7 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Team meeting and strategy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRD-qo1BJ3CdmdWNQoRe5Ph_nz7V8bB6BpB1yPIzJHL0FHIJ4he8GyJTrQC8rk6xw6SEnsod0Ebb6bChjuAdO_u8KjFUFyW8S_S4YeP5KgZFrrRB4dXlUUq6drCRYYL2DfqADqiz_HHiSj6vGp0WjZcihxPvqDR0x_sfoWJ_eeL_yfqjMl4rCuivjmQz5OC6uJCjGaZZlMNAvCR8bVyPyk7UlU1kdzYdW5UovL3tWqRczFuGz3jzXfo6T7e0-Nao6uI4YkrOsBpMc"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Soft Skills</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Effective Team Communication</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Enhance your professional life by mastering empathy, active listening, and conflict resolution.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">12 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">4h 45m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+<!-- Course Card 8 -->
+<div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Developer at workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJcwzRadEKaFipjpl-OePxtvWjuckcnz2tTkbCZC9WDBUKdyf56IMm4BwKl7MlTdsLyo5qxsg3qvoX5TnZToR0UNZwHgxelXwf_J8IQzrov584MIxBvd_eBEzU-wON-Sro16FMFrxkQmlJUZTQqgl1U75G2nKI66a0Zr1C9Yz_pouNFMQAdSUBJGTiPeo8IzXmCkyPHEoIjwkdm5c4zEW1doMWJItBAMZIjKWTGRsIR02ZOt1HFq7bVf7MiioOnc2c_jCgozSzCfw"/>
+<div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary">Development</div>
+</div>
+<div class="flex flex-col flex-1 p-5">
+<h3 class="text-lg font-bold text-[#111318] dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors">Intro to Backend with Node.js</h3>
+<p class="text-[#616f89] dark:text-slate-400 text-sm line-clamp-2 mb-4">Understand servers, APIs, and databases. Build robust backends for modern web apps.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">layers</span>
+<span class="text-xs font-medium">31 Lessons</span>
+</div>
+<div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span class="text-xs font-medium">13h 50m</span>
+</div>
+</div>
+<div class="mt-5 grid grid-cols-2 gap-3">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary py-2 rounded-lg text-xs font-bold transition-colors">Details</button>
+<button class="bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-xs font-bold transition-colors">Enroll</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center mt-16 mb-8">
+<button class="flex items-center gap-2 px-8 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[#111318] dark:text-white font-bold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span>Load More Courses</span>
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer Section -->
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-10 px-10">
+<div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-5">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-[#111318] dark:text-white text-sm font-bold">EduLearn © 2024</span>
+</div>
+<div class="flex gap-8">
+<a class="text-[#616f89] dark:text-slate-400 text-xs hover:text-primary" href="#">Terms of Service</a>
+<a class="text-[#616f89] dark:text-slate-400 text-xs hover:text-primary" href="#">Privacy Policy</a>
+<a class="text-[#616f89] dark:text-slate-400 text-xs hover:text-primary" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

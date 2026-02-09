@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lesson Slides Overview | EduLearn</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dbdfe6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white transition-colors duration-200">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e5e7eb] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] px-6 py-3">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">EduLearn</h2>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">My Courses</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Resources</a>
+</nav>
+<div class="flex items-center gap-3 border-l border-[#e5e7eb] dark:border-[#2d3748] pl-6">
+<button class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f2f4] dark:bg-[#2d3748] hover:bg-[#e2e8f0] transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20">
+<img class="h-full w-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARv0AsnSbLoJmlvhVRPrWvFPLEcqDngj7nJALzpMfTlK5qc68przvtLOljcsnOZKJFbHpCH8xptjLZr84xtCf0AjhG4pe1k7IqVHXfIKzweBlF1ohpfM4Vhyt9AQ9MJofQKNvF7RdR4LMbQz7gGTPlBxempUgsFc-3gsx2rgDV37GPKGjQLxPrL81Spdss9ut41H8oKYAD7VqR08eTxn9BSsKLfWso9LKbFV476_sQkap-na_i3wR9v5-K5FBekhE2dY7fPySU-WU"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-64px)] w-full overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-80 border-r border-[#e5e7eb] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] flex flex-col justify-between">
+<div class="flex flex-col gap-6 p-6 overflow-y-auto custom-scrollbar">
+<div class="flex flex-col gap-1">
+<h1 class="text-lg font-semibold text-[#111318] dark:text-white">Advanced React Hooks</h1>
+<p class="text-[#616f89] dark:text-gray-400 text-sm">Module 3 - React Masters</p>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-xs font-bold uppercase tracking-wider text-[#616f89] dark:text-gray-500 mb-2">Lesson Content</p>
+<!-- Sidebar Item: Completed -->
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-green-500 text-[22px]" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<p class="text-sm font-medium">1. Introduction to Hooks</p>
+</div>
+<!-- Sidebar Item: Active/Current -->
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 cursor-pointer">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1">play_circle</span>
+<p class="text-sm font-bold">2. useState Deep Dive</p>
+</div>
+<!-- Sidebar Item: Completed -->
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-green-500 text-[22px]" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<p class="text-sm font-medium">3. useEffect Fundamentals</p>
+</div>
+<!-- Sidebar Item: Locked/Pending -->
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark cursor-pointer transition-colors text-[#616f89]">
+<span class="material-symbols-outlined text-[22px]">circle</span>
+<p class="text-sm font-medium">4. The Rules of Hooks</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark cursor-pointer transition-colors text-[#616f89]">
+<span class="material-symbols-outlined text-[22px]">circle</span>
+<p class="text-sm font-medium">5. Custom Hooks Intro</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark cursor-pointer transition-colors text-[#616f89]">
+<span class="material-symbols-outlined text-[22px]">quiz</span>
+<p class="text-sm font-medium">6. Module Quiz</p>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-[#e5e7eb] dark:border-[#2d3748]">
+<button class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#f0f2f4] dark:bg-[#2d3748] h-10 px-4 text-sm font-bold transition-all hover:bg-[#e2e8f0]">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Course Overview</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-y-auto custom-scrollbar">
+<!-- Lesson Header & Progress -->
+<div class="w-full bg-white dark:bg-[#1a202c] border-b border-[#e5e7eb] dark:border-[#2d3748] px-8 py-6">
+<div class="max-w-5xl mx-auto flex flex-col gap-6">
+<div class="flex flex-wrap items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<h2 class="text-3xl font-bold leading-tight">useState Deep Dive</h2>
+<p class="text-[#616f89] dark:text-gray-400 text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                                Estimated time: 15 minutes
+                            </p>
+</div>
+<button class="flex min-w-[140px] items-center justify-center gap-2 rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span>Resume Lesson</span>
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+<!-- Progress Bar Component -->
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-end">
+<p class="text-sm font-semibold text-primary">Lesson Progress</p>
+<p class="text-sm font-bold">40% Complete</p>
+</div>
+<div class="h-2.5 w-full bg-[#dbdfe6] dark:bg-[#2d3748] rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 40%;"></div>
+</div>
+<p class="text-[#616f89] dark:text-gray-400 text-xs font-medium">2 of 5 slides completed in this lesson</p>
+</div>
+</div>
+</div>
+<!-- Slides Preview Grid -->
+<div class="w-full px-8 py-10">
+<div class="max-w-5xl mx-auto">
+<div class="mb-6 flex items-center justify-between">
+<h3 class="text-lg font-bold">Slide Previews</h3>
+<div class="flex items-center gap-2 text-sm text-[#616f89]">
+<span>Sort by:</span>
+<button class="font-semibold text-[#111318] dark:text-white flex items-center gap-1">
+                                Sequence <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Slide Card 1 -->
+<div class="group flex flex-col bg-white dark:bg-[#1a202c] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/30">
+<div class="relative w-full aspect-video bg-center bg-no-repeat bg-cover" data-alt="React hooks visual diagram" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDz_sdr9Sic4no7_jr06nD3uHptshWTBzboJuGYPXU-cozBm60ZgPpZ7eRJ600mxCQPLDXUpOzx3r13-Rsy9kHxkrJPWZdL5YlB5u0l0SIIid87draWFiyWrlx2C7_tiLgTSO0mbiLs9r4tbiU5B9nJPIToJkgba9Bjtsi5BiyqMzCD7FJ5KizoKe9cg6DFHgqmWfx1sFsRzZ9fL5jxIrsxDAQgRWk_QTFvh-mmzy6o4180W3d0UUSsSmWZioGNKMOF7mENdb4w80g");'>
+<div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors"></div>
+<div class="absolute top-3 left-3 px-2 py-1 rounded bg-green-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">check</span> Completed
+                                </div>
+</div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<p class="text-xs font-bold text-primary uppercase tracking-tighter">Slide 1</p>
+<span class="material-symbols-outlined text-green-500 text-[18px]">verified</span>
+</div>
+<p class="text-base font-semibold leading-snug">Introduction to Hooks</p>
+<p class="text-[#616f89] text-xs line-clamp-1">History and motivation for React hooks.</p>
+</div>
+</div>
+<!-- Slide Card 2 (Active) -->
+<div class="group flex flex-col bg-white dark:bg-[#1a202c] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border-2 border-primary">
+<div class="relative w-full aspect-video bg-center bg-no-repeat bg-cover" data-alt="Abstract code on screen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_oby5ozxjll35FoKHfhSSQHX-nw4egAcA6s6RdKLUKBXeQxX7VEBtMRs9FMJgnO6dTX5a0WDJbxaJIZYHWZMu6J1MqgeP-Jyl3Z6s3ixRpA482Qb9LqbYHmmU-JwASnnqL2c-9beGY6eFj9P-U7UoO2MwXL1cTks8HJNOyBeJZvFDddx8UyF4Qs6qyg7AdxHTSjnRvYjb88-tEYFUWjWE_Lo2Rjxo9nVpdb5vm2UhBjVJRiafCZFdRCtPu8acnnbeItGjZlKFG1k");'>
+<div class="absolute inset-0 bg-primary/10"></div>
+<div class="absolute top-3 left-3 px-2 py-1 rounded bg-primary text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> In Progress
+                                </div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="bg-primary text-white rounded-full p-3 shadow-xl">
+<span class="material-symbols-outlined text-[32px]">play_arrow</span>
+</button>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<p class="text-xs font-bold text-primary uppercase tracking-tighter">Slide 2</p>
+<span class="material-symbols-outlined text-primary text-[18px]">hourglass_empty</span>
+</div>
+<p class="text-base font-semibold leading-snug">useState Deep Dive</p>
+<p class="text-[#616f89] text-xs line-clamp-1">Managing component local state efficiently.</p>
+</div>
+</div>
+<!-- Slide Card 3 -->
+<div class="group flex flex-col bg-white dark:bg-[#1a202c] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/30 opacity-80 hover:opacity-100">
+<div class="relative w-full aspect-video bg-center bg-no-repeat bg-cover" data-alt="Lines of Javascript code" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBxhS4_w15KZnoZy5XBqv09Omm4lzMwjHmjyAX3XIIkJdKITGWiT9fnZRTC5a4kgQjODoFrS2Of3Z88CXWMssgA7mjgxyt5IdFM3P7Er5xILOI-YAW6SxXZU-7_5SLrG0iVZwnMu79vhkGUUkTg8YA0n8aScX7VZm3nqE2PzVyOWJgO6_1VLY8coO7bSYmRrrLQ_sgskUWlr2XQEty49LuXwmLJZiwLNjEXzgg_cENujkTaobPnaVQsA4lCkLSexzdw9KX-0m33PyM");'>
+<div class="absolute top-3 left-3 px-2 py-1 rounded bg-gray-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span> Locked
+                                </div>
+</div>
+<div class="p-4 flex flex-col gap-2">
+<p class="text-xs font-bold text-[#616f89] uppercase tracking-tighter">Slide 3</p>
+<p class="text-base font-semibold leading-snug">useEffect Fundamentals</p>
+<p class="text-[#616f89] text-xs line-clamp-1">Synchronizing with external systems.</p>
+</div>
+</div>
+<!-- Slide Card 4 -->
+<div class="group flex flex-col bg-white dark:bg-[#1a202c] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/30 opacity-80 hover:opacity-100">
+<div class="relative w-full aspect-video bg-center bg-no-repeat bg-cover" data-alt="Laptop on desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBYMyhFvR5GbCF3tQYpA5c0n5S3-cesEkO8_cbnI2o13KZRIO_BK-PcRNzwYfqGPSDSDLa5i2Hi2A8rR3_7zyEq4qGIz2fPZ5p891nqkxnnXs6OjYYnqv3B8o1IFaTtBmdlLq5S-9Xi5v7HeSxHuasEPcCB8XQhme3-ryAvEbwLvgcVsyQWkKHPAZ57BOaMCpQJ5mK5EAGwe6pOSnWpXga1oEphtJHdpcvSya5zHjefPOBI9g2C55XIjB0XP8Q6Wvo0zBVtCaOj1U");'>
+<div class="absolute top-3 left-3 px-2 py-1 rounded bg-gray-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span> Locked
+                                </div>
+</div>
+<div class="p-4 flex flex-col gap-2">
+<p class="text-xs font-bold text-[#616f89] uppercase tracking-tighter">Slide 4</p>
+<p class="text-base font-semibold leading-snug">The Rules of Hooks</p>
+<p class="text-[#616f89] text-xs line-clamp-1">Consistency and predictability rules.</p>
+</div>
+</div>
+<!-- Slide Card 5 -->
+<div class="group flex flex-col bg-white dark:bg-[#1a202c] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/30 opacity-80 hover:opacity-100">
+<div class="relative w-full aspect-video bg-center bg-no-repeat bg-cover" data-alt="Modern web design patterns" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5fU13jlDoM-jR3AQ5ki0CO9mAHPRtmbLeDjCX5HyNDm4iMJwtonRtX60FnjHdarlk4f9ZDooLxcF6h0rRxQKOuvzKDVTDXdHChafOHIK5IqfCFtsUiahGdA1nX5HSY8ghIxV19ZceRVgc7qQjxULLFK3lHe15opBmxpyKBHpBKMZV3NHdouiD-UA5ERoqlRoe1mkKThHplIn2xPknPkNNc8012j3Tzr6HVJYj8YNJTqMs5SPFyNWqRVhv5iwZ3DLBGJdaNbRwx8s");'>
+<div class="absolute top-3 left-3 px-2 py-1 rounded bg-gray-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span> Locked
+                                </div>
+</div>
+<div class="p-4 flex flex-col gap-2">
+<p class="text-xs font-bold text-[#616f89] uppercase tracking-tighter">Slide 5</p>
+<p class="text-base font-semibold leading-snug">Custom Hooks Intro</p>
+<p class="text-[#616f89] text-xs line-clamp-1">Reusing stateful logic across components.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer for quick navigation (Desktop Sticky) -->
+<div class="fixed bottom-0 right-0 w-[calc(100%-320px)] bg-white dark:bg-[#1a202c] border-t border-[#e5e7eb] dark:border-[#2d3748] px-8 py-3 flex items-center justify-between z-40">
+<div class="flex items-center gap-2 text-sm text-[#616f89]">
+<span class="font-bold text-[#111318] dark:text-white">Up Next:</span>
+<span>Rules of Hooks</span>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center gap-2 rounded-lg h-9 px-4 border border-[#e5e7eb] dark:border-[#2d3748] text-sm font-medium hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span> Previous Lesson
+            </button>
+<button class="flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-[#f0f2f4] dark:bg-[#2d3748] text-sm font-bold hover:bg-[#e2e8f0] transition-colors">
+                Next Lesson <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</body></html>

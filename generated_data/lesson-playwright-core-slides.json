@@ -10,7 +10,18 @@
                 "Playwright strongly recommends using user-facing attributes like roles, labels, and text."
             ],
             "codeExample": "// Good: Using accessible roles\nconst button = page.getByRole('button', { name: 'Submit' });\n\n// Good: Using visible text\nconst header = page.getByText('Welcome, User!');\n\n// Discouraged: CSS Selectors (brittle)\nconst myDiv = page.locator('.container > div:nth-child(2)');",
-            "note": "Testing by user-visible attributes ensures your app is usable and accessible, not just structurally correct."
+            "note": "Testing by user-visible attributes ensures your app is usable and accessible, not just structurally correct.",
+            "locales": {
+                "vi": {
+                    "title": "Hiểu Về Locators",
+                    "bulletPoints": [
+                        "Locator là trung tâm của cơ chế tự động chờ (auto-waiting) trong Playwright.",
+                        "Chúng đại diện cho cách tìm phần tử trên trang tại bất kỳ thời điểm nào.",
+                        "Playwright khuyến nghị mạnh mẽ dùng các thuộc tính hướng người dùng như roles, labels và text."
+                    ],
+                    "note": "Test bằng thuộc tính hiển thị với người dùng đảm bảo app bạn dùng được và có khả năng tiếp cận, không chỉ đúng về cấu trúc."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "It waits until the condition is met or the timeout is reached."
             ],
             "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('login button becomes active', async ({ page }) => {\n  await page.goto('/login');\n  \n  const loginBtn = page.getByRole('button', { name: 'Login' });\n  \n  // Playwright polls the DOM until the button is no longer disabled\n  await expect(loginBtn).toBeEnabled({ timeout: 10000 });\n});",
-            "note": "Auto-retrying assertions eliminate the need for manual sleep() or arbitrary timeouts in tests."
+            "note": "Auto-retrying assertions eliminate the need for manual sleep() or arbitrary timeouts in tests.",
+            "locales": {
+                "vi": {
+                    "title": "Assertions & Tự Động Thử Lại",
+                    "bulletPoints": [
+                        "Playwright cung cấp thư viện 'Web-First Assertions' ngay từ đầu.",
+                        "Assertions như 'toBeVisible()' hay 'toHaveText()' sẽ tự động thử lại.",
+                        "Nó đợi đến khi điều kiện được thỏa mãn hoặc timeout đạt đến."
+                    ],
+                    "note": "Auto-retrying assertions loại bỏ nhu cầu dùng sleep() thủ công hay timeout tùy ý trong test."
+                }
+            }
         }
     ]
 }

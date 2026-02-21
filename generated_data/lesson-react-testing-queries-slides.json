@@ -10,7 +10,18 @@
                 "1. getByRole (Best)\n2. getByLabelText\n3. getByPlaceholderText\n4. getByText\n5. getByTestId (Fallback)"
             ],
             "codeExample": "// BEST: Accessible queries\nconst button = screen.getByRole('button', { name: 'Submit' });\nconst input = screen.getByLabelText('Email Address');\n\n// OKAY: Text/visual queries\nconst message = screen.getByText('Success!');\n\n// LAST RESORT: data-testid attributes\nconst icon = screen.getByTestId('custom-icon');",
-            "note": "'getBy' throws an error if not found. 'queryBy' returns null (good for asserting non-existence). 'findBy' returns a Promise (good for async updates)."
+            "note": "'getBy' throws an error if not found. 'queryBy' returns null (good for asserting non-existence). 'findBy' returns a Promise (good for async updates).",
+            "locales": {
+                "vi": {
+                    "title": "Thứ Tự Ưu Tiên Của Queries",
+                    "bulletPoints": [
+                        "RTL cung cấp nhiều cách query phần tử: getBy, queryBy, findBy.",
+                        "Nguyên tắc: Dùng query phản ánh trải nghiệm của người dùng thị giác/hỗ trợ.",
+                        "1. getByRole (Tốt nhất)\n2. getByLabelText\n3. getByPlaceholderText\n4. getByText\n5. getByTestId (Fallback)"
+                    ],
+                    "note": "'getBy' ném lỗi nếu không tìm thấy. 'queryBy' trả về null (tốt để kiểm tra không tồn tại). 'findBy' trả về Promise (tốt cho async)."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "Since it simulates real browsing, the API is async."
             ],
             "codeExample": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport ContactForm from './ContactForm';\n\ntest('typing in the input field', async () => {\n  // Setup user-event instance\n  const user = userEvent.setup();\n  \n  render(<ContactForm />);\n  \n  const input = screen.getByRole('textbox', { name: 'Name' });\n  \n  // Simulate a real user typing\n  await user.type(input, 'John Doe');\n  \n  // Wait for and assert the change\n  expect(input).toHaveValue('John Doe');\n});",
-            "note": "Always setup userEvent before rendering your component to initialize the state cleanly."
+            "note": "Always setup userEvent before rendering your component to initialize the state cleanly.",
+            "locales": {
+                "vi": {
+                    "title": "Tích Hợp User Events",
+                    "bulletPoints": [
+                        "Luôn ưu tiên '@testing-library/user-event' hơn 'fireEvent'.",
+                        "user-event mô phỏng toàn bộ tương tác (ví dụ gõ phím kích hoạt keydown, keypress, keyup, change).",
+                        "Vì mô phỏng duyệt web thực, API là async."
+                    ],
+                    "note": "Luôn setup userEvent trước khi render component để khởi tạo trạng thái sạch."
+                }
+            }
         }
     ]
 }

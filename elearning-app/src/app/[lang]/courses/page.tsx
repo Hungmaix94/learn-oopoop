@@ -1,8 +1,15 @@
 import { getAllCourses } from '@/lib/data'
 import { BookOpen, Presentation, ChevronRight, Layers } from 'lucide-react'
 import Link from 'next/link'
+import { getDictionary, Locale } from '@/dictionaries'
 
-export default async function CoursesPage() {
+export default async function CoursesPage({
+    params
+}: {
+    params: Promise<{ lang: string }>
+}) {
+    const { lang } = await params;
+    const dict = await getDictionary(lang as Locale);
     const courses = await getAllCourses()
 
     return (
@@ -10,16 +17,16 @@ export default async function CoursesPage() {
             <div className="max-w-5xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
                     <h1 className="text-5xl font-extrabold tracking-tight text-white mb-4">
-                        Internal E-Learning
+                        {dict.courses.title}
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        Select a structured course generated from internal IT markdown knowledge bases.
+                        {dict.courses.subtitle}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
                     {courses.map(course => (
-                        <Link key={course.id} href={`/courses/${course.id}`} className="group block">
+                        <Link key={course.id} href={`/${lang}/courses/${course.id}`} className="group block">
                             <div className="glass-card rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden h-full flex flex-col cursor-pointer border-blue-500/20 hover:border-blue-500/50">
                                 <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
                                     <Layers className="w-32 h-32" />
@@ -39,10 +46,10 @@ export default async function CoursesPage() {
                                 <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
                                     <div className="flex items-center gap-2 text-sm text-gray-500">
                                         <Presentation className="w-4 h-4" />
-                                        <span>{course.lessons?.length || 0} Lessons</span>
+                                        <span>{course.lessons?.length || 0} {dict.courses.lessons}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-blue-400 font-medium group-hover:translate-x-1 transition-transform">
-                                        Start Course <ChevronRight className="w-4 h-4" />
+                                        {dict.home.startLearning} <ChevronRight className="w-4 h-4" />
                                     </div>
                                 </div>
                             </div>

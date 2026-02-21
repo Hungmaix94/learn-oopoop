@@ -10,7 +10,18 @@
                 "RTL encourages you not to test implementation details like state values or internal instance methods."
             ],
             "codeExample": "// Instead of testing component state (implementation detail)\nexpect(wrapper.state('isOpen')).toBe(true);\n\n// Test what the user actually sees\nexpect(screen.getByText('Hello World')).toBeVisible();\nexpect(screen.getByRole('dialog')).toBeInTheDocument();",
-            "note": "RTL renders components into a virtual DOM via jsdom, avoiding the overhead of a real browser while still behaving like one."
+            "note": "RTL renders components into a virtual DOM via jsdom, avoiding the overhead of a real browser while still behaving like one.",
+            "locales": {
+                "vi": {
+                    "title": "Triết Lý RTL",
+                    "bulletPoints": [
+                        "React Testing Library (RTL) được xây dựng trên một tiền đề rất đơn giản:",
+                        "'Test càng giống cách phần mềm được sử dụng, test càng đáng tin cậy hơn.'",
+                        "RTL khuyến khích không test chi tiết triển khai như giá trị state hay instance method nội bộ."
+                    ],
+                    "note": "RTL render component vào DOM ảo qua jsdom, tránh overhead của browser thực trong khi vẫn hoạt động như một browser."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "Combine this with test runners like Vitest or Jest."
             ],
             "codeExample": "import { render, screen } from '@testing-library/react';\nimport App from './App';\nimport { describe, test, expect } from 'vitest';\n\ndescribe('App Component', () => {\n  test('renders the welcome heading', () => {\n    // 1. Render the component\n    render(<App />);\n    \n    // 2. Query the DOM\n    const heading = screen.getByRole('heading', { name: /welcome/i });\n    \n    // 3. Assert\n    expect(heading).toBeInTheDocument();\n  });\n});",
-            "note": "Always use 'screen' rather than destructuring queries from 'render'. 'screen' lets you query any element in document.body globally."
+            "note": "Always use 'screen' rather than destructuring queries from 'render'. 'screen' lets you query any element in document.body globally.",
+            "locales": {
+                "vi": {
+                    "title": "Render Components Trong Test",
+                    "bulletPoints": [
+                        "Hàm 'render' từ '@testing-library/react' được dùng để mount component.",
+                        "Nó gắn component vào document.body và cung cấp tiện ích dọn dẹp.",
+                        "Kết hợp với test runner như Vitest hoặc Jest."
+                    ],
+                    "note": "Luôn dùng 'screen' thay vì destructure queries từ 'render'. 'screen' cho phép query bất kỳ phần tử nào trong document.body toàn cục."
+                }
+            }
         }
     ]
 }

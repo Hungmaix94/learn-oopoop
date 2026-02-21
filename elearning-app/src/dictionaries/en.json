@@ -1,0 +1,32 @@
+{
+    "navigation": {
+        "back": "Back",
+        "fullscreen": "Fullscreen",
+        "exitFullscreen": "Exit Fullscreen",
+        "backToCourse": "Back to Course"
+    },
+    "slide": {
+        "example": "EXAMPLE",
+        "slideText": "Slide"
+    },
+    "login": {
+        "title": "Welcome Back",
+        "subtitle": "Access the internal team learning portal",
+        "username": "Team Username",
+        "password": "Password",
+        "signIn": "Sign In",
+        "authenticating": "Authenticating...",
+        "error": "Invalid team credentials. Try team / 123456"
+    },
+    "courses": {
+        "title": "Available Training Tracks",
+        "subtitle": "Select a course to begin your learning journey",
+        "lessons": "Lessons"
+    },
+    "home": {
+        "heroTitle": "Internal E-Learning",
+        "heroSubtitle": "Master AI, Backend, and Frontend at your own pace",
+        "startLearning": "Start Learning",
+        "viewCourses": "View All Courses"
+    }
+}

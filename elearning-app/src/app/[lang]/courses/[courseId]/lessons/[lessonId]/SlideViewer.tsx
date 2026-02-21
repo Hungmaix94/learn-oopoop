@@ -16,9 +16,11 @@ interface SlideViewerProps {
     courseId: string
     lessonTitle: string
     slides: Slide[]
+    dict: any
+    lang: string
 }
 
-export default function SlideViewer({ courseId, lessonTitle, slides }: SlideViewerProps) {
+export default function SlideViewer({ courseId, lessonTitle, slides, dict, lang }: SlideViewerProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
     const containerRef = useRef<HTMLDivElement>(null)
     const [isFullscreen, setIsFullscreen] = useState(false)
@@ -44,7 +46,7 @@ export default function SlideViewer({ courseId, lessonTitle, slides }: SlideView
     if (!slides || slides.length === 0) {
         return (
             <div className="container mx-auto px-4 py-12 text-center">
-                <Link href={`/courses/${courseId}`} className="text-blue-400 hover:underline mb-4 inline-block">Back to Course</Link>
+                <Link href={`/${lang}/courses/${courseId}`} className="text-blue-400 hover:underline mb-4 inline-block">{dict.navigation?.backToCourse || "Back to Course"}</Link>
                 <div className="text-gray-400">No slides found for this lesson.</div>
             </div>
         )
@@ -60,24 +62,24 @@ export default function SlideViewer({ courseId, lessonTitle, slides }: SlideView
     return (
         <div
             ref={containerRef}
-            className={`mx-auto flex flex-col transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-[100] bg-slate-950 px-4 md:px-20 py-10 w-full h-full justify-center space-y-4' : 'container px-4 py-8 h-[calc(100vh-5rem)]'}`}
+            className={`mx-auto flex flex-col transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-[100] bg-slate-950 px-4 md:px-20 py-10 w-full h-full justify-center space-y-4 overflow-y-auto' : 'container px-4 py-8 min-h-[calc(100vh-5rem)]'}`}
         >
             {/* Header */}
             <div className="flex items-center justify-between mb-8 shrink-0">
                 <div className="flex justify-center items-center gap-6">
                     {!isFullscreen && (
-                        <Link href={`/courses/${courseId}`} className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition">
-                            <ArrowLeft className="w-4 h-4" /> Back
+                        <Link href={`/${lang}/courses/${courseId}`} className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition">
+                            <ArrowLeft className="w-4 h-4" /> {dict.navigation?.back || "Back"}
                         </Link>
                     )}
                     <button onClick={toggleFullscreen} className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition">
                         {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-                        <span className="text-sm font-medium hidden sm:block">{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</span>
+                        <span className="text-sm font-medium hidden sm:block">{isFullscreen ? (dict.navigation?.exitFullscreen || 'Exit Fullscreen') : (dict.navigation?.fullscreen || 'Fullscreen')}</span>
                     </button>
                 </div>
 
                 <div className="text-gray-400 font-medium bg-black/40 px-4 py-1.5 rounded-full border border-gray-800">
-                    Slide {currentIndex + 1} / {slides.length}
+                    {dict.slide?.slideText || "Slide"} {currentIndex + 1} / {slides.length}
                 </div>
             </div>
 
@@ -113,7 +115,7 @@ export default function SlideViewer({ courseId, lessonTitle, slides }: SlideView
                             <div className="mt-8 rounded-2xl bg-black/60 border border-gray-800 overflow-hidden shadow-2xl">
                                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border-b border-gray-800">
                                     <Code2 className="w-4 h-4 text-gray-500" />
-                                    <span className="text-xs text-gray-500 font-mono tracking-widest uppercase">Example</span>
+                                    <span className="text-xs text-gray-500 font-mono tracking-widest uppercase">{dict.slide?.example || "Example"}</span>
                                 </div>
                                 <pre className={`p-6 font-mono text-green-400/90 whitespace-pre-wrap overflow-x-auto ${isFullscreen ? 'text-lg md:text-xl' : 'text-sm md:text-base'}`}>
                                     {currentSlide.codeExample}

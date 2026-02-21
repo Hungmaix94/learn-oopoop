@@ -10,7 +10,18 @@
                 "Useful for simulating error states (500 Server Error) or edge cases."
             ],
             "codeExample": "test('mocks a fruit and doesn\\'t call api', async ({ page }) => {\n  // Intercept the API call\n  await page.route('*/**/api/v1/fruits', async route => {\n    const json = [{ name: 'Strawberry', id: 21 }];\n    await route.fulfill({ json });\n  });\n\n  // Go to the page - the frontend will receive the mock data\n  await page.goto('https://demo.playwright.dev/api-mocking');\n\n  // Assert that the mocked fruit is visible\n  await expect(page.getByText('Strawberry')).toBeVisible();\n});",
-            "note": "Mocking ensures tests run fast and aren't affected by staging database downtimes."
+            "note": "Mocking ensures tests run fast and aren't affected by staging database downtimes.",
+            "locales": {
+                "vi": {
+                    "title": "Giả Lập Mạng (Network Mocking)",
+                    "bulletPoints": [
+                        "Giả lập API để test frontend độc lập mà không cần backend thực.",
+                        "Chặn traffic mạng khớp với URL pattern cụ thể để trả về JSON stub.",
+                        "Hữu ích để mô phỏng trạng thái lỗi (500 Server Error) hoặc edge case."
+                    ],
+                    "note": "Mocking đảm bảo test chạy nhanh và không bị ảnh hưởng bởi downtime của staging database."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "Fixtures can encapsulate setup (e.g., logging in a user) and teardown logic."
             ],
             "codeExample": "import { test as base } from '@playwright/test';\n\n// Extend base test to include a custom 'todoPage' fixture\nexport const test = base.extend({\n  todoPage: async ({ page }, use) => {\n    const todoPage = new TodoPage(page);\n    await todoPage.goto();\n    await todoPage.addToDo('item1');\n    \n    // Pass the fixture to the test\n    await use(todoPage);\n    \n    // Teardown (if necessary) runs after the test\n    await todoPage.removeAll();\n  },\n});",
-            "note": "Fixtures are the modern replacement for global beforeAll/afterEach blocks, preventing state leakage between parallel tests."
+            "note": "Fixtures are the modern replacement for global beforeAll/afterEach blocks, preventing state leakage between parallel tests.",
+            "locales": {
+                "vi": {
+                    "title": "Playwright Test Fixtures",
+                    "bulletPoints": [
+                        "Fixtures thiết lập môi trường cho mỗi test, cung cấp mọi thứ cần thiết.",
+                        "Chúng tách biệt các test: mỗi test nhận một page, context hoặc object tùy chỉnh mới hoàn toàn.",
+                        "Fixtures có thể đóng gói logic setup (ví dụ đăng nhập người dùng) và teardown."
+                    ],
+                    "note": "Fixtures là thay thế hiện đại cho các block beforeAll/afterEach toàn cục, ngăn rò rỉ trạng thái giữa các test song song."
+                }
+            }
         }
     ]
 }

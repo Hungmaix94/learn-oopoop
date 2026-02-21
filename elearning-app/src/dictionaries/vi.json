@@ -1,0 +1,32 @@
+{
+    "navigation": {
+        "back": "Quay lại",
+        "fullscreen": "Toàn màn hình",
+        "exitFullscreen": "Thoát toàn màn hình",
+        "backToCourse": "Về trang khóa học"
+    },
+    "slide": {
+        "example": "VÍ DỤ",
+        "slideText": "Trang"
+    },
+    "login": {
+        "title": "Chào mừng trở lại",
+        "subtitle": "Đăng nhập vào cổng đào tạo nội bộ",
+        "username": "Tên đăng nhập",
+        "password": "Mật khẩu",
+        "signIn": "Đăng Nhập",
+        "authenticating": "Đang xác thực...",
+        "error": "Thông tin không hợp lệ. Vui lòng dùng: team / 123456"
+    },
+    "courses": {
+        "title": "Các Lộ Trình Đào Tạo",
+        "subtitle": "Chọn một khóa học để bắt đầu hành trình của bạn",
+        "lessons": "Bài học"
+    },
+    "home": {
+        "heroTitle": "E-Learning Nội Bộ",
+        "heroSubtitle": "Làm chủ AI, Backend, và Frontend theo tốc độ của bạn",
+        "startLearning": "Bắt đầu học",
+        "viewCourses": "Xem tất cả khóa học"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "course": {
+        "title": "Mastering Antigravity Agents & Workflows",
+        "description": "Learn how to build powerful automation Skills and Workflows using Antigravity (Gemini Code Assist). Unlock the full potential of AI-driven development.",
+        "lessons": [
+            {
+                "lessonId": "antigravity-workflows",
+                "lessonTitle": "Custom Workflows & Skills",
+                "summary": "Understand Agent boundaries, build workflows, and leverage the 'turbo' mode.",
+                "order": 1
+            }
+        ]
+    }
+}

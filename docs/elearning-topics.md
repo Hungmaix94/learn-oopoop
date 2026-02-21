@@ -34,3 +34,19 @@ Dưới đây là tài liệu tổng hợp những chủ đề hot nhất và th
 - **Observability (Giám sát ứng dụng):**
   - Bắt lỗi và crash real-time với Sentry.
   - Quản lý Logs tập trung và đo lường uptime (Prometheus/Grafana).
+
+## 6. Xây Dựng AI Agents & Workflows (Antigravity)
+*Dành riêng cho việc tinh chỉnh và tối ưu trải nghiệm AI nội bộ với Antigravity (Gemini Code Assist).*
+
+- **Nguyên lý của Antigravity Agent:** Hiểu về kiến trúc Agent-based, vòng lặp OODA (Observe, Orient, Decide, Act) mà Antigravity sử dụng để tự động phân tích codebase và thực thi task.
+- **Phát triển System Skills (Kỹ năng hệ thống):**
+  - Cách tạo các cấu trúc thư mục `{.agent}/workflows/` hoặc `{.agent}/skills/` chứa file YAML/Markdown.
+  - Viết hướng dẫn (Instructions) chi tiết, định nghĩa ranh giới (Boundaries), và cung cấp Context (file path, project structure) cho AI.
+- **Viết Custom Workflows (Quy trình tự động hóa):**
+  - Xây dựng workflow tạo Boilerplate chuẩn công ty (tự động setup Next.js, cấu hình linter, Tailwind).
+  - Workflow Deploy tự động: Xây dựng instruction bắt AI tự động build, test và đẩy lệnh Docker/Vercel.
+  - Sử dụng Annotation `// turbo` hoặc `// turbo-all` để cấp quyền chạy lệnh bash script liên tục không cần chờ review.
+- **Usecase Cụ thể cho Developer:**
+  - **Tự động viết Unit Test:** Skill tự động phân tích coverage và xin quyền chạy lệnh test (VD: `jest --coverage`).
+  - **Code Review & Refactoring:** Workflow phân tích Pull Request, tìm ra code "bốc mùi" (code smell) và đề xuất Clean Code.
+  - **Dịch Thuật và Document (i18n):** Workflow scan các file JSON ngôn ngữ, format lại UI và cập nhật markdown documentation tự động.

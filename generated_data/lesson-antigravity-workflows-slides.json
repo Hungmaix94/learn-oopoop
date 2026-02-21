@@ -1,0 +1,203 @@
+{
+    "lessonId": "antigravity-workflows",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "The Antigravity Architecture",
+            "bulletPoints": [
+                "Antigravity (Gemini Code Assist) is a fully autonomous coding Agent running in your IDE.",
+                "It follows the OODA loop: Observe (read files) → Orient (plan) → Decide (choose tools) → Act (run commands).",
+                "It has direct access to: local file system, bash terminal, browser, and the MCP server ecosystem.",
+                "Key tools: `view_file`, `run_command`, `grep_search`, `write_to_file`, `browser_subagent`."
+            ],
+            "codeExample": "// Tools Antigravity uses autonomously:\n- view_file('/src/app/page.tsx')       → reads any file\n- run_command('pnpm test')             → executes shell commands\n- grep_search('useAuthStore')          → search across codebase\n- write_to_file('/src/hooks/...')      → creates/modifies files\n- browser_subagent('Go to /dashboard')→ controls Chrome",
+            "note": "Antigravity is not a copilot — it is a Senior Engineer that plans, executes, verifies, and reports back to you.",
+            "locales": {
+                "vi": {
+                    "title": "Kiến Trúc Antigravity",
+                    "bulletPoints": [
+                        "Antigravity (Gemini Code Assist) là Agent lập trình tự trị hoàn toàn chạy trong IDE của bạn.",
+                        "Tuân theo vòng OODA: Quan Sát (đọc file) → Định Hướng (lập kế hoạch) → Quyết Định (chọn tool) → Hành Động (chạy lệnh).",
+                        "Có quyền truy cập trực tiếp vào: file system local, terminal bash, trình duyệt và hệ sinh thái MCP server.",
+                        "Các tool chính: `view_file`, `run_command`, `grep_search`, `write_to_file`, `browser_subagent`."
+                    ],
+                    "note": "Antigravity không phải copilot — nó là Senior Engineer: lập kế hoạch, thực thi, kiểm tra và báo cáo lại cho bạn."
+                }
+            }
+        },
+        {
+            "slideOrder": 2,
+            "title": "System Skills: Encoding Team Standards",
+            "bulletPoints": [
+                "Skills are markdown files in `.agents/skills/` — they act as 'standing orders' the Agent always follows.",
+                "FE Skill example: 'Every React component MUST have a matching `.test.tsx` and use RTL + Vitest.'",
+                "BE Skill example: 'Every NestJS endpoint MUST have a DTO, a Swagger decorator, and a service unit test.'",
+                "Skills are scoped to the project — different repos can have completely different rules."
+            ],
+            "codeExample": "# .agents/skills/FE-STANDARDS.md\n## Stack: Next.js 14 (App Router) + TailwindCSS + ShadCN\n\nWhen creating a new React component you MUST:\n1. Place it under `src/components/{domain}/`.\n2. Use TypeScript with full prop types — no `any`.\n3. Create a matching test file at `src/components/{domain}/__tests__/`.\n4. Export from the domain's `index.ts` barrel file.\n5. Run `pnpm test` and assert all tests pass before reporting done.",
+            "note": "Without skills, the AI makes assumptions. With skills, the AI executes your team's exact conventions every single time.",
+            "locales": {
+                "vi": {
+                    "title": "System Skills: Mã Hóa Chuẩn Của Team",
+                    "bulletPoints": [
+                        "Skills là file markdown trong `.agents/skills/` — chúng là 'mệnh lệnh thường trực' mà Agent luôn tuân theo.",
+                        "Ví dụ FE Skill: 'Mỗi React component PHẢI có `.test.tsx` tương ứng và dùng RTL + Vitest.'",
+                        "Ví dụ BE Skill: 'Mỗi NestJS endpoint PHẢI có DTO, Swagger decorator, và unit test cho service.'",
+                        "Skills được scoped cho từng project — các repo khác nhau có thể có quy tắc hoàn toàn khác."
+                    ],
+                    "note": "Không có skills, AI đoán mò. Có skills, AI thực thi đúng Convention của team mỗi lần."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "FE Workflow: New Feature Component (Next.js)",
+            "bulletPoints": [
+                "Step 1 — Branch: Create `feat/user-profile-card` from `main`.",
+                "Step 2 — Scaffold: Generate `UserProfileCard.tsx` + `UserProfileCard.test.tsx` + Storybook story.",
+                "Step 3 — Implement: Use ShadCN `Card`, `Avatar`, `Badge` primitives. Fully typed props.",
+                "Step 4 — Test: Run `pnpm test --filter UserProfileCard`. Assert coverage ≥ 80%.",
+                "Step 5 — PR: Lint (`pnpm lint`), build (`pnpm build`), then open PR with auto-generated description."
+            ],
+            "codeExample": "# .agents/workflows/fe-new-component.md\n---\ndescription: Scaffold a new React UI component end-to-end\n---\n1. Create branch `feat/{component-name}` from main.\n// turbo\n2. Run `pnpm lint` to verify no pre-existing errors.\n3. Scaffold `src/components/{domain}/{Name}.tsx` with full TypeScript props.\n4. Scaffold `src/components/{domain}/__tests__/{Name}.test.tsx` with RTL.\n5. Run `pnpm test` and assert all tests pass.\n6. Open a draft PR with a summary of changes.",
+            "note": "The Agent handles scaffolding, testing, and PR description — you only need to review the final code diff.",
+            "locales": {
+                "vi": {
+                    "title": "FE Workflow: Tạo Component Tính Năng Mới (Next.js)",
+                    "bulletPoints": [
+                        "Bước 1 — Branch: Tạo `feat/user-profile-card` từ `main`.",
+                        "Bước 2 — Scaffold: Tạo `UserProfileCard.tsx` + `UserProfileCard.test.tsx` + Storybook story.",
+                        "Bước 3 — Implement: Dùng primitive ShadCN `Card`, `Avatar`, `Badge`. Props đầy đủ type.",
+                        "Bước 4 — Test: Chạy `pnpm test --filter UserProfileCard`. Assert coverage ≥ 80%.",
+                        "Bước 5 — PR: Lint (`pnpm lint`), build (`pnpm build`), rồi mở PR với mô tả tự sinh."
+                    ],
+                    "note": "Agent xử lý scaffold, test và mô tả PR — bạn chỉ cần review code diff cuối cùng."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "FE Workflow: API Integration with React Query",
+            "bulletPoints": [
+                "Step 1: Read the OpenAPI spec or existing `api/` client to understand the endpoint contract.",
+                "Step 2: Generate a typed `useGetUserProfile(userId)` React Query hook in `src/hooks/`.",
+                "Step 3: Add loading, error, and empty states using ShadCN `Skeleton` and `Alert` components.",
+                "Step 4: Run `pnpm test` — mock the API with MSW, assert all UI states render correctly.",
+                "Step 5: Verify in browser using `browser_subagent` that the real API call resolves successfully."
+            ],
+            "codeExample": "// Generated hook by Antigravity in src/hooks/useUserProfile.ts\nexport const useUserProfile = (userId: string) =>\n  useQuery({\n    queryKey: ['user', userId],\n    queryFn: () => apiClient.get<UserProfile>(`/users/${userId}`),\n    staleTime: 5 * 60 * 1000, // 5 min cache\n  });\n\n// MSW mock in tests:\nhttp.get('/api/users/:id', () =>\n  HttpResponse.json({ id: '1', name: 'Nguyen Van A' }))",
+            "note": "Antigravity reads the existing `apiClient` setup before writing hooks — it never invents a new HTTP pattern.",
+            "locales": {
+                "vi": {
+                    "title": "FE Workflow: Tích Hợp API với React Query",
+                    "bulletPoints": [
+                        "Bước 1: Đọc OpenAPI spec hoặc `api/` client hiện có để hiểu contract của endpoint.",
+                        "Bước 2: Sinh hook `useGetUserProfile(userId)` có type đầy đủ trong `src/hooks/`.",
+                        "Bước 3: Thêm trạng thái loading, error, empty dùng ShadCN `Skeleton` và `Alert`.",
+                        "Bước 4: Chạy `pnpm test` — mock API với MSW, kiểm tra tất cả trạng thái UI render đúng.",
+                        "Bước 5: Xác minh trên browser với `browser_subagent` rằng API thực phân giải thành công."
+                    ],
+                    "note": "Antigravity đọc setup `apiClient` hiện có trước khi viết hook — không bao giờ tự đặt ra pattern HTTP mới."
+                }
+            }
+        },
+        {
+            "slideOrder": 5,
+            "title": "BE Workflow: New NestJS CRUD Module",
+            "bulletPoints": [
+                "Step 1 — Schema: Add Prisma model to `schema.prisma`, run `pnpm prisma migrate dev`.",
+                "Step 2 — Module: Scaffold `products.module.ts`, `products.controller.ts`, `products.service.ts`.",
+                "Step 3 — DTOs: Create `CreateProductDto` and `UpdateProductDto` with `class-validator` decorators.",
+                "Step 4 — Swagger: Add `@ApiTags`, `@ApiOperation`, `@ApiResponse` to every controller method.",
+                "Step 5 — Test: Write unit tests for `ProductsService` with mocked `PrismaService`. Assert ≥ 80% coverage."
+            ],
+            "codeExample": "# .agents/workflows/be-new-module.md\n---\ndescription: Scaffold a complete NestJS CRUD module\n---\n1. Add the Prisma model to `schema.prisma` and confirm with user.\n2. Run `pnpm prisma migrate dev --name add_{entity}`.\n// turbo\n3. Scaffold Module, Controller, Service under `src/{entity}/`.\n4. Create DTOs with class-validator in `src/{entity}/dto/`.\n5. Add full Swagger decorators to controller.\n6. Write unit tests for Service. Run `pnpm test` and assert pass.\n7. Run `pnpm build` to confirm no TypeScript errors.",
+            "note": "The migration step always pauses for user confirmation — preventing accidental schema changes on shared databases.",
+            "locales": {
+                "vi": {
+                    "title": "BE Workflow: Tạo NestJS CRUD Module Mới",
+                    "bulletPoints": [
+                        "Bước 1 — Schema: Thêm model Prisma vào `schema.prisma`, chạy `pnpm prisma migrate dev`.",
+                        "Bước 2 — Module: Scaffold `products.module.ts`, `products.controller.ts`, `products.service.ts`.",
+                        "Bước 3 — DTOs: Tạo `CreateProductDto` và `UpdateProductDto` với decorator `class-validator`.",
+                        "Bước 4 — Swagger: Thêm `@ApiTags`, `@ApiOperation`, `@ApiResponse` cho mọi method của controller.",
+                        "Bước 5 — Test: Viết unit test cho `ProductsService` với `PrismaService` đã mock. Assert coverage ≥ 80%."
+                    ],
+                    "note": "Bước migration luôn dừng lại để xác nhận với người dùng — ngăn thay đổi schema vô ý trên database dùng chung."
+                }
+            }
+        },
+        {
+            "slideOrder": 6,
+            "title": "BE Workflow: Database Migration Safety",
+            "bulletPoints": [
+                "Rule: Never run `prisma migrate deploy` without a human checkpoint — always require explicit approval.",
+                "Workflow: Generate migration → diff review → test on dev DB → manual approval → deploy to staging.",
+                "Use `prisma migrate diff` to compare schemas before and after — Agent shows the full SQL diff.",
+                "Rollback plan: commit DB state snapshot before any destructive migration (ALTER/DROP columns)."
+            ],
+            "codeExample": "# .agents/workflows/be-db-migration.md\n---\ndescription: Safe database migration: generate, review, and apply\n---\n1. Update `schema.prisma` with the required schema change.\n2. Run `pnpm prisma migrate dev --create-only --name {change_name}`.\n// turbo\n3. Run `pnpm prisma migrate diff` and display the SQL output for review.\n4. STOP and ask user: 'Please review the SQL diff above. Approve to continue?'\n5. Run `pnpm prisma migrate deploy` only after explicit user approval.\n6. Run `pnpm test` to verify no regression.",
+            "note": "Destructive migrations (DROP COLUMN, ALTER TYPE) are ALWAYS paused for manual approval — this is non-negotiable.",
+            "locales": {
+                "vi": {
+                    "title": "BE Workflow: Bảo Mật Migration Database",
+                    "bulletPoints": [
+                        "Quy tắc: Không bao giờ chạy `prisma migrate deploy` mà không có checkpoint của người dùng — luôn yêu cầu phê duyệt rõ ràng.",
+                        "Workflow: Tạo migration → review diff → test trên dev DB → phê duyệt thủ công → deploy lên staging.",
+                        "Dùng `prisma migrate diff` để so sánh schema trước và sau — Agent hiển thị đầy đủ SQL diff.",
+                        "Kế hoạch rollback: commit snapshot trạng thái DB trước bất kỳ migration phá hủy nào (ALTER/DROP column)."
+                    ],
+                    "note": "Migration phá hủy (DROP COLUMN, ALTER TYPE) LUÔN dừng lại để phê duyệt thủ công — đây là quy tắc bất biến."
+                }
+            }
+        },
+        {
+            "slideOrder": 7,
+            "title": "Full-Stack Workflow: PR Review Automation",
+            "bulletPoints": [
+                "Trigger: '@agent review this PR' — Antigravity reads every changed file and produces a structured review.",
+                "It checks: TypeScript errors, missing tests, Swagger missing on new endpoints, console.log left in code.",
+                "It runs: `pnpm lint`, `pnpm test`, `pnpm build` and reports the pass/fail status inline.",
+                "It posts: a summary comment template with a checklist the developer must tick before merge."
+            ],
+            "codeExample": "# .agents/workflows/pr-review.md\n---\ndescription: Automated PR review checklist for FE + BE changes\n---\n// turbo-all\n1. Run `git diff main...HEAD --name-only` to list changed files.\n2. For each .tsx file: check for missing test coverage + console.log.\n3. For each .controller.ts file: check for missing @ApiOperation decorators.\n4. Run `pnpm lint && pnpm test && pnpm build`.\n5. Report a structured summary:\n   - ✅ Tests pass / ❌ Tests fail\n   - ✅ Build clean / ❌ Build errors\n   - ⚠️  Missing items list\n6. Ask: 'Fix the issues above, or approve to merge?'",
+            "note": "// turbo-all is safe here because these are all read-only checks — nothing is modified or deployed.",
+            "locales": {
+                "vi": {
+                    "title": "Full-Stack Workflow: Tự Động Hóa Review PR",
+                    "bulletPoints": [
+                        "Kích hoạt: '@agent review this PR' — Antigravity đọc toàn bộ file thay đổi và tạo review có cấu trúc.",
+                        "Kiểm tra: TypeScript errors, thiếu test, thiếu Swagger trên endpoint mới, console.log còn trong code.",
+                        "Chạy: `pnpm lint`, `pnpm test`, `pnpm build` và báo cáo trạng thái pass/fail.",
+                        "Đăng: comment tóm tắt với checklist mà developer phải tick trước khi merge."
+                    ],
+                    "note": "// turbo-all an toàn ở đây vì đây là các kiểm tra chỉ đọc — không có gì bị sửa đổi hay deploy."
+                }
+            }
+        },
+        {
+            "slideOrder": 8,
+            "title": "Team Setup: Skills & Workflow Structure",
+            "bulletPoints": [
+                "Commit `.agents/` into version control — every developer shares the same AI rules.",
+                "Recommended structure: `skills/` for global rules, `workflows/` for repeatable procedures.",
+                "Have the Tech Lead own the skills files — review skill changes like you review architecture decisions.",
+                "Use `// turbo` sparingly: only for `pnpm lint`, `pnpm test`, `git add`, never for `rm`, `migrate deploy`, or `git push`."
+            ],
+            "codeExample": ".agents/\n├── skills/\n│   ├── FE-STANDARDS.md      # React + Next.js conventions\n│   ├── BE-STANDARDS.md      # NestJS + Prisma conventions\n│   └── GIT-STANDARDS.md     # Commit message format, branch naming\n└── workflows/\n    ├── fe-new-component.md  # Scaffold component + tests\n    ├── be-new-module.md     # NestJS CRUD module\n    ├── be-db-migration.md   # Safe DB migration\n    └── pr-review.md         # Automated PR checks",
+            "note": "The `.agents/` directory is your team's 'AI Constitution' — it defines how the AI thinks and acts in your project.",
+            "locales": {
+                "vi": {
+                    "title": "Thiết Lập Team: Cấu Trúc Skills & Workflows",
+                    "bulletPoints": [
+                        "Commit `.agents/` vào version control — mọi developer đều dùng chung quy tắc AI.",
+                        "Cấu trúc khuyến nghị: `skills/` cho quy tắc toàn cục, `workflows/` cho quy trình lặp lại.",
+                        "Tech Lead quản lý file skills — review thay đổi skills như review quyết định kiến trúc.",
+                        "Dùng `// turbo` tiết kiệm: chỉ cho `pnpm lint`, `pnpm test`, `git add`, không bao giờ cho `rm`, `migrate deploy`, hay `git push`."
+                    ],
+                    "note": "Thư mục `.agents/` là 'Hiến Pháp AI' của team — định nghĩa cách AI suy nghĩ và hành động trong project của bạn."
+                }
+            }
+        }
+    ]
+}

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BookOpen, AlertCircle, ArrowRight, Lock } from 'lucide-react'
 
-export default function LoginPage() {
+export default function LoginForm({ dict, lang }: { dict: any, lang: string }) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -20,13 +20,11 @@ export default function LoginPage() {
         await new Promise(resolve => setTimeout(resolve, 800))
 
         if (username === 'team' && password === '123456') {
-            // Set a simple cookie acting as our session via document.cookie
-            // In a real production app, use Next.js server actions (cookies()) for security!
             document.cookie = "team_auth=true; path=/; max-age=86400" // 1 day expiration
-            router.push('/courses')
+            router.push(`/${lang}/courses`)
             router.refresh()
         } else {
-            setError('Invalid team credentials. Try team / 123456')
+            setError(dict.login.error)
             setIsLoading(false)
         }
     }
@@ -44,10 +42,10 @@ export default function LoginPage() {
                 </div>
 
                 <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2 text-center">
-                    Team Portal
+                    {dict.login.title}
                 </h1>
                 <p className="text-gray-400 text-center mb-8">
-                    Authenticate to access the internal E-Learning catalog.
+                    {dict.login.subtitle}
                 </p>
 
                 <form onSubmit={handleLogin} className="w-full space-y-5">
@@ -59,7 +57,7 @@ export default function LoginPage() {
                     )}
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold tracking-wider text-gray-400 uppercase ml-1">Username</label>
+                        <label className="text-xs font-semibold tracking-wider text-gray-400 uppercase ml-1">{dict.login.username}</label>
                         <input
                             type="text"
                             value={username}
@@ -71,7 +69,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold tracking-wider text-gray-400 uppercase ml-1">Password</label>
+                        <label className="text-xs font-semibold tracking-wider text-gray-400 uppercase ml-1">{dict.login.password}</label>
                         <input
                             type="password"
                             value={password}
@@ -88,10 +86,13 @@ export default function LoginPage() {
                         className="w-full mt-6 py-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? (
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <span>{dict.login.authenticating}</span>
+                            </div>
                         ) : (
                             <>
-                                Access Secure Gateway <ArrowRight className="w-4 h-4 ml-1" />
+                                {dict.login.signIn} <ArrowRight className="w-4 h-4 ml-1" />
                             </>
                         )}
                     </button>

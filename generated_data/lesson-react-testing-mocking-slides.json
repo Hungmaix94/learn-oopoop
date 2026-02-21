@@ -10,7 +10,18 @@
                 "The solution is to use the 'wrapper' option in the 'render' function."
             ],
             "codeExample": "import { render, screen } from '@testing-library/react';\nimport { ThemeProvider } from './ThemeContext';\nimport UserProfile from './UserProfile';\n\nconst AllTheProviders = ({ children }) => {\n  return (\n    <ThemeProvider theme=\"dark\">\n      {children}\n    </ThemeProvider>\n  );\n};\n\ntest('renders wrapped component without crashing', () => {\n  render(<UserProfile />, { wrapper: AllTheProviders });\n  expect(screen.getByText('Dark Mode User Profile')).toBeVisible();\n});",
-            "note": "For large apps, create a custom 'render' function in a setup file that automatically wraps all components in necessary providers."
+            "note": "For large apps, create a custom 'render' function in a setup file that automatically wraps all components in necessary providers.",
+            "locales": {
+                "vi": {
+                    "title": "Giả Lập Providers & Context",
+                    "bulletPoints": [
+                        "Nhiều component dựa vào Context (Theme, Auth, Redux, React Query).",
+                        "Chúng sẽ crash nếu render trực tiếp mà không có provider.",
+                        "Giải pháp là dùng tùy chọn 'wrapper' trong hàm 'render'."
+                    ],
+                    "note": "Với app lớn, hãy tạo hàm 'render' tùy chỉnh trong file setup để tự động bọc tất cả components với các provider cần thiết."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "Your application code (like React Query or useEffect) operates exactly as if hitting a real server."
             ],
             "codeExample": "import { setupServer } from 'msw/node';\nimport { http, HttpResponse } from 'msw';\n\n// Define network stub\nconst server = setupServer(\n  http.get('https://api.example.com/user', () => {\n    return HttpResponse.json({ name: 'Jane Mocked' });\n  })\n);\n\n// Standard test runner hooks\nbeforeAll(() => server.listen());\nafterEach(() => server.resetHandlers());\nafterAll(() => server.close());\n\ntest('displays user from mocked API', async () => {\n  render(<UserDashboard />);\n  \n  // Use findBy to wait for async resolution\n  const userName = await screen.findByText('Jane Mocked');\n  expect(userName).toBeVisible();\n});",
-            "note": "MSW is widely considered the industry standard for testing frontend applications connecting to REST or GraphQL APIs."
+            "note": "MSW is widely considered the industry standard for testing frontend applications connecting to REST or GraphQL APIs.",
+            "locales": {
+                "vi": {
+                    "title": "Giả Lập API với MSW",
+                    "bulletPoints": [
+                        "Giả lập 'fetch' hay 'axios' thủ công dễ vỡ và khó bảo trì.",
+                        "Mock Service Worker (MSW) chặn request ở tầng mạng trong Node/jsdom.",
+                        "Code ứng dụng (như React Query hay useEffect) hoạt động y hệt như đang gọi server thực."
+                    ],
+                    "note": "MSW được xem là chuẩn công nghiệp để test ứng dụng frontend kết nối REST hoặc GraphQL APIs."
+                }
+            }
         }
     ]
 }

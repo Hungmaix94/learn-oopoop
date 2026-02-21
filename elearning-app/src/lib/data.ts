@@ -10,8 +10,6 @@ export async function getAllCourses() {
         const courses = files.map(file => {
             const raw = fs.readFileSync(path.join(getDataDir(), file), 'utf8');
             const data = JSON.parse(raw);
-            // Determine the course id from the filename, e.g., 'course-nestjs.json' -> 'nestjs'
-            // If the file is 'course.json', default to 'backend-engineering'.
             const id = file === 'course.json' ? 'backend-engineering' : file.replace('course-', '').replace('.json', '');
             return { id, ...data.course };
         });
@@ -36,19 +34,33 @@ export async function getLessons(courseId: string) {
     return course.lessons.sort((a: any, b: any) => a.order - b.order);
 }
 
-export async function getLessonSlides(lessonId: string) {
+/**
+ * Resolves a locale-aware slide: if the slide has a `locales` object with
+ * the target lang, merge those fields over the defaults (title, bulletPoints, note).
+ * codeExample is always shared across locales.
+ */
+function resolveSlideLocale(slide: any, lang: string) {
+    if (slide.locales && slide.locales[lang]) {
+        return {
+            ...slide,
+            title: slide.locales[lang].title ?? slide.title,
+            bulletPoints: slide.locales[lang].bulletPoints ?? slide.bulletPoints,
+            note: slide.locales[lang].note ?? slide.note,
+        };
+    }
+    return slide;
+}
+
+export async function getLessonSlides(lessonId: string, lang = 'en') {
     try {
-        const fileTarget = `lesson-${lessonId.split('-')[1] || lessonId}-slides.json`;
-        const fallbackDir = path.join(getDataDir(), fileTarget);
-        // Fallback naive matching if IDs slightly differ from the manual map I made earlier
         const files = fs.readdirSync(getDataDir()).filter(f => f.includes('slides.json'));
 
-        // Scan all slides JSONs to find the appropriate lesson ID
         for (const file of files) {
             const raw = fs.readFileSync(path.join(getDataDir(), file), 'utf8');
             const data = JSON.parse(raw);
             if (data.lessonId === lessonId) {
-                return data.slides.sort((a: any, b: any) => a.slideOrder - b.slideOrder);
+                const sorted = data.slides.sort((a: any, b: any) => a.slideOrder - b.slideOrder);
+                return sorted.map((slide: any) => resolveSlideLocale(slide, lang));
             }
         }
         return [];

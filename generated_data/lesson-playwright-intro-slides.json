@@ -10,7 +10,18 @@
                 "Tests can run across Windows, Linux, and macOS, locally or on CI, headless or headed."
             ],
             "codeExample": "npm init playwright@latest",
-            "note": "Playwright avoids flakiness by auto-waiting for elements before performing actions."
+            "note": "Playwright avoids flakiness by auto-waiting for elements before performing actions.",
+            "locales": {
+                "vi": {
+                    "title": "Playwright là gì?",
+                    "bulletPoints": [
+                        "Framework kiểm thử End-to-End (E2E) hiện đại do Microsoft phát triển.",
+                        "Hỗ trợ tất cả các engine rendering hiện đại bao gồm Chromium, WebKit và Firefox.",
+                        "Test có thể chạy trên Windows, Linux và macOS, cục bộ hay trên CI, headless hay headed."
+                    ],
+                    "note": "Playwright tránh flakiness bằng cách tự động chờ các phần tử trước khi thực hiện hành động."
+                }
+            }
         },
         {
             "slideOrder": 2,
@@ -21,7 +32,18 @@
                 "Use the 'test' and 'expect' utilities to structure the spec."
             ],
             "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('homepage has title and links to intro page', async ({ page }) => {\n  await page.goto('https://playwright.dev/');\n\n  // Expect a title \"to contain\" a substring.\n  await expect(page).toHaveTitle(/Playwright/);\n});",
-            "note": "Notice the use of 'async/await' - Playwright is entirely Promise-based for clean, linear control flow."
+            "note": "Notice the use of 'async/await' - Playwright is entirely Promise-based for clean, linear control flow.",
+            "locales": {
+                "vi": {
+                    "title": "Test Playwright Đầu Tiên",
+                    "bulletPoints": [
+                        "Test được viết bằng TypeScript hoặc JavaScript với Playwright Test runner.",
+                        "Mỗi test tự động nhận context 'page' và 'browser' riêng lập.",
+                        "Dùng 'test' và 'expect' để cấu trúc spec."
+                    ],
+                    "note": "'async/await' — Playwright hoàn toàn dựa trên Promise để luồng kiểm soát sạch, tuyến tính."
+                }
+            }
         }
     ]
 }

@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <header className="glass sticky top-0 z-50 w-full border-b">
+        <header className="glass relative z-50 w-full border-b">
           <div className="container mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-white hover:opacity-80 transition">
               <BookOpen className="w-6 h-6 text-blue-500" />

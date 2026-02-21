@@ -1,0 +1,27 @@
+{
+    "lessonId": "playwright-advanced",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Network Mocking",
+            "bulletPoints": [
+                "Mock APIs to test the frontend in isolation without a real backend.",
+                "Intercept network traffic matching specific URL patterns to provide stubbed JSON responses.",
+                "Useful for simulating error states (500 Server Error) or edge cases."
+            ],
+            "codeExample": "test('mocks a fruit and doesn\\'t call api', async ({ page }) => {\n  // Intercept the API call\n  await page.route('*/**/api/v1/fruits', async route => {\n    const json = [{ name: 'Strawberry', id: 21 }];\n    await route.fulfill({ json });\n  });\n\n  // Go to the page - the frontend will receive the mock data\n  await page.goto('https://demo.playwright.dev/api-mocking');\n\n  // Assert that the mocked fruit is visible\n  await expect(page.getByText('Strawberry')).toBeVisible();\n});",
+            "note": "Mocking ensures tests run fast and aren't affected by staging database downtimes."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Playwright Test Fixtures",
+            "bulletPoints": [
+                "Fixtures establish an environment for each test, providing everything it needs.",
+                "They isolate tests: each gets a brand new page, context, or custom object.",
+                "Fixtures can encapsulate setup (e.g., logging in a user) and teardown logic."
+            ],
+            "codeExample": "import { test as base } from '@playwright/test';\n\n// Extend base test to include a custom 'todoPage' fixture\nexport const test = base.extend({\n  todoPage: async ({ page }, use) => {\n    const todoPage = new TodoPage(page);\n    await todoPage.goto();\n    await todoPage.addToDo('item1');\n    \n    // Pass the fixture to the test\n    await use(todoPage);\n    \n    // Teardown (if necessary) runs after the test\n    await todoPage.removeAll();\n  },\n});",
+            "note": "Fixtures are the modern replacement for global beforeAll/afterEach blocks, preventing state leakage between parallel tests."
+        }
+    ]
+}

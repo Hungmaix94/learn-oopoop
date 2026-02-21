@@ -1,0 +1,27 @@
+{
+    "lessonId": "react-testing-intro",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "The RTL Philosophy",
+            "bulletPoints": [
+                "React Testing Library (RTL) is built on a very simple premise:",
+                "'The more your tests resemble the way your software is used, the more confidence they can give you.'",
+                "RTL encourages you not to test implementation details like state values or internal instance methods."
+            ],
+            "codeExample": "// Instead of testing component state (implementation detail)\nexpect(wrapper.state('isOpen')).toBe(true);\n\n// Test what the user actually sees\nexpect(screen.getByText('Hello World')).toBeVisible();\nexpect(screen.getByRole('dialog')).toBeInTheDocument();",
+            "note": "RTL renders components into a virtual DOM via jsdom, avoiding the overhead of a real browser while still behaving like one."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Rendering Components",
+            "bulletPoints": [
+                "The 'render' function from '@testing-library/react' is used to mount your component.",
+                "It attaches the component to document.body and provides cleanup utilities.",
+                "Combine this with test runners like Vitest or Jest."
+            ],
+            "codeExample": "import { render, screen } from '@testing-library/react';\nimport App from './App';\nimport { describe, test, expect } from 'vitest';\n\ndescribe('App Component', () => {\n  test('renders the welcome heading', () => {\n    // 1. Render the component\n    render(<App />);\n    \n    // 2. Query the DOM\n    const heading = screen.getByRole('heading', { name: /welcome/i });\n    \n    // 3. Assert\n    expect(heading).toBeInTheDocument();\n  });\n});",
+            "note": "Always use 'screen' rather than destructuring queries from 'render'. 'screen' lets you query any element in document.body globally."
+        }
+    ]
+}

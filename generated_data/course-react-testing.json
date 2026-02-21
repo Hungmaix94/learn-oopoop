@@ -1,0 +1,26 @@
+{
+    "course": {
+        "title": "Unit Testing in React",
+        "description": "Master React Testing Library (RTL) and Jest/Vitest to build confidence in your React components. Covers rendering, querying, async events, and mocking.",
+        "lessons": [
+            {
+                "lessonId": "react-testing-intro",
+                "lessonTitle": "Introduction to React Testing Labs",
+                "summary": "Setup, Philosophy, and Rendering Components",
+                "order": 1
+            },
+            {
+                "lessonId": "react-testing-queries",
+                "lessonTitle": "Querying and User Events",
+                "summary": "Finding elements and simulating user interactions.",
+                "order": 2
+            },
+            {
+                "lessonId": "react-testing-mocking",
+                "lessonTitle": "Mocking Hooks and Contexts",
+                "summary": "Isolating components deeply with Mock Service Worker and Jest Mocks.",
+                "order": 3
+            }
+        ]
+    }
+}

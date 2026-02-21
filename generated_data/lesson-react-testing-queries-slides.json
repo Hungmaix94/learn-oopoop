@@ -1,0 +1,27 @@
+{
+    "lessonId": "react-testing-queries",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Priority of Queries",
+            "bulletPoints": [
+                "RTL provides multiple ways to query elements: getBy, queryBy, findBy.",
+                "Guiding principle: Use queries that reflect the experience of visual/assistive users.",
+                "1. getByRole (Best)\n2. getByLabelText\n3. getByPlaceholderText\n4. getByText\n5. getByTestId (Fallback)"
+            ],
+            "codeExample": "// BEST: Accessible queries\nconst button = screen.getByRole('button', { name: 'Submit' });\nconst input = screen.getByLabelText('Email Address');\n\n// OKAY: Text/visual queries\nconst message = screen.getByText('Success!');\n\n// LAST RESORT: data-testid attributes\nconst icon = screen.getByTestId('custom-icon');",
+            "note": "'getBy' throws an error if not found. 'queryBy' returns null (good for asserting non-existence). 'findBy' returns a Promise (good for async updates)."
+        },
+        {
+            "slideOrder": 2,
+            "title": "User Events Integration",
+            "bulletPoints": [
+                "Always prefer '@testing-library/user-event' over 'fireEvent'.",
+                "user-event simulates full interactions (e.g., typing triggers keydown, keypress, keyup, change).",
+                "Since it simulates real browsing, the API is async."
+            ],
+            "codeExample": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport ContactForm from './ContactForm';\n\ntest('typing in the input field', async () => {\n  // Setup user-event instance\n  const user = userEvent.setup();\n  \n  render(<ContactForm />);\n  \n  const input = screen.getByRole('textbox', { name: 'Name' });\n  \n  // Simulate a real user typing\n  await user.type(input, 'John Doe');\n  \n  // Wait for and assert the change\n  expect(input).toHaveValue('John Doe');\n});",
+            "note": "Always setup userEvent before rendering your component to initialize the state cleanly."
+        }
+    ]
+}

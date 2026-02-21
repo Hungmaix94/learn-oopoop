@@ -1,0 +1,27 @@
+{
+    "lessonId": "playwright-core",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Understanding Locators",
+            "bulletPoints": [
+                "Locators are the central piece of Playwright's auto-waiting mechanism.",
+                "They represent a way to find element(s) on the page at any moment.",
+                "Playwright strongly recommends using user-facing attributes like roles, labels, and text."
+            ],
+            "codeExample": "// Good: Using accessible roles\nconst button = page.getByRole('button', { name: 'Submit' });\n\n// Good: Using visible text\nconst header = page.getByText('Welcome, User!');\n\n// Discouraged: CSS Selectors (brittle)\nconst myDiv = page.locator('.container > div:nth-child(2)');",
+            "note": "Testing by user-visible attributes ensures your app is usable and accessible, not just structurally correct."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Assertions & Auto-Retrying",
+            "bulletPoints": [
+                "Playwright provides a 'Web-First Assertions' library out of the box.",
+                "Assertions like 'toBeVisible()' or 'toHaveText()' will automatically retry.",
+                "It waits until the condition is met or the timeout is reached."
+            ],
+            "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('login button becomes active', async ({ page }) => {\n  await page.goto('/login');\n  \n  const loginBtn = page.getByRole('button', { name: 'Login' });\n  \n  // Playwright polls the DOM until the button is no longer disabled\n  await expect(loginBtn).toBeEnabled({ timeout: 10000 });\n});",
+            "note": "Auto-retrying assertions eliminate the need for manual sleep() or arbitrary timeouts in tests."
+        }
+    ]
+}

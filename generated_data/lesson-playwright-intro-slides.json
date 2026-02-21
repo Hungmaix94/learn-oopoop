@@ -1,0 +1,27 @@
+{
+    "lessonId": "playwright-intro",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "What is Playwright?",
+            "bulletPoints": [
+                "A modern End-to-End (E2E) testing framework developed by Microsoft.",
+                "Supports all modern rendering engines including Chromium, WebKit, and Firefox.",
+                "Tests can run across Windows, Linux, and macOS, locally or on CI, headless or headed."
+            ],
+            "codeExample": "npm init playwright@latest",
+            "note": "Playwright avoids flakiness by auto-waiting for elements before performing actions."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Your First Playwright Test",
+            "bulletPoints": [
+                "Tests are written in TypeScript or JavaScript using the Playwright Test runner.",
+                "Every test receives isolated 'page' and 'browser' contexts automatically.",
+                "Use the 'test' and 'expect' utilities to structure the spec."
+            ],
+            "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('homepage has title and links to intro page', async ({ page }) => {\n  await page.goto('https://playwright.dev/');\n\n  // Expect a title \"to contain\" a substring.\n  await expect(page).toHaveTitle(/Playwright/);\n});",
+            "note": "Notice the use of 'async/await' - Playwright is entirely Promise-based for clean, linear control flow."
+        }
+    ]
+}

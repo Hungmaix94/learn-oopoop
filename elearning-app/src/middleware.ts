@@ -1,27 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
-    // Add Basic Auth so only the team can access the site
-    const basicAuth = req.headers.get('authorization');
+    // Check for the auth cookie set by the login page
+    const isLoggedIn = req.cookies.get('team_auth')?.value === 'true';
 
-    if (basicAuth) {
-        const authValue = basicAuth.split(' ')[1];
-        // Base64 decode to get username:password
-        const decodedValue = atob(authValue);
-        const [user, pwd] = decodedValue.split(':');
-
-        // Simple team security
-        if (user === 'team' && pwd === '123456') {
-            return NextResponse.next();
-        }
+    // If already logged in, let them access the app
+    if (isLoggedIn) {
+        return NextResponse.next();
     }
 
-    return new NextResponse('Team Authentication Required', {
-        status: 401,
-        headers: {
-            'WWW-Authenticate': 'Basic realm="Secure E-Learning Area"',
-        },
-    });
+    // If they are trying to access the login page while NOT logged in, let them
+    if (req.nextUrl.pathname === '/login') {
+        return NextResponse.next();
+    }
+
+    // Otherwise, they are not logged in and trying to access protected content. Redirect to login.
+    return NextResponse.redirect(new URL('/login', req.url));
 }
 
 export const config = {

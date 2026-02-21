@@ -1,0 +1,27 @@
+{
+    "lessonId": "react-testing-mocking",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Mocking Providers & Context",
+            "bulletPoints": [
+                "Many components rely on Contexts (Theme, Auth, Redux, React Query).",
+                "They will crash if rendered directly without their providers.",
+                "The solution is to use the 'wrapper' option in the 'render' function."
+            ],
+            "codeExample": "import { render, screen } from '@testing-library/react';\nimport { ThemeProvider } from './ThemeContext';\nimport UserProfile from './UserProfile';\n\nconst AllTheProviders = ({ children }) => {\n  return (\n    <ThemeProvider theme=\"dark\">\n      {children}\n    </ThemeProvider>\n  );\n};\n\ntest('renders wrapped component without crashing', () => {\n  render(<UserProfile />, { wrapper: AllTheProviders });\n  expect(screen.getByText('Dark Mode User Profile')).toBeVisible();\n});",
+            "note": "For large apps, create a custom 'render' function in a setup file that automatically wraps all components in necessary providers."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Mocking APIs with MSW",
+            "bulletPoints": [
+                "Mocking 'fetch' or 'axios' manually is brittle and hard to maintain.",
+                "Mock Service Worker (MSW) intercepts requests at the network level in Node/jsdom.",
+                "Your application code (like React Query or useEffect) operates exactly as if hitting a real server."
+            ],
+            "codeExample": "import { setupServer } from 'msw/node';\nimport { http, HttpResponse } from 'msw';\n\n// Define network stub\nconst server = setupServer(\n  http.get('https://api.example.com/user', () => {\n    return HttpResponse.json({ name: 'Jane Mocked' });\n  })\n);\n\n// Standard test runner hooks\nbeforeAll(() => server.listen());\nafterEach(() => server.resetHandlers());\nafterAll(() => server.close());\n\ntest('displays user from mocked API', async () => {\n  render(<UserDashboard />);\n  \n  // Use findBy to wait for async resolution\n  const userName = await screen.findByText('Jane Mocked');\n  expect(userName).toBeVisible();\n});",
+            "note": "MSW is widely considered the industry standard for testing frontend applications connecting to REST or GraphQL APIs."
+        }
+    ]
+}

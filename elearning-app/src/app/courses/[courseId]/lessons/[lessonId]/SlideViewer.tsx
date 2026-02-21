@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react'
 import { ArrowLeft, ChevronLeft, ChevronRight, Code2, Maximize, Minimize } from 'lucide-react'
 import Link from 'next/link'

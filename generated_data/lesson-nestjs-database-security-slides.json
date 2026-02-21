@@ -1,0 +1,55 @@
+{
+    "lessonId": "nestjs-database-security",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Kết Nối SQL Với TypeORM",
+            "bulletPoints": [
+                "TypeORM là ORM phổ biến. Dữ liệu bảng Database ánh xạ hoàn toàn 1-1 thành Object Class (Entity).",
+                "Dùng Repository Pattern `@InjectRepository()` trong Services để truy xuất dữ liệu."
+            ],
+            "codeExample": "@Entity()\nexport class User {\n  @PrimaryGeneratedColumn()\n  id: number;\n}",
+            "note": "Hỗ trợ full MySQL, PostgreSQL, MSSQL..."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Truy Vấn Repository (SQL)",
+            "bulletPoints": [
+                "NestJS tự tạo ra các lệnh find(), save(), delete() cho các entities."
+            ],
+            "codeExample": "constructor(\n  @InjectRepository(User) private readonly usersRepo: Repository<User>\n) {}\n\nfindAll() { return this.usersRepo.find(); }",
+            "note": "Tương tác hướng đối tượng toàn phần tránh dùng SQL string nguyên thủy."
+        },
+        {
+            "slideOrder": 3,
+            "title": "MongoDB Với Mongoose",
+            "bulletPoints": [
+                "Sử dụng module `@nestjs/mongoose` bọc Schema Document của MongoDB vào Classes.",
+                "Linh hoạt hơn (NoSQL Schema-less) nhưng có validation Typescript nhờ SchemaFactory."
+            ],
+            "codeExample": "@Schema()\nexport class Cat {\n  @Prop({ required: true }) name: string;\n}\nexport const CatSchema = SchemaFactory.createForClass(Cat);",
+            "note": "Dành cho Data Catalog lưu nhiều field dị."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Configuration (Biến Môi Trường)",
+            "bulletPoints": [
+                "Quản lý thông tin mật như URL Database, Secret Keys qua biến môi trường (.env).",
+                "Sử dụng module tích hợp `@nestjs/config` để truy cập cực tiện lợi."
+            ],
+            "codeExample": "ConfigModule.forRoot({\n  isGlobal: true, \n})",
+            "note": "Tuyệt đối không hardcode AWS Keys trên Github!"
+        },
+        {
+            "slideOrder": 5,
+            "title": "Authentication Bằng Passport & JWT",
+            "bulletPoints": [
+                "Nest kết hợp thư viện Passport để xác thực siêu tốc với hàng trăm Strategies.",
+                "Local Strategy (Kiểm tra Db lấy pass) sinh ra JWT Token.",
+                "JWT Strategy (Giải mã Token trong Header) bảo vệ Route với `AuthGuard`."
+            ],
+            "codeExample": null,
+            "note": "Chuẩn mực bảo mật API Backend."
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+{
+    "lessonId": "python-applied-ecommerce",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Tại Sao Chọn Python Cho E-commerce?",
+            "bulletPoints": [
+                "Nhanh ở Tốc độ phát triển (Development Speed) nhờ cú pháp gọn và thư viện có sẵn.",
+                "Backend API: Xây microservice với FastAPI nhanh gọn nhẹ.",
+                "Data & Queue: Phân tích data với Pandas. Chạy background task với Celery."
+            ],
+            "codeExample": null,
+            "note": "Hệ sinh thái phong phú giúp Launch sản phẩm nhanh hơn."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Cơ Sở Dữ Liệu: PostgreSQL (SQLAlchemy)",
+            "bulletPoints": [
+                "Dùng SQLAlchemy (ORM) để bọc các bảng thành Class an toàn và Pythonic.",
+                "Transaction: Rất quan trọng (ví dụ đặt hàng, trừ tiền). Dùng session.begin() và session.rollback()."
+            ],
+            "codeExample": "with session.begin():\n    new_order = Order(user_id=1, total=100)\n    session.add(new_order)",
+            "note": "Transaction đảm bảo ACID: Cùng thành công hoặc cùng thất bại."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Cơ Sở Dữ Liệu: MongoDB & Redis",
+            "bulletPoints": [
+                "MongoDB (PyMongo): Dùng cho Catalog SP đa dạng, cấu trúc key JSONB linh động ($lt, $gt).",
+                "Redis (Redis-py): Làm Cache, Giỏ hàng. Dùng pipeline() để batch commands chỉ 1 round-trip network."
+            ],
+            "codeExample": "pipe = r.pipeline()\nfor item in items:\n    pipe.hset(key, item.id, item.qty)\npipe.execute()",
+            "note": "Phân chia lưu trữ tùy use-case (Polyglot Persistence)."
+        },
+        {
+            "slideOrder": 4,
+            "title": "OOP & FP Trong Python",
+            "bulletPoints": [
+                "Python là ngôn ngữ Đa Mô Hình (Multi-paradigm).",
+                "Dùng OOP/DataClasses định nghĩa DataSchema (VD: Giỏ hàng, Item).",
+                "Dùng FP (List Comprehensions, map, filter, sum) biến đổi dữ liệu một cách gãy gọn, không side-effect."
+            ],
+            "codeExample": "@dataclass\nclass CartItem: sku: str\n\ntotal = sum(o['amount'] for o in orders if o['status'] == 'PAID')",
+            "note": "Biết phối hợp ưu điểm của Class để Gom data, FP để Tính toán Data."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Vũ Khí Hiệu Năng: AsyncIO",
+            "bulletPoints": [
+                "Async/Await rất phổ biến cho IO-bound task (Gọi DB/API) từ Python 3.7+ (Tối đa hóa CPU).",
+                "Thay vì chờ đợi tuyến tính, dùng event loop và asyncio.gather() để bắn đồng thời nhiều task."
+            ],
+            "codeExample": "async def send_mail(): await asyncio.sleep(1)\n\ntasks = [send_mail() for _ in range(10)]\nawait asyncio.gather(*tasks)",
+            "note": "Microservices ngày nay cực kỳ phụ thuộc vào AsyncIO để chống nghẽn."
+        },
+        {
+            "slideOrder": 6,
+            "title": "Mẹo Tối Ưu Backend Python",
+            "bulletPoints": [
+                "Dùng Set thay vì List để kiểm tra tồn tại cực nhanh O(1).",
+                "Dùng Generators thay vì nạp toàn bộ mảng khi xử lý file cực lớn.",
+                "Dùng Pydantic bắt lỗi Type Validation API Request ngay cửa ngõ."
+            ],
+            "codeExample": "class OrderReq(BaseModel):\n    user_id: int\n    total: PositiveInt",
+            "note": "Tuy Dynamic Type nhưng phải strict (chặt chẽ) biên giới Dữ liệu nhập."
+        }
+    ]
+}

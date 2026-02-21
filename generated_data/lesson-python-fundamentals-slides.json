@@ -1,0 +1,57 @@
+{
+    "lessonId": "python-fundamentals",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Biến & Kiểu Dữ Liệu",
+            "bulletPoints": [
+                "Python dùng Dynamic Typing (không cần khai báo kiểu) nhưng Strong Typing (không ép kiểu láo như JS).",
+                "Khai báo đơn giản: name = 'Hung', age = 30, is_active = True.",
+                "Nên dùng Type Hinting (như TypeScript) để code an toàn hơn."
+            ],
+            "codeExample": "user_id: int = 123\nemail: str = 'test@example.com'",
+            "note": "Type Hinting giúp IDE gợi ý lỗi tốt hơn."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Cấu Trúc Dữ Liệu 'Quốc Dân'",
+            "bulletPoints": [
+                "List (Mảng): Dùng dấu ngoặc vuông [], có thể thay đổi (Mutable).",
+                "Dictionary (Object/Map): Dùng cặp key-value trong ngoặc nhọn {}, trích xuất dữ liệu cực nhanh O(1)."
+            ],
+            "codeExample": "fruits = ['apple', 'banana']\nfruits.append('orange')\nuser = {'id': 1, 'name': 'Hung'}\nprint(user['name'])",
+            "note": "Bạn sẽ dùng 2 loại này trong 90% thời gian code Python."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Điều Khiển Luồng (Control Flow)",
+            "bulletPoints": [
+                "Lưu ý quan trọng: Python dùng Thụt lề (Indentation) thay vì ngoặc nhọn {}.",
+                "If/Elif/Else: Cấu trúc rẽ nhánh cơ bản.",
+                "For/While: Dùng để lặp qua List hoặc dải số (range)."
+            ],
+            "codeExample": "if status == 'PAID':\n    print('Giao hàng!')\nfor i in range(5):\n    print(i)",
+            "note": "Viết sai thụt lề (IndentationError) là lỗi phổ biến nhất ở người mới."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Hàm & List Comprehension",
+            "bulletPoints": [
+                "Hàm định nghĩa bằng từ khóa 'def'. Có thể kèm Type Hint (-> float).",
+                "List Comprehension: Đặc sản Python. Viết vòng lặp tạo mảng mới chỉ trên 1 dòng duy nhất siêu tốc."
+            ],
+            "codeExample": "def calc(price: float) -> float:\n    return price * 2\n\ndiscounted = [p * 0.9 for p in prices if p > 250]",
+            "note": "List Comprehension chạy nhanh hơn vòng lặp for thông thường."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Xử Lý Lỗi (Try...Except)",
+            "bulletPoints": [
+                "Đừng để App sập chỉ vì lỗi nhỏ. Luôn dùng khối Try/Except bắt lỗi.",
+                "Khối Exception chạy khi có lỗi khớp. Khối finally luôn chạy (dùng để đóng file/DB)."
+            ],
+            "codeExample": "try:\n    10 / 0\nexcept ZeroDivisionError:\n    print('Lỗi chia cho 0')\nfinally:\n    print('Luôn chạy')",
+            "note": "Bắt Exception cực kỳ quan trọng khi gọi API ngoại hay truy vấn DB."
+        }
+    ]
+}

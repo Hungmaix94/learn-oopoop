@@ -1,0 +1,38 @@
+{
+    "course": {
+        "title": "NestJS Zero to Hero",
+        "description": "This comprehensive course takes you from the core concepts of NestJS to advanced application architecture, focusing on building scalable backend systems.",
+        "lessons": [
+            {
+                "lessonId": "nestjs-the-foundations",
+                "lessonTitle": "The Foundations of NestJS",
+                "summary": "Introduction, Modules, Controllers, Services, DI, DTOs",
+                "order": 1
+            },
+            {
+                "lessonId": "nestjs-logic-flow-middleware",
+                "lessonTitle": "Logic Flow & Middleware",
+                "summary": "Middleware, Guards, Pipes, Interceptors, Execution Order",
+                "order": 2
+            },
+            {
+                "lessonId": "nestjs-database-security",
+                "lessonTitle": "Database & Security",
+                "summary": "ORM Integration, Configuration, Security (Passport)",
+                "order": 3
+            },
+            {
+                "lessonId": "nestjs-quality-assurance",
+                "lessonTitle": "Quality Assurance (Testing)",
+                "summary": "Unit Testing, E2E Testing, Test Runners",
+                "order": 4
+            },
+            {
+                "lessonId": "nestjs-advanced-architecture",
+                "lessonTitle": "Advanced Architecture",
+                "summary": "Microservices, WebSockets, Hybrid Applications",
+                "order": 5
+            }
+        ]
+    }
+}

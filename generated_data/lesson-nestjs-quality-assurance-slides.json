@@ -1,0 +1,57 @@
+{
+    "lessonId": "nestjs-quality-assurance",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Tại Sao NestJS Lại Dễ Test?",
+            "bulletPoints": [
+                "1 Hero thực thụ không bao giờ Deploy mà thiếu Test.",
+                "Nhờ kiến trúc Dependency Injection (DI) hoàn thiện, việc test rất nhẹ.",
+                "Bạn dễ dàng 'Fake' (Mock) các Service thành bản giả độc lập (Ví dụ DB giả) để tránh phụ thuộc."
+            ],
+            "codeExample": null,
+            "note": "NestJS sử dụng Jest làm test runner mặc định."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Unit Testing (Kiểm Thử Đơn Vị)",
+            "bulletPoints": [
+                "Mục đích: Tập trung test 1 class hay 1 method duy nhất tách riêng.",
+                "Test nghiệp vụ độc lập mà không cần môi trường network."
+            ],
+            "codeExample": "describe('ProductsService', () => {\n  it('trả về mảng sp', () => {\n    expect(service.getAll()).toEqual(['Laptop', 'iPhone']);\n  });\n});",
+            "note": "Dùng describe() khai báo cụm, it() chạy điều kiện mô tả."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Mocking Dependencies",
+            "bulletPoints": [
+                "Mock ProductsService rỗng bằng `jest.fn()` khi test ProductsController.",
+                "Không bao giờ trigger DB thật khi Unit Test."
+            ],
+            "codeExample": "providers: [ { provide: ProductsService, useValue: mockProductsService } ]",
+            "note": "Inject bản Mock thay thế bản thật ở TestingModule."
+        },
+        {
+            "slideOrder": 4,
+            "title": "E2E Testing (End-to-End)",
+            "bulletPoints": [
+                "Kiểm tra luồng đi từ lúc nhận HTTP Request (Gọi qua Supertest).",
+                "App Controller hứng request -> Middleware -> AuthGuard -> Service xử lý -> Trả response."
+            ],
+            "codeExample": "it('/products (GET)', () => {\n  return request(app.getHttpServer())\n    .get('/products')\n    .expect(200)\n});",
+            "note": "E2E test đánh giá cả quá trình tích hợp xem các Module nối nhau đúng không."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Các Lệnh Chạy Test Phổ Biến",
+            "bulletPoints": [
+                "npm run test: Chạy Unit Test bình thường 1 lượt.",
+                "npm run test:watch: Xem và chạy lại nếu có thay đổi file lúc lưu code.",
+                "npm run test:cov: Render report Coverage phân tích xem Code thiếu Test ở File/Line nào."
+            ],
+            "codeExample": null,
+            "note": "Tỉ lệ Coverage > 80% là mác chứng nhận dự án đáng tin cậy."
+        }
+    ]
+}

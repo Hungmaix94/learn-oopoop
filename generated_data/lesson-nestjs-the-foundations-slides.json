@@ -1,0 +1,55 @@
+{
+    "lessonId": "nestjs-the-foundations",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Tại Sao Chọn NestJS?",
+            "bulletPoints": [
+                "NestJS là framework Node.js tiến hóa, kiến trúc vững chắc.",
+                "Sử dụng TypeScript mặc định, hỗ trợ mạnh mẽ Decorators và Dependency Injection.",
+                "Hệ sinh thái phong phú: GraphQL, Microservices, Open API (Swagger)."
+            ],
+            "codeExample": null,
+            "note": "Express linh hoạt kiểu lá, NestJS là kiến trúc kiểu cây."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Kiềng Ba Chân: Module",
+            "bulletPoints": [
+                "Modules: Đóng gói các thành phần liên quan. App luôn có 1 Root Module (AppModule)."
+            ],
+            "codeExample": "@Module({\n  imports: [],\n  controllers: [AppController],\n  providers: [AppService],\n})\nexport class AppModule {}",
+            "note": "Giữ logic tách biệt theo từng domain chức năng."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Kiềng Ba Chân: Controllers & Services",
+            "bulletPoints": [
+                "Controllers: Hứng request (HTTP) cấu hình endpoint (e.g., @Get, @Post) và trả về response.",
+                "Services (Providers): Nơi chứa logic nghiệp vụ và gọi DB. Được inject vào Controllers qua Constructor."
+            ],
+            "codeExample": "@Controller('products')\nexport class ProductsController {\n  constructor(private readonly service: ProductsService) {}\n  @Get() findAll() { return this.service.getAll(); }\n}",
+            "note": "Controller không bao giờ chứa logic tính toán, chỉ làm Router."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Dependency Injection (DI)",
+            "bulletPoints": [
+                "NestJS quản lý vòng đời (lifecycle) của các class (Service, Repository).",
+                "Thay vì `new Service()`, bạn khai báo Constructor và Nest tự 'bơm' data vào (Inversion of Control)."
+            ],
+            "codeExample": "constructor(private readonly service: MyService) {}",
+            "note": "Rất dễ test bằng cách bơm dữ liệu giả (Mock) vào lúc Unit Test."
+        },
+        {
+            "slideOrder": 5,
+            "title": "DTO và Validation",
+            "bulletPoints": [
+                "DTO (Data Transfer Object): Class định nghĩa cấu trúc data gửi lên từ Client.",
+                "Dùng `class-validator` để check valid tự động trước khi lọt vào logic."
+            ],
+            "codeExample": "import { IsString, IsNumber } from 'class-validator';\nexport class CreateProductDto {\n  @IsString() name: string;\n  @IsNumber() price: number;\n}",
+            "note": "Chặn rác (Invalid Data) ở cổng vào."
+        }
+    ]
+}

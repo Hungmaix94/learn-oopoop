@@ -1,0 +1,127 @@
+{
+    "lessonId": "ecommerce-db-architecture",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Tư Duy CSDL: Mô Hình Hóa Thực Tế",
+            "bulletPoints": [
+                "CSDL là bản sao kỹ thuật số của thế giới thực.",
+                "Lược bỏ chi tiết thừa, chỉ giữ lại Thuộc tính cốt lõi.",
+                "Nhiệm vụ là vẽ lại thế giới đó vào trong máy tính sao cho chính xác nhất."
+            ],
+            "codeExample": null,
+            "note": "Ví dụ: Áo thun Đỏ Size M -> Table Products: {name: 'Áo thun', sku: 'AT-M-RED'}"
+        },
+        {
+            "slideOrder": 2,
+            "title": "Chiến Lược: Polyglot Persistence",
+            "bulletPoints": [
+                "Hệ thống E-commerce hiện đại không bao giờ chỉ dùng 1 loại CSDL.",
+                "Core Data (User, Order, Payment): Dùng RDBMS (PostgreSQL/MySQL) cần ACID.",
+                "Catalog (Product Details): Dùng NoSQL (MongoDB) nhờ Schema linh động.",
+                "Caching/Session: Dùng Redis cho truy xuất siêu tốc <1ms.",
+                "Search: Dùng Elasticsearch để tìm kiếm full-text, lọc tính năng tốt nhất."
+            ],
+            "codeExample": null,
+            "note": "Kết hợp công cụ tốt nhất cho từng việc."
+        },
+        {
+            "slideOrder": 3,
+            "title": "So Sánh Đặc Tính Kỹ Thuật",
+            "bulletPoints": [
+                "RDBMS (SQL): Cấu trúc Structured cứng, Strong Consistency (ACID), Scaling Vertical (Scale Up).",
+                "NoSQL: Cấu trúc Flexible, Dynamic Schema, Eventual Consistency (BASE), Horizontal (Scale Out)."
+            ],
+            "codeExample": null,
+            "note": "Chọn theo Case: RDBMS cho Transaction, NoSQL cho Catalog đa dạng, Redis cho Cache."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Phân Tích Yêu Cầu & Thiết Kế Ý Tưởng",
+            "bulletPoints": [
+                "Phân tích: Xác định Yêu cầu Chức năng, Phi Chức Năng (Concurrency, Consistency, Latency), Yêu cầu Dữ liệu.",
+                "Thiết kế Ý tưởng (Conceptual Design): Vẽ sơ đồ ERD mức cao.",
+                "Các loại quan hệ: 1-1 (User-Profile), 1-N (User-Order), N-N (Order-Product qua bảng OrderItems)."
+            ],
+            "codeExample": null,
+            "note": "Bước đầu tiên của 4 giai đoạn thiết kế CSDL."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Logic & Vật Lý (Logical & Physical Design)",
+            "bulletPoints": [
+                "Thiết Kế Logic: Chuẩn hóa dữ liệu (3NF), xác định PK/FK và Ràng buộc (Constraints, Unique, Check).",
+                "Thiết Kế Vật Lý: Cài đặt thực tế trên DBMS. Chọn độ chính xác (DECIMAL thay cho FLOAT).",
+                "Phân vùng dữ liệu (Partitioning) cho các bảng lớn (Orders chia theo năm/tháng)."
+            ],
+            "codeExample": "CREATE TABLE orders_2024_01 PARTITION OF orders FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');",
+            "note": "Tối ưu hiệu năng trực tiếp trên CSDL."
+        },
+        {
+            "slideOrder": 6,
+            "title": "Schema Cốt Lõi: Users & Catalog",
+            "bulletPoints": [
+                "Users: Tách bảng 'users' (auth) và 'user_profiles' (thông tin) tăng tốc login và bảo mật.",
+                "Catalog: Dùng mô hình Product - SKU.",
+                "Products lưu mảng chung, SKUs lưu chi tiết biến thể (Size, Giá, Tồn kho).",
+                "Dùng JSONB cho các thuộc tính linh động (Color, CPU, RAM) để không phải tạo bảng trung gian."
+            ],
+            "codeExample": "CREATE TABLE skus ( id BIGINT, product_id BIGINT, sku_code VARCHAR, specific_attrs JSONB );",
+            "note": "Normalization cho Orders, Denormalization (JSONB) cho Catalog."
+        },
+        {
+            "slideOrder": 7,
+            "title": "Schema Đơn Hàng (Orders)",
+            "bulletPoints": [
+                "Lưu ý quan trọng: Luôn copy dữ liệu giá (unit_price) tại thời điểm mua vào bảng order_items.",
+                "Nếu sau này giá sản phẩm đổi, đơn hàng cũ KHÔNG được bị ảnh hưởng."
+            ],
+            "codeExample": "CREATE TABLE order_items ( order_id BIGINT, sku_id BIGINT, quantity INT, unit_price DECIMAL(15,2) );",
+            "note": "Tính bền vững và đóng băng dữ liệu giao dịch."
+        },
+        {
+            "slideOrder": 8,
+            "title": "Bài Toán Hóc Búa: Concurrency Control",
+            "bulletPoints": [
+                "Tránh bán quá số lượng (Overselling) khi hàng ngàn người mua cùng lúc.",
+                "Pessimistic Locking (Khóa Bi Quan): 'FOR UPDATE'. An toàn tuyệt đối, khóa dòng lại khi đọc.",
+                "Optimistic Locking (Khóa Lạc Quan): Dùng cột 'version'. Nhanh nhưng phải handle retry cho user bị lỗi."
+            ],
+            "codeExample": "UPDATE skus SET stock_quantity = stock_quantity - 1, version = version + 1 WHERE id = 100 AND version = 5;",
+            "note": "Kỹ thuật tối thượng xử lý Flash Sale."
+        },
+        {
+            "slideOrder": 9,
+            "title": "Bài Toán Hóc Búa: Product Filtering",
+            "bulletPoints": [
+                "LIKE '%text%' cực chậm vì quét toàn bảng (Full Table Scan).",
+                "Sử dụng Inverted Index (Elasticsearch hoặc PostgreSQL Full Text Search).",
+                "Tạo cột TSVECTOR và đánh GIN Index để tìm kiếm hàng triệu sp trong tích tắc."
+            ],
+            "codeExample": "CREATE INDEX idx_products_search ON products USING GIN(text_search);\nSELECT * FROM products WHERE text_search @@ to_tsquery('apple');",
+            "note": "Chuyển từ O(N) sang O(1)."
+        },
+        {
+            "slideOrder": 10,
+            "title": "Chiến Lược Indexing: Best Practices",
+            "bulletPoints": [
+                "Đánh Index cho MỌI Khóa ngoại (user_id, product_id) để JOIN nhanh.",
+                "Dùng Composite Index (Index Kép) đúng thứ tự: Cột dùng '=' đứng trước cột dùng '> <'.",
+                "Dùng Partial Index nếu chỉ tìm tập con nhỏ (vd: status='FAILED')."
+            ],
+            "codeExample": "CREATE INDEX idx_failed_orders ON orders(id) WHERE status = 'FAILED';",
+            "note": "Index làm chậm viết, tăng tốc đọc. Hãy dùng tiết kiệm."
+        },
+        {
+            "slideOrder": 11,
+            "title": "Bảo Mật CSDL Tối Thượng",
+            "bulletPoints": [
+                "Chống SQL Injection bằng Parameterized Queries.",
+                "Chống IDOR: Luôn truyền kèm 'user_id' hoặc dùng UUID cho URL.",
+                "Nguyên tắc Đặc Quyền Tối Thiểu (Least Privilege): App user không được cấp quyền DROP hay TRUNCATE."
+            ],
+            "codeExample": null,
+            "note": "Bảo vệ tài sản và dữ liệu khách hàng tuyệt đối."
+        }
+    ]
+}

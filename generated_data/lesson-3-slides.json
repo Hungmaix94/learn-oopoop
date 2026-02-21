@@ -1,0 +1,113 @@
+{
+    "lessonId": "fp-vs-oop-ecommerce",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Giới Thiệu OOP vs FP in TypeScript",
+            "bulletPoints": [
+                "OOP (Object-Oriented Programming): Đơn vị chính là Class & Object, trạng thái (state) thay đổi bên trong object (Mutable).",
+                "OOP Encapsulation: Dữ liệu và Hành vi gắn liền nhau.",
+                "FP (Functional Programming): Đơn vị chính là Hàm (Function). Về trạng thái nó dùng Immutability (Tạo bản sao mới).",
+                "FP Separation: Dữ liệu cấu trúc tách biệt với Hàm tinh khiết (Pure functions)."
+            ],
+            "codeExample": null,
+            "note": "Hai tư duy tiếp cận giải quyết bài toán cốt lõi."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Bài Toán 1: Quản Lý Sản Phẩm - OOP (Encapsulation)",
+            "bulletPoints": [
+                "Dữ liệu và hàm đi chung. Class chịu trách nhiệm bảo vệ dữ liệu của nó.",
+                "Sử dụng private properties và public methods (get/set).",
+                "Mutation: Cập nhật giá bằng cách thay đổi trực tiếp biến của instance."
+            ],
+            "codeExample": "class Product {\n  private _price: number;\n  setPrice(newPrice: number) { this._price = newPrice; }\n}",
+            "note": "Ưu điểm: Trực quan, kiểm soát chặt bằng Setter. Nhược: Khó test, side-effect."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Bài Toán 1: Quản Lý Sản Phẩm - FP (Separation)",
+            "bulletPoints": [
+                "Dữ liệu chỉ là dữ liệu (type/interface readonly). Hàm là nhà máy biến đổi input thành output mới.",
+                "Pure Function: Nhận Input cũ -> Trả nguyên vẹn cái mới. Không làm thay đổi input ban đầu.",
+                "Immutability: An toàn tuyệt đối."
+            ],
+            "codeExample": "const updatePrice = (product: Product, newPrice: number): Product => {\n  return { ...product, price: newPrice };\n};",
+            "note": "Ưu điểm: Dễ test, Predictable. Nhược: Có thể tạo Performance overhead khi nhân bản bộ nhớ."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Bài Toán 2: Giỏ Hàng (State Management) - OOP",
+            "bulletPoints": [
+                "Giỏ hàng là một 'Hộp đen' lưu trữ trạng thái (Stateful Service).",
+                "Class `Cart` giữ một private array các sản phẩm.",
+                "Method `addItem` thực hiện thao tác push() nội tại làm thay đổi mảng."
+            ],
+            "codeExample": "class Cart { private items: Product[] = []; addItem(p: Product) { this.items.push(p); } }",
+            "note": "Gọn gàng và hiệu năng cao nhưng dễ dính lỗi Race Condition trong đa luồng."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Bài Toán 2: Giỏ Hàng (State Management) - FP",
+            "bulletPoints": [
+                "Giỏ hàng chỉ là 1 danh sách. Thêm phần tử là tạo ra danh sách mới (Immutable Data Flow).",
+                "Hỗ trợ Time-travel Debugging nhờ bản sao lịch sử trạng thái."
+            ],
+            "codeExample": "const addToCart = (cart: Cart, product: Product): Cart => [...cart, product];",
+            "note": "An toàn concurrency nhưng có thể gây Garbage Collector Pressure."
+        },
+        {
+            "slideOrder": 6,
+            "title": "Bài Toán 3: Tính Giảm Giá - OOP (Strategy Pattern)",
+            "bulletPoints": [
+                "Sử dụng Interface để thiết kế chung cho các Strategy giảm giá.",
+                "Các Class con implement Interface riêng biệt (Percentage, Fixed Amount).",
+                "Context Class gọi đến Strategy interface để thực thi (Đa hình - Polymorphism)."
+            ],
+            "codeExample": "interface DiscountStrategy { apply(price: number): number; }\nclass PercentageDiscount implements DiscountStrategy { /*...*/ }",
+            "note": "Cấu trúc rõ, dễ mở rộng (Open/Closed). Nhược: Nhiều Boilerplate code."
+        },
+        {
+            "slideOrder": 7,
+            "title": "Bài Toán 3: Tính Giảm Giá - FP (Higher-Order Functions)",
+            "bulletPoints": [
+                "HOF: Hàm trả về hàm, xem functions như first-class citizens.",
+                "Tạo các closures chứa logic tính toán động (Vd: truyền % giảm giá vào, trả ra 1 function tính giá cuối)."
+            ],
+            "codeExample": "const createPercentDiscount = (percent) => (price) => price * (1 - percent);\nconst tenOff = createPercentDiscount(0.1);",
+            "note": "Ngắn gọn, linh hoạt ở cả runtime. Nhược: Type đôi khi quá chung chung."
+        },
+        {
+            "slideOrder": 8,
+            "title": "Bài Toán 4: Xử Lý Đơn Hàng - OOP (Chaining)",
+            "bulletPoints": [
+                "Service Layer gọi các method liên tiếp, lồng nhau (Chaining/Facade).",
+                "Dễ đọc luồng từ trên xuống dưới, IDE hỗ trợ tốt autocomplete."
+            ],
+            "codeExample": "class OrderService {\n  process(order) { order.calcTotal(); this.repo.save(order); }\n}",
+            "note": "Service dễ phình (God Class), các method bị ràng buộc (Coupling), khó tách tái sử dụng."
+        },
+        {
+            "slideOrder": 9,
+            "title": "Bài Toán 4: Xử Lý Đơn Hàng - FP (Composition)",
+            "bulletPoints": [
+                "Ghép nối các hàm nhỏ thuần khiết thành quy trình lớn (Data pipeline).",
+                "Sử dụng hàm pipe/compose: validate -> calculate -> save.",
+                "Các hàm nhỏ tái sử dụng độc lập và dễ chạy Unit Test."
+            ],
+            "codeExample": "const processOrder = pipe(validate, calculate, save); processOrder(myOrder);",
+            "note": "Tái sử dụng cực cao. Tuy vậy, stack trace khi debug có thể rối rắm."
+        },
+        {
+            "slideOrder": 10,
+            "title": "Tổng Kết Lời Khuyên (Hybrid Approach)",
+            "bulletPoints": [
+                "Chọn OOP cho Domain Modeling phức tạp, State UI, Service Dependency Injection.",
+                "Chọn FP cho Data Transformation, React Hooks Helpers, Business Math Logic.",
+                "Quy tắc vàng: 'Functional Core, Imperative Shell' - Lõi dùng FP, Lớp Vỏ dùng OOP."
+            ],
+            "codeExample": null,
+            "note": "Trong TypeScript và Next.js, kết hợp tinh hoa của cả 2 mang lại kiến trúc dẻo dai."
+        }
+    ]
+}

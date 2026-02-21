@@ -1,0 +1,128 @@
+{
+    "lessonId": "oop-deep-dive",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "4 Trụ Cột Cơ Bản (The 4 Pillars)",
+            "bulletPoints": [
+                "Encapsulation (Đóng Gói): Bảo vệ dữ liệu, chỉ cho phép truy cập qua các cổng method được kiểm soát.",
+                "Inheritance (Kế Thừa): Tái sử dụng code từ lớp cha (VD: Manager extends Employee)."
+            ],
+            "codeExample": "class Wallet { private _balance = 0; deposit(a) { if(a>0) this._balance+=a; } }",
+            "note": "Giữ logic an toàn bên trong Object."
+        },
+        {
+            "slideOrder": 2,
+            "title": "4 Trụ Cột Cơ Bản (The 4 Pillars) Thêm",
+            "bulletPoints": [
+                "Abstraction (Trừu Tượng): Ẩn chi tiết phức tạp, chỉ lộ thiết kế cần thiết (Interface/Abstract class).",
+                "Polymorphism (Đa Hình): Một hành động có thể được thực hiện theo nhiều cách khác nhau tùy đối tượng."
+            ],
+            "codeExample": "abstract class PaymentGateway { abstract charge(amount: number): void; }",
+            "note": "OOP che đi cách thức hoạt động bên dưới của hệ thống."
+        },
+        {
+            "slideOrder": 3,
+            "title": "S - Single Responsibility Principle (SRP)",
+            "bulletPoints": [
+                "Một class chỉ nên có một lý do duy nhất để thay đổi.",
+                "Tránh tạo God Class chứa quá nhiều logic (Lưu DB, Gửi Mail, Tính Tổng)."
+            ],
+            "codeExample": "// Tốt: Tách nhỏ trách nhiệm\nclass Order { /* data */ }\nclass OrderRepo { /* DB */ }\nclass Mailer { /* Mail */ }",
+            "note": "Giúp code dễ maintain và unit test."
+        },
+        {
+            "slideOrder": 4,
+            "title": "O - Open/Closed Principle (OCP)",
+            "bulletPoints": [
+                "Mở để mở rộng, đóng để sửa đổi.",
+                "Thêm tính năng mới bằng cách khởi tạo Class mới thay vì sửa function if/else của Code cũ đang chạy tốt."
+            ],
+            "codeExample": null,
+            "note": "Thường ứng dụng kết hợp với Polymorphism hoặc Strategy Pattern."
+        },
+        {
+            "slideOrder": 5,
+            "title": "L & I - Liskov (LSP) & Interface Segregation (ISP)",
+            "bulletPoints": [
+                "LSP: Class con phải thay thế được Class cha mà không làm hỏng app. (VD: Chim cánh cụt không bay được thì đừng extends từ class Bird có hàm fly()).",
+                "ISP: Thà dùng nhiều Interface nhỏ còn hơn dùng 1 Interface lớn. Đừng ép Client implement thứ họ không xài."
+            ],
+            "codeExample": "interface User { login(): void; } \ninterface Admin { deleteUser(): void; }",
+            "note": "Chia nhỏ Interface thành các tập tính năng độc lập."
+        },
+        {
+            "slideOrder": 6,
+            "title": "D - Dependency Inversion Principle (DIP)",
+            "bulletPoints": [
+                "Sếp (High-level) không hỏi nhân viên (Low-level) hướng dẫn làm việc. Cả hai đều phụ thuộc vào Hợp Đồng (Interface/Abstraction).",
+                "Tightly Coupled: Khởi tạo trực tiếp MySQLDatabase trong Constructor của OrderService (Sai).",
+                "Loose Coupling: Truyền tham số là Interface IDatabase vào Constructor của OrderService thông qua Dependency Injection."
+            ],
+            "codeExample": "class OrderService {\n  constructor(private db: IDatabase) {}\n  process(order) { this.db.save(order); }\n}",
+            "note": "Sự trừu tượng không phụ thuộc chi tiết. Chi tiết phụ thuộc vào sự trừu tượng."
+        },
+        {
+            "slideOrder": 7,
+            "title": "Lợi Ích Của DIP",
+            "bulletPoints": [
+                "Dễ đổi công nghệ: Thay DB hay Cổng TT chỉ cần tạo file implementation mới.",
+                "Dễ test: Có thể bơm MockDatabase vào OrderService để Unit test mà không gọi DB thật.",
+                "Làm việc song song: Đội A làm backend logic, đội B làm DB adapter dựa trên chung Interface."
+            ],
+            "codeExample": null,
+            "note": "Yếu tố cốt lõi của Kiến trúc Module/Microservices."
+        },
+        {
+            "slideOrder": 8,
+            "title": "1. Factory Pattern (Creational)",
+            "bulletPoints": [
+                "Tạo các đối tượng khác nhau (Stripe, Momo) dựa trên input. (Ví dụ: Thanh toán).",
+                "Client (Service) không cần dùng hàm khởi tạo 'new', giấu đi logic phức tạp."
+            ],
+            "codeExample": "class PaymentFact { static create(type) { if(type==='momo') return new Momo(); } }",
+            "note": "Tách logic SỬ DỤNG đối tượng khỏi logic TẠO đối tượng."
+        },
+        {
+            "slideOrder": 9,
+            "title": "2. Singleton Pattern (Creational)",
+            "bulletPoints": [
+                "Bài toán: Chỉ muốn có DUY NHẤT 1 instance kết nối DB trong toàn app.",
+                "Chặn constructor bằng private. Tạo static method 'getInstance()'."
+            ],
+            "codeExample": "static getInstance() {\n  if(!this.inst) this.inst = new DB();\n  return this.inst;\n}",
+            "note": "Tiết kiệm tài nguyên và giữ tính nhất quán (Single Source of Truth)."
+        },
+        {
+            "slideOrder": 10,
+            "title": "3. Strategy Pattern (Behavioral)",
+            "bulletPoints": [
+                "Thay đổi thuật toán (Phí ship) ngay lúc runtime (đang chạy) không sửa code cũ.",
+                "Xóa If-Else chùm. Mỗi logic nằm trong Class riêng implement 1 Interface."
+            ],
+            "codeExample": "shipping.setStrategy(new ExpressShipping());\nconsole.log(shipping.execute(10));",
+            "note": "Tuyệt chiêu đáp ứng OCP số 1."
+        },
+        {
+            "slideOrder": 11,
+            "title": "4. Observer Pattern (Behavioral)",
+            "bulletPoints": [
+                "Khi SP có hàng, tự động báo cho User. Event Driven (Pub/Sub).",
+                "Subject giữ array of Observers. Gọi notify() lặp qua tất cả và báo update().",
+                "Không cần Client liên tục Polling hỏi server."
+            ],
+            "codeExample": "notify(id) { this.observers.forEach(o => o.update(id)); }",
+            "note": "Độc lập đối tượng cao, subject không biết observer là ai."
+        },
+        {
+            "slideOrder": 12,
+            "title": "5. Adapter Pattern (Structural)",
+            "bulletPoints": [
+                "Hệ thống cũ xài Logger XML. App mới cần JSON. Thiết kế 1 Adapter chuyển đổi.",
+                "Đảm bảo Single Responsibility. Thư viện cũ vẫn sống chung được."
+            ],
+            "codeExample": "class LoggerAdapter implements INewLogger {\n  logJSON(msg) { this.oldLogger.logXML(msg); }\n}",
+            "note": "Bridge the gap giữa các interface không tương thích."
+        }
+    ]
+}

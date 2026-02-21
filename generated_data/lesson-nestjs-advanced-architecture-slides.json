@@ -1,0 +1,59 @@
+{
+    "lessonId": "nestjs-advanced-architecture",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Tại Sao Cần Microservices?",
+            "bulletPoints": [
+                "Thay vì Monolith (Server Xử Lý Cục Bộ), Chia nhỏ thành: Auth, Orders, Inventory.",
+                "Lợi ích: Auth sập không kéo theo sập Orders. Dễ update tính năng nhỏ lẻ."
+            ],
+            "codeExample": null,
+            "note": "Đập cái cục cồng kềnh thành những con Kiến Worker nhỏ."
+        },
+        {
+            "slideOrder": 2,
+            "title": "NestJS Transporters",
+            "bulletPoints": [
+                "Hỗ trợ Cổng Giao Tiếp đa dạng kết nối các Microservices lại.",
+                "TCP: Default, Nhanh, Gửi thẳng.",
+                "Redis Pub/Sub: Nhanh, Broadcast đến nhiều Subcribers event.",
+                "RabbitMQ/Kafka: Chuyên xây Message Queue (hàng đợi) đồ sộ."
+            ],
+            "codeExample": "this.client.send('order_created', data); // Truyền tin qua TCP/MQ",
+            "note": "Tạo Request không màng Response Block luồng chính (Fire and Forget)."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Real-time Với WebSockets",
+            "bulletPoints": [
+                "Ví dụ: Chat hỗ trợ, Board Đấu Giá giá biến động (Socket.io).",
+                "Xây bằng các Gateways (@WebSocketGateway). Gửi Msg Broadcast trực tiếp không đứt kết nối."
+            ],
+            "codeExample": "@SubscribeMessage('events')\nhandleMessage(data: string) { return 'Data: ' + data; }",
+            "note": "Lắng nghe Sự kiện 2 chiều ngay thời gian thực."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Hybrid Application (Phiên Bản Hỗn Hợp)",
+            "bulletPoints": [
+                "1 máy chủ Node.js có thể làm cả 3 chức năng: REST API Web, Message Consumer, WebSocket Gateway.",
+                "Nối thêm Microservice Adapter thẳng vào Core NestFactory."
+            ],
+            "codeExample": "app.connectMicroservice({ transport: Transport.TCP });\nawait app.startAllMicroservices();\nawait app.listen(3000);",
+            "note": "Phối hợp mềm dẻo từ quy mô Monolith lên Global Distribute Network."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Trở Thành NestJS Hero",
+            "bulletPoints": [
+                "Core: DI, DTO, Controllers.",
+                "Luồng Tranh Chấp: Middleware -> Guards -> Pipes -> Interceptors -> Error Filters.",
+                "Data: SQL (TypeORM) & NoSQL (Mongoose).",
+                "Thử Thách Kế Tiếp: Testing, DevOps Deploy & Microservices."
+            ],
+            "codeExample": null,
+            "note": "Kiến trúc vững từ móng tới ngọn giúp Application bay cao, xa hơn ExpressJS cục bộ."
+        }
+    ]
+}

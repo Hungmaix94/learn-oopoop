@@ -1,0 +1,20 @@
+{
+    "course": {
+        "title": "Python for Backend Development",
+        "description": "This course equips you with the fundamental and advanced Python skills necessary to build robust backend systems, focusing on data structures and asynchronous programming.",
+        "lessons": [
+            {
+                "lessonId": "python-fundamentals",
+                "lessonTitle": "Python Fundamentals",
+                "summary": "Syntax, Data Structures, Functions, List Comprehensions, Error Handling",
+                "order": 1
+            },
+            {
+                "lessonId": "python-applied-ecommerce",
+                "lessonTitle": "Applied Python for E-commerce",
+                "summary": "Database Interaction, Backend Architecture (AsyncIO, Design)",
+                "order": 2
+            }
+        ]
+    }
+}

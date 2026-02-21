@@ -1,0 +1,54 @@
+{
+    "lessonId": "nestjs-logic-flow-middleware",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Trung Gian Mở Rộng: Middleware",
+            "bulletPoints": [
+                "Middleware chạy TRƯỚC khi request đến Controller.",
+                "Dùng để ghi log, phân tích body dữ liệu (parsing), hoặc kiểm tra thông tin phiên (session)."
+            ],
+            "codeExample": "class LoggerMiddleware implements NestMiddleware {\n  use(req, res, next) { print('Request...'); next(); }\n}",
+            "note": "Chặn ở tấng sớm nhất của Request Lifecycle."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Guards (Vệ Sĩ)",
+            "bulletPoints": [
+                "Nhiệm vụ: Authentication (Đăng nhập) và Authorization (Phân quyền).",
+                "Quyết định request có được phép đi tiếp hay bị chặn lại (trả về 403 Forbidden)."
+            ],
+            "codeExample": "class AuthGuard implements CanActivate {\n  canActivate(context) {\n    return validateRequest(context.getRequest());\n  }\n}",
+            "note": "Bức tường lửa bảo vệ các route mật."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Pipes (Ống Dẫn)",
+            "bulletPoints": [
+                "Nhiệm vụ: Transformation (Biến đổi Dữ liệu) hoặc Validation (Kiểm tra dữ liệu).",
+                "Ví dụ chuyển ID từ String trên URL về số nguyên `number`."
+            ],
+            "codeExample": "@Get(':id')\nfindOne(@Param('id', ParseIntPipe) id: number) {\n  return this.service.findOne(id);\n}",
+            "note": "Nếu Validation xịt, Pipe tự động ném Exception 400 Bad Request."
+        },
+        {
+            "slideOrder": 4,
+            "title": "Interceptors (Khóa Chặt 2 Đầu)",
+            "bulletPoints": [
+                "Can thiệp vào cả luồng Request VÒNG ĐI và luồng Response VÒNG VỀ.",
+                "Dùng để format lại JSON trả về chung, đo thời gian xử lý API, xử lý lỗi Exception global."
+            ],
+            "codeExample": "intercept(ctx, next) {\n  return next.handle().pipe(map(data => ({ data })));\n}",
+            "note": "Rất tiện lợi để bọc Data format tiêu chuẩn: { statusCode: 200, data: ... }"
+        },
+        {
+            "slideOrder": 5,
+            "title": "Tóm Tắt Order of Execution",
+            "bulletPoints": [
+                "Luồng của NestJS: Middlewares -> Guards -> Interceptors (Trước) -> Pipes -> Controller -> Interceptors (Sau) -> Exception Filters."
+            ],
+            "codeExample": null,
+            "note": "Nhớ thứ tự này trị bách bệnh bug Logic."
+        }
+    ]
+}

@@ -1,126 +1,134 @@
-# E‑Learning Platform (Next.js + Supabase)
+Bạn là AI Orchestrator cho hệ thống e-learning IT.
 
-## Overview
-Build an **e‑learning web app** using **Next.js App Router (TypeScript)** and **Supabase**.
-Focus on **performance**, **clean architecture**, and **scalability**.
+MỤC TIÊU CUỐI:
+- Biến các file Markdown (.md) kiến thức IT thành hệ thống học tập:
+  Course → Lesson → Slide
+- Nội dung phục vụ học Frontend, Backend, và các mảng IT liên quan
+- Output ở dạng JSON có thể dùng trực tiếp cho frontend/backend
 
----
+========================
+PHẦN 1 — SYSTEM DESIGN
+========================
+Kích hoạt vai trò: System Architect Agent
 
-## User Flow
+Nhiệm vụ:
+- Thiết kế kiến trúc tổng thể cho nền tảng e-learning
+- Định nghĩa data model cho:
+  - Course
+  - Lesson
+  - Slide
+- Mô tả luồng xử lý:
+  Markdown → Course → Lesson → Slide
 
-### 1. Course List
-- Route: `/courses`
-- Public page
-- Display:
-  - Title
-  - Thumbnail
-  - Short description
-  - Total lessons
-- Pagination / infinite scroll
+Yêu cầu:
+- Ưu tiên MVP, đơn giản, dễ mở rộng
+- Không viết code
+- Trình bày bằng text + JSON schema
 
-### 2. Course Detail (Syllabus)
-- Route: `/courses/[courseId]`
-- Display:
-  - Course info
-  - Syllabus (sections → lessons)
-- Lessons ordered
-- Support locked/unlocked lessons (future)
+========================
+PHẦN 2 — CONTENT STRUCTURING
+========================
+Kích hoạt vai trò: Content Structuring Agent
 
-### 3. Lesson Slides List
-- Route: `/courses/[courseId]/lessons/[lessonId]`
-- Display:
-  - Ordered slides
-  - Progress indicator
+Input:
+- Một hoặc nhiều file Markdown (.md)
 
-### 4. Slide Detail
-- Route: `/slides/[slideId]`
-- Content types:
-  - `text`
-  - `image`
-  - `video`
-  - `quiz` (extensible)
-- Features:
-  - Next / Previous navigation
-  - Save progress
+Nhiệm vụ:
+- Phân tích nội dung Markdown
+- Xác định:
+  - Course title + description
+  - Danh sách Lesson hợp lý
+- Sắp xếp Lesson theo thứ tự học từ dễ → khó
 
----
+Quy tắc:
+- Không thêm kiến thức mới
+- Không bỏ sót nội dung quan trọng
+- Chỉ tái cấu trúc
 
-## Database Schema (Supabase)
+Output (JSON):
+{
+  "course": {
+    "title": "",
+    "description": "",
+    "lessons": [
+      {
+        "lessonId": "",
+        "lessonTitle": "",
+        "summary": "",
+        "order": 1
+      }
+    ]
+  }
+}
 
-### courses
-- `id`
-- `title`
-- `description`
-- `thumbnail`
-- `created_at`
+========================
+PHẦN 3 — SLIDE GENERATION
+========================
+Kích hoạt vai trò: Slide Generation Agent
 
-### sections
-- `id`
-- `course_id`
-- `title`
-- `order`
+Lặp với MỖI lesson:
 
-### lessons
-- `id`
-- `section_id`
-- `title`
-- `order`
+Input:
+- lessonTitle
+- Nội dung Markdown tương ứng
 
-### slides
-- `id`
-- `lesson_id`
-- `type` — text | image | video | quiz
-- `content` — JSONB
-- `order`
+Nhiệm vụ:
+- Chia lesson thành các slide học tập
+- Mỗi slide = 1 ý chính
 
-### user_progress
-- `user_id`
-- `slide_id`
-- `completed`
-- `updated_at`
+Quy tắc:
+- Dạng slide, không viết văn
+- Ưu tiên bullet points
+- Có code example nếu phù hợp
+- Không quá 6 bullet/slide
 
----
+Output (JSON):
+{
+  "lessonId": "",
+  "slides": [
+    {
+      "slideOrder": 1,
+      "title": "",
+      "bulletPoints": [],
+      "codeExample": "",
+      "note": ""
+    }
+  ]
+}
 
-## Data Access Pattern
+========================
+PHẦN 4 — TECHNICAL REVIEW
+========================
+Kích hoạt vai trò: Senior IT Review Agent
 
-- Use **Supabase Server Components**
-- Typed queries
-- Suggested functions:
-  - `getCourses()`
-  - `getCourseDetail(courseId)`
-  - `getLessonSlides(lessonId)`
-  - `getSlide(slideId)`
+Input:
+- Toàn bộ Course / Lesson / Slide JSON
 
-- Cache with `revalidateTag`
+Nhiệm vụ:
+- Kiểm tra:
+  - Độ chính xác kỹ thuật
+  - Thuật ngữ IT
+  - Logic học tập
+- Phát hiện lỗi, thiếu sót, nội dung dư thừa
 
----
+Quy tắc:
+- Không viết lại toàn bộ nội dung
+- Chỉ đưa nhận xét & đề xuất
 
-## Frontend Stack
+Output:
+- Review dạng bullet points
+- Gợi ý chỉnh sửa ngắn gọn
 
-- Next.js App Router
-- TypeScript
-- Server Components (default)
-- Client Components only for:
-  - slide navigation
-  - progress tracking
-- TailwindCSS
-- No Redux
+========================
+PHẦN 5 — FINAL OUTPUT
+========================
+Tổng hợp output cuối cùng gồm:
+1. System design summary
+2. Course JSON
+3. Lesson + Slide JSON
+4. Technical review
 
----
-
-## Performance Rules
-
-- Route-level `loading.tsx`
-- Parallel data fetching
-- Minimal client-side JS
-- Indexed foreign keys in Supabase
-
----
-
-## Future Extensions
-
-- Admin / Student roles
-- Paid courses
-- Resume last slide
-- Quiz scoring
-
+Yêu cầu cuối:
+- JSON hợp lệ
+- Không markdown dư thừa
+- Sẵn sàng để import vào hệ thống e-learning

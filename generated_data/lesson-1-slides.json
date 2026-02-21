@@ -1,0 +1,153 @@
+{
+    "lessonId": "database-architecture",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "Bản Chất Số Hóa của CSDL",
+            "bulletPoints": [
+                "CSDL không chỉ là kho lưu trữ, nó là một bản sao kỹ thuật số của thế giới thực.",
+                "Lược bỏ chi tiết thừa và giữ lại các Thuộc tính cốt lõi để máy tính có thể quản lý."
+            ],
+            "codeExample": null,
+            "note": "Ví dụ: Gói gọn xe máy thực tế thành [XE_MAY] với Biển số, Nhãn hiệu, Màu sắc."
+        },
+        {
+            "slideOrder": 2,
+            "title": "Ví Dụ Mô Hình Hóa: Bệnh Viện",
+            "bulletPoints": [
+                "Anh Nguyễn Văn A đang khám bệnh ➔ Table BenhNhan: ID, Ten, BenhLy",
+                "Bác sĩ Lê Thị B đang kê đơn ➔ Table BacSi: ID, ChuyenKhoa",
+                "Phòng bệnh 102 đang trống ➔ Table LichHen: PatientID, DoctorID, Time"
+            ],
+            "codeExample": null,
+            "note": "Physical Reality mapping to Database Mapping."
+        },
+        {
+            "slideOrder": 3,
+            "title": "Khi Không Có CSDL, Chúng Ta Dùng Gì?",
+            "bulletPoints": [
+                "Trước đây dữ liệu thường lưu bằng File văn bản (.txt, .csv, excel, json).",
+                "Tốc độ cực chậm khi tìm kiếm trên file lớn (Full table scan).",
+                "Khó bảo mật và phân quyền.",
+                "Xung đột dữ liệu khi nhiều người dùng cùng lúc.",
+                "Thiếu ràng buộc tự động, dễ sai lệch dữ liệu."
+            ],
+            "codeExample": null,
+            "note": "File systems are not suitable for large-scale transaction processing."
+        },
+        {
+            "slideOrder": 4,
+            "title": "5 Ưu Điểm Vượt Trội Của CSDL",
+            "bulletPoints": [
+                "Truy xuất cực nhanh: Tìm 1/10 triệu bản ghi trong mili giây nhờ Index.",
+                "Quản lý quan hệ phức tạp: Dễ dàng liên kết nhiều đối tượng.",
+                "Toàn vẹn dữ liệu: Tính nhất quán Consistency.",
+                "Hỗ trợ đa người dùng: Tính độc lập Isolation.",
+                "Bảo mật & Phân quyền: Cấu hình chi tiết đến từng dòng dữ liệu."
+            ],
+            "codeExample": null,
+            "note": "CSDL quản lý hàng triệu bản ghi hiệu quả."
+        },
+        {
+            "slideOrder": 5,
+            "title": "Tính Chất ACID: Atomicity (Tính Nguyên Tố)",
+            "bulletPoints": [
+                "Quy tắc: Tất cả hoặc không gì.",
+                "Giao dịch phải thành công 100% hoặc thất bại 100%, không bị dở dang.",
+                "Ví dụ: Nếu trừ tiền tài khoản A thành công nhưng server sập trước khi cộng cho B, tiền của A sẽ được tự động hoàn lại (Rollback)."
+            ],
+            "codeExample": null,
+            "note": "Bảo vệ dữ liệu khi gặp sự cố gián đoạn."
+        },
+        {
+            "slideOrder": 6,
+            "title": "Tính Chất ACID: Consistency & Isolation",
+            "bulletPoints": [
+                "C - Consistency (Nhất Quán): Luôn đúng luật. Chuyển từ trạng thái hợp lệ này sang trạng thái hợp lệ khác. Từ chối lưu dữ liệu sai ràng buộc.",
+                "I - Isolation (Độc Lập): Đừng chen lấn. Hai giao dịch cùng lúc không nhìn thấy dữ liệu trung gian của nhau.",
+                "Ví dụ mua vé phim: Khóa vé cho người bấm nhanh hơn 0.001s, báo hết vé cho người sau."
+            ],
+            "codeExample": null,
+            "note": "Ngăn chặn xung đột và dữ liệu rác."
+        },
+        {
+            "slideOrder": 7,
+            "title": "Tính Chất ACID: Durability (Tính Bền Vững)",
+            "bulletPoints": [
+                "Quy tắc: Ghi bút bi.",
+                "Khi hệ thống báo giao dịch thành công, dữ liệu đã lưu an toàn vào ổ cứng.",
+                "Ngay cả khi sập nguồn lập tức, dữ liệu đơn hàng vẫn hiển thị đầy đủ khi server phục hồi."
+            ],
+            "codeExample": null,
+            "note": "Sự cam kết vĩnh viễn của DBMS."
+        },
+        {
+            "slideOrder": 8,
+            "title": "4 Giai Đoạn Thiết Kế Chuẩn",
+            "bulletPoints": [
+                "1. Phân Tích: Thu thập yêu cầu và xác định nghiệp vụ.",
+                "2. Quan Niệm: Bản thiết kế (Blueprint) dùng sơ đồ thực thể ERD.",
+                "3. Logic (Cấu Trúc): Tạo các Bảng, Khóa Chính (PK), Khóa Ngoại (FK).",
+                "4. Vật Lý: Cài đặt DBMS, chỉ mục Index, Server."
+            ],
+            "codeExample": null,
+            "note": "Phân Tích ➔ Quan Niệm ➔ Logic ➔ Vật Lý"
+        },
+        {
+            "slideOrder": 9,
+            "title": "Cú Pháp SQL Cơ Bản (CRUD)",
+            "bulletPoints": [
+                "Create: Thêm mới bản ghi bằng lệnh INSERT INTO.",
+                "Read: Truy vấn dữ liệu có điều kiện hoặc lọc bằng SELECT.",
+                "Update: Cập nhật dòng hiện có bằng UPDATE.",
+                "Delete: Xóa dữ liệu với DELETE."
+            ],
+            "codeExample": "INSERT INTO NguoiDung (ID, Ten) VALUES (1, 'A');\nSELECT * FROM NguoiDung WHERE Tuoi > 18;\nUPDATE NguoiDung SET Tuoi = 20 WHERE ID = 1;",
+            "note": "Luôn nhớ Mệnh đề WHERE cho DELETE và UPDATE."
+        },
+        {
+            "slideOrder": 10,
+            "title": "Index & Tối Ưu Hiệu Năng",
+            "bulletPoints": [
+                "Index như mục lục từ điển, thay vì lật từng trang (Full Table Scan), nó nhảy trỏ thẳng đến trang chứa từ.",
+                "Nên dùng: Các cột thường có trong WHERE, JOIN, ORDER BY.",
+                "Không dùng: Cột hay bị Update, bảng quá ít dữ liệu, cột có giá trị trùng lặp nhiều."
+            ],
+            "codeExample": "CREATE INDEX idx_email ON KhachHang(Email);",
+            "note": "Giúp tăng tốc truy vấn hàng triệu dòng xuống mili giây."
+        },
+        {
+            "slideOrder": 11,
+            "title": "Bảo Mật: Chống SQL Injection",
+            "bulletPoints": [
+                "Lỗ hổng chết người khi hacker chèn mã SQL vào Input.",
+                "Giải pháp: Luôn sử dụng Parameterized Query.",
+                "Sử dụng tham số ẩn thay vì nối chuỗi biến trực tiếp."
+            ],
+            "codeExample": "// ĐÚNG - Tham số hóa (Parameterized Query)\nconst query = 'SELECT * FROM Users WHERE name = ?';\ndb.execute(query, [userInput]);",
+            "note": "Bức tường phòng thủ cơ bản nhất."
+        },
+        {
+            "slideOrder": 12,
+            "title": "Chuẩn Hóa (Normalization) 1NF & 2NF",
+            "bulletPoints": [
+                "1NF: Mỗi ô chỉ chứa 1 giá trị duy nhất. Không lưu mảng số điện thoại chung 1 ô.",
+                "2NF: Đạt 1NF và mọi cột dữ liệu phụ thuộc hoàn toàn vào toàn bộ Khóa Chính.",
+                "Ví dụ 2NF: Tách ChiTietDon và SanPham thành 2 bảng để cột ProductName không bị dính logic vào ChiTietDon."
+            ],
+            "codeExample": null,
+            "note": "Giảm thiểu dư thừa dữ liệu."
+        },
+        {
+            "slideOrder": 13,
+            "title": "Chuẩn Hóa (Normalization) 3NF",
+            "bulletPoints": [
+                "3NF: Đạt 2NF và loại bỏ các phụ thuộc bắc cầu.",
+                "Không lưu các cột có thể tự tính toán được từ các cột khác.",
+                "Ví dụ: Bỏ cột ThanhTien, tính bằng cách SELECT (DonGia * SoLuong)."
+            ],
+            "codeExample": "SELECT (DonGia * SoLuong) AS ThanhTien FROM ChiTietDon;",
+            "note": "Tối ưu dung lượng lưu trữ thật sự cần thiết."
+        }
+    ]
+}

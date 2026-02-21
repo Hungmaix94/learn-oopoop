@@ -1,0 +1,32 @@
+{
+    "course": {
+        "title": "Backend Engineering Foundation & Architecture",
+        "description": "This course provides a comprehensive foundation in backend engineering, focusing on database architecture, design patterns, and programming paradigms within an E-commerce context.",
+        "lessons": [
+            {
+                "lessonId": "database-architecture",
+                "lessonTitle": "Kiến Trúc & Thiết Kế Cơ Sở Dữ Liệu Toàn Diện",
+                "summary": "Tổng quan - Tính chất ACID - Quy trình 4 giai đoạn - SQL Chuyên sâu",
+                "order": 1
+            },
+            {
+                "lessonId": "ecommerce-db-architecture",
+                "lessonTitle": "E-commerce Database Design Masterclass",
+                "summary": "Strategy: Polyglot Persistence, Schema Design, and Scaling.",
+                "order": 2
+            },
+            {
+                "lessonId": "fp-vs-oop-ecommerce",
+                "lessonTitle": "Programming Paradigms (OOP vs FP)",
+                "summary": "Comparison of Object-Oriented Programming vs. Functional Programming in real-world scenarios.",
+                "order": 3
+            },
+            {
+                "lessonId": "oop-deep-dive",
+                "lessonTitle": "Advanced Object-Oriented Design",
+                "summary": "The 4 Pillars, SOLID Principles, and Design Patterns in E-commerce.",
+                "order": 4
+            }
+        ]
+    }
+}

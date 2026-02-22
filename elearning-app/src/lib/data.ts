@@ -1,70 +1,82 @@
-import fs from 'fs';
-import path from 'path';
+import 'reflect-metadata';
+import { getDataSource } from './db';
+import { Course } from '@/entities/Course';
+import { Lesson } from '@/entities/Lesson';
+import { Slide } from '@/entities/Slide';
 
-// Helper to simulate Database queries via Local JSON
-const getDataDir = () => path.join(process.cwd(), '../generated_data');
+// Resolve locale fields from slide JSONB locales column
+function resolveLocale(slide: Slide, lang: string) {
+    const override = slide.locales?.[lang];
+    if (!override) return slide;
+    return {
+        ...slide,
+        title: override.title ?? slide.title,
+        bulletPoints: override.bulletPoints ?? slide.bulletPoints,
+        note: override.note ?? slide.note,
+    };
+}
 
 export async function getAllCourses() {
     try {
-        const files = fs.readdirSync(getDataDir()).filter(f => f.startsWith('course') && f.endsWith('.json'));
-        const courses = files.map(file => {
-            const raw = fs.readFileSync(path.join(getDataDir(), file), 'utf8');
-            const data = JSON.parse(raw);
-            const id = file === 'course.json' ? 'backend-engineering' : file.replace('course-', '').replace('.json', '');
-            return { id, ...data.course };
+        const ds = await getDataSource();
+        const courses = await ds.getRepository(Course).find({
+            relations: ['lessons'],
+            order: { title: 'ASC' },
         });
-        return courses;
+        return courses.map((c) => ({
+            id: c.id,
+            title: c.title,
+            description: c.description,
+            lessons: c.lessons.sort((a, b) => a.order - b.order),
+        }));
     } catch (e) {
+        console.error('[getAllCourses]', e);
         return [];
     }
 }
 
 export async function getCourse(id: string) {
     try {
-        const courses = await getAllCourses();
-        return courses.find(c => c.id === id) || null;
+        const ds = await getDataSource();
+        const course = await ds.getRepository(Course).findOne({
+            where: { id },
+            relations: ['lessons'],
+        });
+        if (!course) return null;
+        return {
+            ...course,
+            lessons: course.lessons.sort((a, b) => a.order - b.order),
+        };
     } catch (e) {
+        console.error('[getCourse]', e);
         return null;
     }
 }
 
 export async function getLessons(courseId: string) {
-    const course = await getCourse(courseId);
-    if (!course) return [];
-    return course.lessons.sort((a: any, b: any) => a.order - b.order);
-}
-
-/**
- * Resolves a locale-aware slide: if the slide has a `locales` object with
- * the target lang, merge those fields over the defaults (title, bulletPoints, note).
- * codeExample is always shared across locales.
- */
-function resolveSlideLocale(slide: any, lang: string) {
-    if (slide.locales && slide.locales[lang]) {
-        return {
-            ...slide,
-            title: slide.locales[lang].title ?? slide.title,
-            bulletPoints: slide.locales[lang].bulletPoints ?? slide.bulletPoints,
-            note: slide.locales[lang].note ?? slide.note,
-        };
+    try {
+        const ds = await getDataSource();
+        const lessons = await ds.getRepository(Lesson).find({
+            where: { courseId },
+            order: { order: 'ASC' },
+        });
+        return lessons;
+    } catch (e) {
+        console.error('[getLessons]', e);
+        return [];
     }
-    return slide;
 }
 
 export async function getLessonSlides(lessonId: string, lang = 'en') {
     try {
-        const files = fs.readdirSync(getDataDir()).filter(f => f.includes('slides.json'));
-
-        for (const file of files) {
-            const raw = fs.readFileSync(path.join(getDataDir(), file), 'utf8');
-            const data = JSON.parse(raw);
-            if (data.lessonId === lessonId) {
-                const sorted = data.slides.sort((a: any, b: any) => a.slideOrder - b.slideOrder);
-                return sorted.map((slide: any) => resolveSlideLocale(slide, lang));
-            }
-        }
-        return [];
+        const ds = await getDataSource();
+        const slides = await ds.getRepository(Slide).find({
+            where: { lessonId },
+            order: { slideOrder: 'ASC' },
+        });
+        return slides.map((s) => resolveLocale(s, lang));
     } catch (e) {
+        console.error('[getLessonSlides]', e);
         return [];
     }
 }

@@ -14,7 +14,7 @@ export default async function LessonPage({
     const lessons = await getLessons(courseId)
     const dict = await getDictionary(lang as Locale);
 
-    const lesson = lessons.find((l: any) => l.lessonId === lessonId)
+    const lesson = lessons.find((l: any) => l.id === lessonId)
 
     if (!lesson || !slides.length) {
         return notFound()
@@ -23,7 +23,7 @@ export default async function LessonPage({
     return (
         <SlideViewer
             courseId={courseId}
-            lessonTitle={lesson.lessonTitle}
+            lessonTitle={lesson.title}
             slides={slides}
             dict={dict}
             lang={lang}

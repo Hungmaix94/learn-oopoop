@@ -198,6 +198,292 @@
                     "note": "Thư mục `.agents/` là 'Hiến Pháp AI' của team — định nghĩa cách AI suy nghĩ và hành động trong project của bạn."
                 }
             }
+        },
+        {
+            "slideOrder": 9,
+            "title": "skills.sh: The Open Agent Skills Ecosystem",
+            "bulletPoints": [
+                "skills.sh (launched by Vercel, Jan 2026) is the open registry for reusable AI agent skills — like npm, but for AI knowledge.",
+                "200+ community skills covering React, Next.js, NestJS, Tailwind, Python/FastAPI, testing, DevOps, and more.",
+                "Works with 18+ agents: Claude Code, Cursor, GitHub Copilot, Antigravity, Windsurf, Gemini CLI.",
+                "Install in one command: `npx skills add <owner/repo>` — skills auto-activate based on your request context.",
+                "Top skills by installs: `vercel-react-best-practices` (160K), `web-design-guidelines` (122K), `next-best-practices` (19K)."
+            ],
+            "codeExample": "# Install individual skills for your fullstack project:\nnpx skills add vercel-labs/agent-skills --skill vercel-react-best-practices\nnpx skills add vercel-labs/next-skills --skill next-best-practices\nnpx skills add wshobson/agents --skill tailwind-design-system\nnpx skills add Kadajett/agent-nestjs-skills --skill nestjs-best-practices\nnpx skills add tenlisboa/.claude --skill python-fastapi-ai\n\n# Or install entire collections:\nnpx skills add vercel-labs/agent-skills   # all Vercel skills\nnpx skills add Jeffallan/claude-skills    # 66 fullstack skills",
+            "note": "skills.sh is the community layer on top of your `.agents/` — tap proven best practices instantly instead of writing skills from scratch.",
+            "locales": {
+                "vi": {
+                    "title": "skills.sh: Hệ Sinh Thái Mở Cho Agent Skills",
+                    "bulletPoints": [
+                        "skills.sh (ra mắt bởi Vercel, tháng 1/2026) là registry mở cho agent skills có thể tái sử dụng — giống npm nhưng cho kiến thức AI.",
+                        "200+ skills cộng đồng bao gồm React, Next.js, NestJS, Tailwind, Python/FastAPI, testing, DevOps và nhiều hơn.",
+                        "Hoạt động với 18+ agent: Claude Code, Cursor, GitHub Copilot, Antigravity, Windsurf, Gemini CLI.",
+                        "Cài đặt một lệnh: `npx skills add <owner/repo>` — skills tự kích hoạt dựa theo ngữ cảnh request của bạn.",
+                        "Skills phổ biến nhất: `vercel-react-best-practices` (160K), `web-design-guidelines` (122K), `next-best-practices` (19K)."
+                    ],
+                    "note": "skills.sh là lớp cộng đồng trên `.agents/` — lấy ngay best practices đã được chứng minh thay vì tự viết skills từ đầu."
+                }
+            }
+        },
+        {
+            "slideOrder": 10,
+            "title": "skills.sh: React & Next.js Skills (Vercel Official)",
+            "bulletPoints": [
+                "`vercel-react-best-practices`: 57 rules across 8 categories — eliminating waterfalls, bundle size, RSC, re-render optimization.",
+                "`next-best-practices`: 19.1K installs — RSC boundaries, async patterns, `use client`/`use server`/`use cache` directives, image/font optimization.",
+                "`web-design-guidelines`: 100+ rules — accessibility, focus states, form UX, typography, animations, i18n.",
+                "`vercel-composition-patterns`: Compound components, avoiding boolean-prop explosion, scalable state patterns.",
+                "CRITICAL rules enforced: no request waterfalls, no unnecessary `use client`, parallel data fetching with `Promise.all`."
+            ],
+            "codeExample": "// Rule: CRITICAL — Eliminate Request Waterfalls\n// ❌ Sequential (waterfall)\nasync function Page() {\n  const user = await getUser();          // waits\n  const posts = await getPosts(user.id); // waits again\n}\n\n// ✅ Parallel (correct)\nasync function Page() {\n  const [user, posts] = await Promise.all([\n    getUser(),\n    getPosts(),\n  ]);\n}\n\n// Rule: HIGH — Prefer RSC for data fetching\n// Move fetch logic to Server Components, keep Client Components for interactivity only",
+            "note": "These rules are auto-applied by the AI whenever you write, review, or refactor React/Next.js code — no manual reminders needed.",
+            "locales": {
+                "vi": {
+                    "title": "skills.sh: React & Next.js Skills (Vercel Official)",
+                    "bulletPoints": [
+                        "`vercel-react-best-practices`: 57 rules trong 8 category — loại bỏ waterfalls, bundle size, RSC, tối ưu re-render.",
+                        "`next-best-practices`: 19.1K installs — RSC boundaries, async patterns, directive `use client`/`use server`/`use cache`, tối ưu image/font.",
+                        "`web-design-guidelines`: 100+ rules — accessibility, focus states, form UX, typography, animations, i18n.",
+                        "`vercel-composition-patterns`: Compound components, tránh boolean-prop explosion, state patterns có khả năng mở rộng.",
+                        "Rules CRITICAL được thực thi: không có request waterfalls, không `use client` không cần thiết, fetch song song với `Promise.all`."
+                    ],
+                    "note": "Các rule này được AI tự áp dụng khi bạn viết, review hoặc refactor code React/Next.js — không cần nhắc nhở thủ công."
+                }
+            }
+        },
+        {
+            "slideOrder": 11,
+            "title": "skills.sh: Tailwind CSS v4 Design System Skill",
+            "bulletPoints": [
+                "`tailwind-design-system` (wshobson/agents, 10.1K installs): Production-ready design systems with Tailwind CSS v4.",
+                "Major shift: replace `tailwind.config.ts` with `@theme` blocks directly in CSS — CSS-first configuration.",
+                "Design tokens: hierarchical structure — brand values → semantic purposes → component implementations using OKLCH colors.",
+                "CVA (Class Variance Authority) for type-safe variant composition: base styles, variants, sizes, states.",
+                "React 19 compat: `forwardRef` eliminated — refs are now regular props. Dark mode via native CSS custom variants."
+            ],
+            "codeExample": "/* Tailwind v4 CSS-first config (replaces tailwind.config.ts) */\n@import \"tailwindcss\";\n\n@theme {\n  /* Brand tokens → Semantic tokens */\n  --color-brand-500: oklch(0.6 0.2 250);\n  --color-primary: var(--color-brand-500);\n  --color-primary-hover: oklch(0.55 0.2 250);\n\n  /* Animation via @keyframes in @theme */\n  --animate-fade-in: fade-in 0.3s ease-out;\n  @keyframes fade-in {\n    from { opacity: 0; transform: translateY(-4px); }\n    to   { opacity: 1; transform: translateY(0); }\n  }\n}\n\n// CVA component (type-safe variants)\nconst button = cva('rounded-md font-medium transition-colors', {\n  variants: {\n    intent: { primary: 'bg-primary text-white hover:bg-primary-hover',\n               ghost:   'bg-transparent border border-primary' },\n    size:   { sm: 'px-3 py-1 text-sm', md: 'px-4 py-2', lg: 'px-6 py-3 text-lg' },\n  },\n  defaultVariants: { intent: 'primary', size: 'md' },\n});",
+            "note": "Use semantic tokens (`bg-primary`) over arbitrary values — design system stays maintainable as the codebase scales.",
+            "locales": {
+                "vi": {
+                    "title": "skills.sh: Tailwind CSS v4 Design System Skill",
+                    "bulletPoints": [
+                        "`tailwind-design-system` (wshobson/agents, 10.1K installs): Design system production-ready với Tailwind CSS v4.",
+                        "Thay đổi lớn: thay `tailwind.config.ts` bằng `@theme` blocks trong CSS — cấu hình CSS-first.",
+                        "Design tokens: cấu trúc phân cấp — brand values → semantic purposes → component implementations dùng OKLCH colors.",
+                        "CVA (Class Variance Authority) cho variant composition type-safe: base styles, variants, sizes, states.",
+                        "React 19 compat: loại bỏ `forwardRef` — refs là regular props. Dark mode qua native CSS custom variants."
+                    ],
+                    "note": "Dùng semantic tokens (`bg-primary`) thay arbitrary values — design system dễ bảo trì khi codebase phát triển."
+                }
+            }
+        },
+        {
+            "slideOrder": 12,
+            "title": "skills.sh: NestJS Best Practices Skill",
+            "bulletPoints": [
+                "`nestjs-best-practices` (Kadajett, 4.5K installs): 40 rules across 10 categories for scalable NestJS backends.",
+                "CRITICAL: Architecture (feature modules, avoid circular deps), Dependency Injection (constructor injection, scoping), Validation (class-validator on every DTO), Database (query optimization, caching), Auth (guards, JWT).",
+                "HIGH: Error handling (centralized exception filters), Security (CORS, security headers, dependency audits), Performance (Redis caching, compression).",
+                "MEDIUM: API design (consistent response shapes, versioning), Testing (unit + e2e with mocked PrismaService), Microservices (event-driven with EventEmitter2).",
+                "Stack: NestJS + Bun runtime + Prisma v7 + EventEmitter2."
+            ],
+            "codeExample": "# Install:\nnpx skills add Kadajett/agent-nestjs-skills --skill nestjs-best-practices\n\n// CRITICAL — arch: Organize by feature, not technical layer\n// ❌ Bad: src/controllers/, src/services/, src/repositories/\n// ✅ Good:\nsrc/\n├── products/\n│   ├── products.module.ts\n│   ├── products.controller.ts\n│   ├── products.service.ts\n│   ├── dto/create-product.dto.ts\n│   └── __tests__/products.service.spec.ts\n\n// CRITICAL — validation: Always use class-validator DTOs\nexport class CreateProductDto {\n  @IsString() @IsNotEmpty() name: string;\n  @IsNumber() @Min(0)       price: number;\n  @IsOptional() @IsString() description?: string;\n}",
+            "note": "Rule prefix convention: `arch-`, `di-`, `error-`, `security-`, `perf-`, `test-`, `db-`, `api-` — easy to reference in PR comments.",
+            "locales": {
+                "vi": {
+                    "title": "skills.sh: NestJS Best Practices Skill",
+                    "bulletPoints": [
+                        "`nestjs-best-practices` (Kadajett, 4.5K installs): 40 rules trong 10 category cho NestJS backends có khả năng mở rộng.",
+                        "CRITICAL: Architecture (feature modules, tránh circular deps), DI (constructor injection, scoping), Validation (class-validator trên mọi DTO), Database, Auth.",
+                        "HIGH: Error handling (centralized exception filters), Security (CORS, security headers, dependency audits), Performance (Redis caching, compression).",
+                        "MEDIUM: API design (response shapes nhất quán, versioning), Testing (unit + e2e với mocked PrismaService), Microservices (event-driven).",
+                        "Stack: NestJS + Bun runtime + Prisma v7 + EventEmitter2."
+                    ],
+                    "note": "Quy ước prefix rule: `arch-`, `di-`, `error-`, `security-`, `perf-` — dễ tham chiếu trong PR comments."
+                }
+            }
+        },
+        {
+            "slideOrder": 13,
+            "title": "skills.sh: Python FastAPI Skill",
+            "bulletPoints": [
+                "`python-fastapi-ai` (tenlisboa): FastAPI + Alembic + Pydantic v2 + AI Engineering (LangChain, Google ADK).",
+                "Routing: APIRouter with prefix/tags, dependency injection via `Depends()`, async handlers by default.",
+                "Validation: Pydantic v2 models for request/response — automatic OpenAPI/Swagger docs generation.",
+                "Database: Alembic migrations (never modify existing migrations), SQLAlchemy async sessions.",
+                "AI integration: LangChain chains + Google ADK patterns for LLM-powered endpoints."
+            ],
+            "codeExample": "# FastAPI best practice patterns (from skill)\nfrom fastapi import APIRouter, Depends, HTTPException, status\nfrom pydantic import BaseModel, Field\nfrom typing import Annotated\n\nrouter = APIRouter(prefix='/products', tags=['products'])\n\nclass ProductCreate(BaseModel):\n    name: str = Field(..., min_length=1, max_length=255)\n    price: float = Field(..., ge=0)\n\nclass ProductResponse(BaseModel):\n    id: int\n    name: str\n    price: float\n    model_config = {'from_attributes': True}  # Pydantic v2\n\n@router.post('/', response_model=ProductResponse,\n             status_code=status.HTTP_201_CREATED)\nasync def create_product(\n    payload: ProductCreate,\n    db: Annotated[AsyncSession, Depends(get_db)]\n) -> ProductResponse:\n    product = await product_service.create(db, payload)\n    return product",
+            "note": "Pydantic v2's `model_config = {'from_attributes': True}` replaces v1's `orm_mode = True` — a common migration gotcha.",
+            "locales": {
+                "vi": {
+                    "title": "skills.sh: Python FastAPI Skill",
+                    "bulletPoints": [
+                        "`python-fastapi-ai` (tenlisboa): FastAPI + Alembic + Pydantic v2 + AI Engineering (LangChain, Google ADK).",
+                        "Routing: APIRouter với prefix/tags, dependency injection qua `Depends()`, async handlers là mặc định.",
+                        "Validation: Pydantic v2 models cho request/response — tự động sinh tài liệu OpenAPI/Swagger.",
+                        "Database: Alembic migrations (không bao giờ sửa migration đã có), SQLAlchemy async sessions.",
+                        "AI integration: LangChain chains + Google ADK patterns cho các endpoint dùng LLM."
+                    ],
+                    "note": "`model_config = {'from_attributes': True}` của Pydantic v2 thay thế `orm_mode = True` của v1 — đây là lỗi migration phổ biến."
+                }
+            }
+        },
+        {
+            "slideOrder": 14,
+            "title": "Fullstack Developer: Complete Skill Stack",
+            "bulletPoints": [
+                "Frontend layer: `vercel-react-best-practices` + `next-best-practices` + `tailwind-design-system` + `web-design-guidelines`.",
+                "Backend layer: `nestjs-best-practices` (Node) OR `python-fastapi-ai` (Python) — choose per project.",
+                "Cross-cutting: `vercel-composition-patterns` (component design) + `vercel-deploy-claimable` (deployment automation).",
+                "Testing layer: `javascript-testing-patterns` (Vitest/RTL) + `e2e-testing-patterns` (Playwright/Cypress).",
+                "Total: ~6-8 skills covering 200+ rules — the Agent has your full team's expertise loaded at all times."
+            ],
+            "codeExample": "# One-time setup for a fullstack project — paste in terminal:\nnpx skills add vercel-labs/agent-skills --skill vercel-react-best-practices\nnpx skills add vercel-labs/next-skills  --skill next-best-practices\nnpx skills add wshobson/agents          --skill tailwind-design-system\nnpx skills add vercel-labs/agent-skills --skill web-design-guidelines\n\n# NestJS backend:\nnpx skills add Kadajett/agent-nestjs-skills --skill nestjs-best-practices\n\n# OR Python backend:\nnpx skills add tenlisboa/.claude --skill python-fastapi-ai\n\n# Skills are saved to .agents/skills/ — commit to git\ngit add .agents/ && git commit -m 'chore: add team AI skill stack'",
+            "note": "Skills compound — the AI cross-references Next.js patterns when you write NestJS APIs and vice versa, catching integration mismatches early.",
+            "locales": {
+                "vi": {
+                    "title": "Fullstack Developer: Bộ Skill Stack Đầy Đủ",
+                    "bulletPoints": [
+                        "Frontend layer: `vercel-react-best-practices` + `next-best-practices` + `tailwind-design-system` + `web-design-guidelines`.",
+                        "Backend layer: `nestjs-best-practices` (Node) HOẶC `python-fastapi-ai` (Python) — chọn theo từng project.",
+                        "Cross-cutting: `vercel-composition-patterns` (thiết kế component) + `vercel-deploy-claimable` (tự động hóa deployment).",
+                        "Testing layer: `javascript-testing-patterns` (Vitest/RTL) + `e2e-testing-patterns` (Playwright/Cypress).",
+                        "Tổng cộng: ~6-8 skills bao phủ 200+ rules — Agent luôn có toàn bộ chuyên môn của team được nạp sẵn."
+                    ],
+                    "note": "Skills có hiệu ứng cộng hưởng — AI tham chiếu chéo Next.js patterns khi bạn viết NestJS APIs, bắt lỗi tích hợp sớm."
+                }
+            }
+        },
+        {
+            "slideOrder": 15,
+            "title": "Fullstack Workflow: Feature End-to-End (NestJS + Next.js)",
+            "bulletPoints": [
+                "Trigger: 'Implement the product listing feature — BE API + FE page with filtering and pagination.'",
+                "BE (NestJS): Skill enforces — Prisma model → migration (human checkpoint) → module scaffold → DTO validation → Swagger → unit tests.",
+                "FE (Next.js): Skill enforces — RSC page fetches server-side → React Query hook for client filter state → Skeleton loading → RTL tests.",
+                "Integration: Antigravity uses `browser_subagent` to verify the real API call from the browser — no manual Postman needed.",
+                "PR: Auto-generated diff summary + checklist: ✅ types pass, ✅ tests pass, ✅ Swagger updated, ✅ no console.log."
+            ],
+            "codeExample": "# .agents/workflows/fullstack-feature.md\n---\ndescription: Implement a fullstack feature: NestJS API + Next.js page\n---\n// Phases run sequentially; steps within a phase run // turbo where safe\n\n## Phase 1: Backend\n1. Add Prisma model to schema.prisma. STOP — ask for human approval.\n2. Run `pnpm prisma migrate dev --name add_{entity}`.\n// turbo\n3. Scaffold NestJS module, controller, service, DTOs.\n4. Add Swagger decorators. Run `pnpm test` → assert pass.\n\n## Phase 2: Frontend\n// turbo\n5. Create RSC page at `app/{entity}/page.tsx` — fetch data server-side.\n6. Create `use{Entity}List` React Query hook with filter/pagination.\n7. Add loading (Skeleton) and error (Alert) states.\n8. Write RTL tests. Run `pnpm test` → assert pass.\n\n## Phase 3: Verify\n9. Run `browser_subagent('Navigate to /{entity} and verify data loads')`.\n10. Run `pnpm lint && pnpm build` → assert clean.\n11. Open draft PR with generated description.",
+            "note": "Phase 1 always has a human checkpoint at the migration step — the rest of the feature can run autonomously.",
+            "locales": {
+                "vi": {
+                    "title": "Fullstack Workflow: Tính Năng End-to-End (NestJS + Next.js)",
+                    "bulletPoints": [
+                        "Trigger: 'Implement tính năng danh sách sản phẩm — BE API + FE page với filtering và pagination.'",
+                        "BE (NestJS): Skill thực thi — Prisma model → migration (checkpoint) → scaffold module → DTO validation → Swagger → unit tests.",
+                        "FE (Next.js): Skill thực thi — RSC page fetch server-side → React Query hook cho client filter state → Skeleton loading → RTL tests.",
+                        "Integration: Antigravity dùng `browser_subagent` xác minh API call thực từ browser — không cần Postman thủ công.",
+                        "PR: Tóm tắt diff tự sinh + checklist: ✅ types pass, ✅ tests pass, ✅ Swagger cập nhật, ✅ không console.log."
+                    ],
+                    "note": "Phase 1 luôn có checkpoint của người dùng tại bước migration — phần còn lại của tính năng có thể chạy tự trị."
+                }
+            }
+        },
+        {
+            "slideOrder": 16,
+            "title": "Fullstack Workflow: Feature End-to-End (FastAPI + Next.js)",
+            "bulletPoints": [
+                "Trigger: 'Implement product listing feature — Python FastAPI endpoint + Next.js page.'",
+                "BE (FastAPI): Skill enforces — Pydantic v2 model → Alembic migration (human checkpoint) → APIRouter + Depends() → async handler → OpenAPI docs auto-generated.",
+                "FE (Next.js): Same as NestJS workflow — RSC page, React Query hook, RTL tests.",
+                "Python-specific: `browser_subagent` verifies Swagger UI at `/docs` shows the new endpoint correctly.",
+                "Key difference: FastAPI auto-generates OpenAPI docs — no manual Swagger decorators needed (unlike NestJS)."
+            ],
+            "codeExample": "# .agents/workflows/fullstack-feature-python.md\n---\ndescription: Implement a fullstack feature: FastAPI + Next.js\n---\n## Phase 1: Backend (Python/FastAPI)\n1. Define Pydantic v2 request/response models in `schemas/{entity}.py`.\n2. Create Alembic migration: `alembic revision --autogenerate -m 'add_{entity}'`.\n   STOP — display migration SQL. Ask: 'Approve to run migration?'\n3. Run `alembic upgrade head` after approval.\n// turbo\n4. Implement router in `routers/{entity}.py` with full async CRUD.\n5. Register router in `main.py`. Run `pytest` → assert pass.\n\n## Phase 2: Frontend (Next.js)\n// turbo\n6. Create RSC page. Create React Query hook with MSW mock in tests.\n7. Run `pnpm test` → assert pass.\n\n## Phase 3: Verify\n8. Run `browser_subagent('Go to /docs and verify {entity} endpoints listed')`.\n9. Run `pnpm lint && pnpm build` → assert clean.",
+            "note": "FastAPI + Next.js is ideal for AI/ML features — the Python backend can serve LLM endpoints while Next.js handles the UI.",
+            "locales": {
+                "vi": {
+                    "title": "Fullstack Workflow: Tính Năng End-to-End (FastAPI + Next.js)",
+                    "bulletPoints": [
+                        "Trigger: 'Implement tính năng danh sách sản phẩm — Python FastAPI endpoint + Next.js page.'",
+                        "BE (FastAPI): Skill thực thi — Pydantic v2 model → Alembic migration (checkpoint) → APIRouter + Depends() → async handler → OpenAPI tự sinh.",
+                        "FE (Next.js): Giống workflow NestJS — RSC page, React Query hook, RTL tests.",
+                        "Python-specific: `browser_subagent` xác minh Swagger UI tại `/docs` hiển thị endpoint mới đúng.",
+                        "Điểm khác biệt: FastAPI tự sinh OpenAPI docs — không cần Swagger decorators thủ công như NestJS."
+                    ],
+                    "note": "FastAPI + Next.js lý tưởng cho tính năng AI/ML — backend Python phục vụ LLM endpoints trong khi Next.js xử lý UI."
+                }
+            }
+        },
+        {
+            "slideOrder": 17,
+            "title": "Fullstack Workflow: Debug Production Issue",
+            "bulletPoints": [
+                "Trigger: '@agent The /products page shows blank for 3 seconds on first load. Fix it.'",
+                "Step 1 — Observe: Antigravity reads `app/products/page.tsx`, the API route, and React Query hook simultaneously.",
+                "Step 2 — Diagnose: Checks for RSC waterfall (sequential awaits), missing Suspense boundary, no `staleTime` in React Query, missing skeleton.",
+                "Step 3 — Fix: Applies `vercel-react-best-practices` CRITICAL rules — parallel fetching, adds Suspense + Skeleton, sets `staleTime: 5 * 60 * 1000`.",
+                "Step 4 — Verify: Runs `pnpm test`, then `browser_subagent` to confirm perceived load time improved."
+            ],
+            "codeExample": "// Antigravity's diagnosis output:\n// ⚠️  CRITICAL (react-best-practices/waterfall-001):\n//     Sequential awaits detected in RSC:\nasync function ProductsPage() {\n  const categories = await getCategories(); // blocks\n  const products   = await getProducts();   // waits for above ❌\n}\n\n// ✅ Fix applied:\nasync function ProductsPage() {\n  const [categories, products] = await Promise.all([\n    getCategories(),\n    getProducts(),\n  ]);\n  return (\n    <Suspense fallback={<ProductListSkeleton />}>\n      <ProductList products={products} categories={categories} />\n    </Suspense>\n  );\n}",
+            "note": "The Agent cites the exact rule ID from the installed skill — your team knows exactly WHY the fix was applied.",
+            "locales": {
+                "vi": {
+                    "title": "Fullstack Workflow: Debug Lỗi Production",
+                    "bulletPoints": [
+                        "Trigger: '@agent Trang /products bị trắng 3 giây khi load lần đầu. Sửa lại.'",
+                        "Bước 1 — Quan sát: Antigravity đọc `app/products/page.tsx`, API route và React Query hook đồng thời.",
+                        "Bước 2 — Chẩn đoán: Kiểm tra RSC waterfall (sequential awaits), thiếu Suspense boundary, không có `staleTime` trong React Query, thiếu skeleton.",
+                        "Bước 3 — Sửa: Áp dụng rules CRITICAL từ `vercel-react-best-practices` — fetch song song, thêm Suspense + Skeleton, set `staleTime: 5 * 60 * 1000`.",
+                        "Bước 4 — Xác minh: Chạy `pnpm test`, rồi `browser_subagent` xác nhận perceived load time cải thiện."
+                    ],
+                    "note": "Agent trích dẫn ID rule cụ thể từ skill đã cài — team biết chính xác TẠI SAO fix được áp dụng."
+                }
+            }
+        },
+        {
+            "slideOrder": 18,
+            "title": "Fullstack Workflow: Security Audit",
+            "bulletPoints": [
+                "Trigger: '@agent Run a security audit on the backend API.'",
+                "NestJS checks (from `nestjs-best-practices/security-*`): CORS configured, Helmet headers, rate limiting, `class-validator` on all inputs, no raw SQL.",
+                "FastAPI checks (from `python-fastapi-ai`): CORS middleware, dependency injection for auth, Pydantic validation on all routes, no `eval()` or shell injection.",
+                "Cross-stack checks: JWT secret not hardcoded, `.env` vars not exposed to client, sensitive data not logged.",
+                "Output: Structured security report with rule IDs, severity (CRITICAL/HIGH/MEDIUM), and auto-fix PRs for each finding."
+            ],
+            "codeExample": "# .agents/workflows/security-audit.md\n---\ndescription: Backend security audit using installed skills\n---\n// turbo-all (read-only checks)\n1. Scan all .controller.ts files for missing @UseGuards() on protected routes.\n2. Scan all .ts files for hardcoded secrets (API keys, JWT secrets).\n3. Check main.ts: verify helmet(), cors(), rateLimit() are configured.\n4. Scan all DTOs: assert every field has class-validator decorators.\n5. Check .env.example vs actual .env — flag any missing vars.\n6. For Python: scan routers/ for routes missing Depends(get_current_user).\n\nSTOP — generate security report:\n  CRITICAL: [list]\n  HIGH:     [list]\n  MEDIUM:   [list]\nAsk: 'Auto-fix CRITICAL issues now, or review manually?'",
+            "note": "Security audits are always read-only (// turbo-all safe) — the fixes require explicit approval before any file is modified.",
+            "locales": {
+                "vi": {
+                    "title": "Fullstack Workflow: Kiểm Toán Bảo Mật",
+                    "bulletPoints": [
+                        "Trigger: '@agent Chạy security audit trên backend API.'",
+                        "Kiểm tra NestJS (từ `nestjs-best-practices/security-*`): CORS, Helmet headers, rate limiting, `class-validator` trên tất cả inputs, không có raw SQL.",
+                        "Kiểm tra FastAPI (từ `python-fastapi-ai`): CORS middleware, DI cho auth, Pydantic validation trên mọi route, không có `eval()` hay shell injection.",
+                        "Kiểm tra cross-stack: JWT secret không hardcode, biến `.env` không lộ ra client, dữ liệu nhạy cảm không được log.",
+                        "Output: Báo cáo bảo mật có cấu trúc với rule IDs, severity (CRITICAL/HIGH/MEDIUM), và PR auto-fix cho từng phát hiện."
+                    ],
+                    "note": "Security audits luôn chỉ đọc (// turbo-all an toàn) — các fix cần phê duyệt rõ ràng trước khi bất kỳ file nào bị sửa."
+                }
+            }
+        },
+        {
+            "slideOrder": 19,
+            "title": "Putting It All Together: The Skill-Powered Developer Day",
+            "bulletPoints": [
+                "9:00 AM — Stand-up: '@agent summarize what changed in main since yesterday' → reads git log + diffs, outputs bullet summary.",
+                "10:00 AM — Feature work: '@agent implement the checkout flow' → fullstack-feature workflow runs with all skills active.",
+                "2:00 PM — Code review: '@agent review PR #47' → pr-review workflow: lint + test + build + security checks in parallel.",
+                "4:00 PM — Bug report: '@agent products page is slow' → debug workflow + react-best-practices rules → fix + verify.",
+                "5:00 PM — End of day: '@agent write the release notes for today' → reads commits, generates changelog."
+            ],
+            "codeExample": "# The complete .agents/ structure for a fullstack team\n.agents/\n├── skills/\n│   ├── # Community skills (from skills.sh)\n│   ├── vercel-react-best-practices.md\n│   ├── next-best-practices.md\n│   ├── tailwind-design-system.md\n│   ├── nestjs-best-practices.md  # or python-fastapi-ai.md\n│   ├── web-design-guidelines.md\n│   └── # Team-specific skills\n│   ├── GIT-STANDARDS.md          # your commit/branch conventions\n│   └── TEAM-ARCHITECTURE.md     # your project-specific rules\n└── workflows/\n    ├── fullstack-feature.md      # end-to-end feature\n    ├── fe-new-component.md       # FE only\n    ├── be-new-module.md          # BE only\n    ├── be-db-migration.md        # safe migration\n    ├── pr-review.md              # automated review\n    ├── security-audit.md         # security checks\n    └── debug-performance.md      # perf debugging",
+            "note": "The AI becomes your most reliable team member — it never forgets a convention, never skips a test, never misses a security check.",
+            "locales": {
+                "vi": {
+                    "title": "Tổng Hợp: Ngày Làm Việc Của Developer Được Hỗ Trợ Bởi Skills",
+                    "bulletPoints": [
+                        "9:00 SA — Stand-up: '@agent tóm tắt những gì đã thay đổi trong main từ hôm qua' → đọc git log + diffs, xuất tóm tắt.",
+                        "10:00 SA — Feature work: '@agent implement checkout flow' → fullstack-feature workflow chạy với tất cả skills active.",
+                        "2:00 CH — Code review: '@agent review PR #47' → pr-review workflow: lint + test + build + security checks song song.",
+                        "4:00 CH — Bug report: '@agent trang products bị chậm' → debug workflow + react-best-practices rules → fix + verify.",
+                        "5:00 CH — Cuối ngày: '@agent viết release notes cho hôm nay' → đọc commits, tạo changelog."
+                    ],
+                    "note": "AI trở thành thành viên team đáng tin cậy nhất — không bao giờ quên convention, không bỏ qua test, không bỏ sót kiểm tra bảo mật."
+                }
+            }
         }
     ]
 }

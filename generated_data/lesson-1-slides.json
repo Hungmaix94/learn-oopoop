@@ -95,6 +95,51 @@
         },
         {
             "slideOrder": 9,
+            "title": "Quan Hệ 1:1 (One-to-One)",
+            "bulletPoints": [
+                "Định nghĩa: Một bản ghi ở bảng A chỉ liên kết với duy nhất một bản ghi ở bảng B.",
+                "Thực tế: Dùng để tách bảng rộng (nhiều cột) hoặc bảo mật thông tin nhạy cảm.",
+                "Ví dụ: [Users] ➔ [UserProfiles], [NhanVien] ➔ [ChungMinhThu]."
+            ],
+            "codeExample": "-- Table Profiles dùng user_id làm Khóa Chính vừa làm Khóa Ngoại\nCREATE TABLE Profiles (\n    user_id INT PRIMARY KEY,\n    bio TEXT,\n    avatar_url TEXT,\n    FOREIGN KEY (user_id) REFERENCES Users(id)\n);",
+            "note": "Rất hiếm gặp trong thực tế so với các loại khác."
+        },
+        {
+            "slideOrder": 10,
+            "title": "Quan Hệ 1:N (One-to-Many)",
+            "bulletPoints": [
+                "Định nghĩa: Một bản ghi ở bảng A có thể liên kết với nhiều bản ghi ở bảng B.",
+                "Đây là loại quan hệ phổ biến nhất trong RDBMS.",
+                "Ví dụ: 1 Tác giả (Authors) viết nhiều Sách (Books), 1 Danh mục (Categories) có nhiều Sản phẩm (Products)."
+            ],
+            "codeExample": "-- Khóa ngoại đặt ở bảng bên 'Nhiều' (N)\nCREATE TABLE Books (\n    id INT PRIMARY KEY,\n    title TEXT,\n    author_id INT,\n    FOREIGN KEY (author_id) REFERENCES Authors(id)\n);",
+            "note": "Bên '1' là cha, bên 'N' là con."
+        },
+        {
+            "slideOrder": 11,
+            "title": "Quan Hệ N:N (Many-to-Many)",
+            "bulletPoints": [
+                "Định nghĩa: Nhiều bản ghi ở bảng A có thể liên kết với nhiều bản ghi ở bảng B.",
+                "Giải pháp: Cần một 'Bảng Trung Gian' (Junction Table) để quản lý.",
+                "Ví dụ: Sinh viên (Students) đăng ký nhiều Khóa học (Courses) và ngược lại."
+            ],
+            "codeExample": "-- Bảng trung gian lưu cặp Mapping\nCREATE TABLE Enrollments (\n    student_id INT,\n    course_id INT,\n    enroll_date DATE,\n    PRIMARY KEY (student_id, course_id),\n    FOREIGN KEY (student_id) REFERENCES Students(id),\n    FOREIGN KEY (course_id) REFERENCES Courses(id)\n);",
+            "note": "N:N luôn được phân rã thành hai quan hệ 1:N."
+        },
+        {
+            "slideOrder": 12,
+            "title": "Cú Pháp SQL: JOIN",
+            "bulletPoints": [
+                "INNER JOIN: Lấy bản ghi tồn tại đồng thời ở cả hai bảng.",
+                "LEFT JOIN: Lấy toàn bộ bảng bên trái, và các bản ghi khớp ở bảng bên phải.",
+                "RIGHT JOIN: Lấy toàn bộ bảng bên phải, và các bản ghi khớp ở bảng bên trái."
+            ],
+            "codeExample": "-- Lấy tên khách hàng và mã đơn hàng tương ứng\nSELECT Customers.name, Orders.order_id\nFROM Customers\nINNER JOIN Orders ON Customers.id = Orders.customer_id;",
+            "note": "JOIN là chìa khóa để khai thác sức mạnh của CSDL liên kết.",
+            "imageUrl": "/images/sql-join-illustration.png"
+        },
+        {
+            "slideOrder": 13,
             "title": "Cú Pháp SQL Cơ Bản (CRUD)",
             "bulletPoints": [
                 "Create: Thêm mới bản ghi bằng lệnh INSERT INTO.",
@@ -106,7 +151,7 @@
             "note": "Luôn nhớ Mệnh đề WHERE cho DELETE và UPDATE."
         },
         {
-            "slideOrder": 10,
+            "slideOrder": 14,
             "title": "Index & Tối Ưu Hiệu Năng",
             "bulletPoints": [
                 "Index như mục lục từ điển, thay vì lật từng trang (Full Table Scan), nó nhảy trỏ thẳng đến trang chứa từ.",
@@ -117,7 +162,7 @@
             "note": "Giúp tăng tốc truy vấn hàng triệu dòng xuống mili giây."
         },
         {
-            "slideOrder": 11,
+            "slideOrder": 15,
             "title": "Bảo Mật: Chống SQL Injection",
             "bulletPoints": [
                 "Lỗ hổng chết người khi hacker chèn mã SQL vào Input.",
@@ -128,7 +173,7 @@
             "note": "Bức tường phòng thủ cơ bản nhất."
         },
         {
-            "slideOrder": 12,
+            "slideOrder": 16,
             "title": "Chuẩn Hóa (Normalization) 1NF & 2NF",
             "bulletPoints": [
                 "1NF: Mỗi ô chỉ chứa 1 giá trị duy nhất. Không lưu mảng số điện thoại chung 1 ô.",
@@ -139,7 +184,7 @@
             "note": "Giảm thiểu dư thừa dữ liệu."
         },
         {
-            "slideOrder": 13,
+            "slideOrder": 17,
             "title": "Chuẩn Hóa (Normalization) 3NF",
             "bulletPoints": [
                 "3NF: Đạt 2NF và loại bỏ các phụ thuộc bắc cầu.",

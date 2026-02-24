@@ -4,11 +4,14 @@ import { notFound } from 'next/navigation'
 import { getDictionary, Locale } from '@/dictionaries'
 
 export default async function LessonPage({
-    params
+    params,
+    searchParams,
 }: {
     params: Promise<{ courseId: string, lessonId: string, lang: string }>
+    searchParams: Promise<{ slide?: string }>
 }) {
     const resolvedParams = await params;
+    const resolvedSearch = await searchParams;
     const { lang, courseId, lessonId } = resolvedParams;
     const slides = await getLessonSlides(lessonId, lang)
     const lessons = await getLessons(courseId)
@@ -20,6 +23,9 @@ export default async function LessonPage({
         return notFound()
     }
 
+    const slideParam = parseInt(resolvedSearch.slide ?? '1', 10)
+    const initialSlide = Math.max(1, Math.min(slideParam, slides.length))
+
     return (
         <SlideViewer
             courseId={courseId}
@@ -27,6 +33,7 @@ export default async function LessonPage({
             slides={slides}
             dict={dict}
             lang={lang}
+            initialSlide={initialSlide}
         />
     )
 }

@@ -1,0 +1,403 @@
+{
+    "lessonId": "playwright-all",
+    "slides": [
+        {
+            "slideOrder": 1,
+            "title": "What is Playwright?",
+            "bulletPoints": [
+                "A modern End-to-End (E2E) testing framework developed by Microsoft.",
+                "Supports all modern rendering engines including Chromium, WebKit, and Firefox.",
+                "Tests can run across Windows, Linux, and macOS, locally or on CI, headless or headed."
+            ],
+            "codeExample": "npm init playwright@latest",
+            "note": "Playwright avoids flakiness by auto-waiting for elements before performing actions.",
+            "locales": {
+                "vi": {
+                    "title": "Playwright là gì?",
+                    "bulletPoints": [
+                        "Framework kiểm thử End-to-End (E2E) hiện đại do Microsoft phát triển.",
+                        "Hỗ trợ tất cả các engine rendering hiện đại bao gồm Chromium, WebKit và Firefox.",
+                        "Test có thể chạy trên Windows, Linux và macOS, cục bộ hay trên CI, headless hay headed."
+                    ],
+                    "note": "Playwright tránh flakiness bằng cách tự động chờ các phần tử trước khi thực hiện hành động."
+                }
+            }
+        },
+        {
+            "slideOrder": 2,
+            "title": "Your First Playwright Test",
+            "bulletPoints": [
+                "Tests are written in TypeScript or JavaScript using the Playwright Test runner.",
+                "Every test receives isolated 'page' and 'browser' contexts automatically.",
+                "Use the 'test' and 'expect' utilities to structure the spec."
+            ],
+            "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('homepage has title and links to intro page', async ({ page }) => {\n  await page.goto('https://playwright.dev/');\n\n  // Expect a title \"to contain\" a substring.\n  await expect(page).toHaveTitle(/Playwright/);\n});",
+            "note": "Notice the use of 'async/await' - Playwright is entirely Promise-based for clean, linear control flow.",
+            "locales": {
+                "vi": {
+                    "title": "Test Playwright Đầu Tiên",
+                    "bulletPoints": [
+                        "Test được viết bằng TypeScript hoặc JavaScript với Playwright Test runner.",
+                        "Mỗi test tự động nhận context 'page' và 'browser' riêng lập.",
+                        "Dùng 'test' và 'expect' để cấu trúc spec."
+                    ],
+                    "note": "'async/await' — Playwright hoàn toàn dựa trên Promise để luồng kiểm soát sạch, tuyến tính."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "Locators: Finding Elements the Right Way",
+            "bulletPoints": [
+                "A Locator is a 'recipe' to find an element — Playwright re-runs the recipe every time you interact, so it always finds the current DOM.",
+                "`getByRole()` — best choice: matches by ARIA role + accessible name (what a screen reader announces). Works regardless of HTML structure.",
+                "`getByLabel()` — for form inputs: finds the `<input>` linked to a `<label>` text. Survives input ID changes.",
+                "`getByText()` — for content: finds element containing exact or partial text. Use for headings, paragraphs, list items.",
+                "`getByTestId()` — escape hatch: when no accessible attribute exists, add `data-testid` to the element. Never use CSS class or nth-child."
+            ],
+            "codeExample": "// ✅ Priority order — use the FIRST one that applies:\n\n// 1. getByRole — matches what users and screen readers see\nawait page.getByRole('button', { name: 'Add to Cart' }).click();\nawait page.getByRole('heading', { name: 'Checkout' }).isVisible();\nawait page.getByRole('textbox', { name: 'Email address' }).fill('a@b.com');\n\n// 2. getByLabel — for form fields (links input to its label)\nawait page.getByLabel('Password').fill('Secret123');\nawait page.getByLabel('Remember me').check();\n\n// 3. getByText — for static content\nawait page.getByText('Welcome back, Nguyen Van A!').isVisible();\nawait page.getByText('Out of stock').isVisible();\n\n// 4. getByTestId — last resort (add data-testid to the element in code)\n// <div data-testid=\"product-skeleton\">...</div>\nawait page.getByTestId('product-skeleton').isVisible();\n\n// ❌ NEVER use these — they break when UI is restyled or reordered\nawait page.locator('.btn-primary > span:nth-child(2)').click(); // brittle CSS\nawait page.locator('#root > div > div:nth-child(3)').click();  // brittle path",
+            "note": "Rule of thumb: if a human can describe the element by what it says or does, `getByRole` or `getByLabel` will find it. Only use `getByTestId` when there's no visible label.",
+            "locales": {
+                "vi": {
+                    "title": "Locators: Tìm Phần Tử Đúng Cách",
+                    "bulletPoints": [
+                        "Locator là 'công thức' tìm phần tử — Playwright chạy lại công thức mỗi lần tương tác, đảm bảo luôn tìm đúng DOM hiện tại.",
+                        "`getByRole()` — lựa chọn tốt nhất: khớp theo ARIA role + accessible name (điều screen reader đọc ra). Không phụ thuộc cấu trúc HTML.",
+                        "`getByLabel()` — cho form input: tìm `<input>` liên kết với text `<label>`. Không bị vỡ khi ID input thay đổi.",
+                        "`getByText()` — cho nội dung: tìm phần tử chứa text khớp. Dùng cho heading, đoạn văn, list item.",
+                        "`getByTestId()` — phương án cuối cùng: khi không có thuộc tính accessible nào, thêm `data-testid`. Không bao giờ dùng CSS class hay nth-child."
+                    ],
+                    "note": "Nguyên tắc: nếu người dùng có thể mô tả phần tử qua nội dung hay chức năng của nó, `getByRole` hoặc `getByLabel` sẽ tìm được. Chỉ dùng `getByTestId` khi không có label hiển thị."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "Assertions & Auto-Retrying",
+            "bulletPoints": [
+                "Playwright provides a 'Web-First Assertions' library out of the box.",
+                "Assertions like 'toBeVisible()' or 'toHaveText()' will automatically retry.",
+                "It waits until the condition is met or the timeout is reached."
+            ],
+            "codeExample": "import { test, expect } from '@playwright/test';\n\ntest('login button becomes active', async ({ page }) => {\n  await page.goto('/login');\n  \n  const loginBtn = page.getByRole('button', { name: 'Login' });\n  \n  // Playwright polls the DOM until the button is no longer disabled\n  await expect(loginBtn).toBeEnabled({ timeout: 10000 });\n});",
+            "note": "Auto-retrying assertions eliminate the need for manual sleep() or arbitrary timeouts in tests.",
+            "locales": {
+                "vi": {
+                    "title": "Assertions & Tự Động Thử Lại",
+                    "bulletPoints": [
+                        "Playwright cung cấp thư viện 'Web-First Assertions' ngay từ đầu.",
+                        "Assertions như 'toBeVisible()' hay 'toHaveText()' sẽ tự động thử lại.",
+                        "Nó đợi đến khi điều kiện được thỏa mãn hoặc timeout đạt đến."
+                    ],
+                    "note": "Auto-retrying assertions loại bỏ nhu cầu dùng sleep() thủ công hay timeout tùy ý trong test."
+                }
+            }
+        },
+        {
+            "slideOrder": 5,
+            "title": "Mock vs Real Data: When to Use Each",
+            "bulletPoints": [
+                "Real data E2E: call the real API, seed a test DB before the suite, wipe it after — catches integration bugs mocks can't.",
+                "Mocked data (`page.route()`): intercept the HTTP call, return fake JSON — fast, deterministic, no DB needed, perfect for UI edge cases.",
+                "Use REAL data for: happy-path flows (login → checkout), cross-service integration, contract verification between FE and BE.",
+                "Use MOCK data for: error states (500, 401, empty list), loading skeletons, edge-case data (very long names, zero stock, special chars).",
+                "Hybrid approach: seed a minimal real DB for critical flows + mock everything else — fastest suite with the most confidence."
+            ],
+            "codeExample": "// ─── Strategy 1: REAL data ─────────────────────────────────────────\n// Seed test DB in global-setup, run real API, wipe after suite\n// playwright.config.ts\nglobalSetup: './global-setup.ts'  // seeds products table\nglobalTeardown: './global-teardown.ts' // wipes test data\n\ntest('checkout flow — real API', async ({ page }) => {\n  // Hits the real backend — catches real integration bugs\n  await page.goto('/products');\n  await expect(page.getByText('iPhone 16 Pro')).toBeVisible(); // seeded product\n  await page.getByRole('button', { name: 'Add to Cart' }).click();\n  await page.getByRole('link', { name: 'Checkout' }).click();\n  await expect(page).toHaveURL('/checkout');\n});\n\n// ─── Strategy 2: MOCK data ─────────────────────────────────────────\n// Intercept HTTP, return fake JSON — no DB needed\ntest('empty state — no products', async ({ page }) => {\n  await page.route('*/**/api/products', route =>\n    route.fulfill({ json: { products: [], total: 0 } }) // empty list\n  );\n  await page.goto('/products');\n  await expect(page.getByText('No products found')).toBeVisible();\n});\n\ntest('server error — shows error banner', async ({ page }) => {\n  await page.route('*/**/api/products', route =>\n    route.fulfill({ status: 500, body: 'Internal Server Error' })\n  );\n  await page.goto('/products');\n  await expect(page.getByRole('alert')).toContainText('Something went wrong');\n});\n\ntest('loading skeleton — slow API', async ({ page }) => {\n  await page.route('*/**/api/products', async route => {\n    await new Promise(r => setTimeout(r, 800)); // delay 800ms\n    await route.fulfill({ json: { products: mockProducts } });\n  });\n  await page.goto('/products');\n  await expect(page.getByTestId('product-skeleton')).toBeVisible(); // skeleton shows\n  await expect(page.getByText('iPhone 16 Pro')).toBeVisible();      // then real data\n});",
+            "note": "Rule: use real data for the 'happy path' that ships to production. Use mocks for every error state and edge case — you can't reliably trigger a 500 error on a real API.",
+            "locales": {
+                "vi": {
+                    "title": "Mock vs Data Thật: Khi Nào Dùng Cái Nào",
+                    "bulletPoints": [
+                        "Data thật E2E: gọi API thực, seed test DB trước suite, xóa sau — bắt lỗi integration mà mock không thể phát hiện.",
+                        "Mock data (`page.route()`): chặn HTTP call, trả về JSON giả — nhanh, ổn định, không cần DB, hoàn hảo cho UI edge cases.",
+                        "Dùng data THẬT cho: happy-path flows (login → checkout), cross-service integration, kiểm tra contract giữa FE và BE.",
+                        "Dùng MOCK cho: error states (500, 401, danh sách rỗng), loading skeleton, edge-case data (tên rất dài, hết hàng, ký tự đặc biệt).",
+                        "Hybrid: seed DB tối thiểu cho critical flows + mock tất cả còn lại — suite nhanh nhất với độ tin cậy cao nhất."
+                    ],
+                    "note": "Nguyên tắc: dùng data thật cho 'happy path' sẽ lên production. Dùng mock cho mọi error state và edge case — bạn không thể kích hoạt lỗi 500 trên API thật một cách đáng tin cậy."
+                }
+            }
+        },
+        {
+            "slideOrder": 6,
+            "title": "Fixtures: Tại Sao Cần? Vấn Đề Của beforeEach",
+            "bulletPoints": [
+                "Vấn đề: beforeEach/afterEach dùng biến shared → test song song dễ bị state leak, khó debug.",
+                "Vấn đề: beforeEach chạy cho MỌI test trong file dù test đó không cần — setup thừa, chậm.",
+                "Fixture giải quyết: mỗi test khai báo chính xác cái nó cần, Playwright chỉ setup đúng cái đó.",
+                "Fixture tự động teardown — không cần gọi afterEach thủ công, không bao giờ quên dọn dẹp."
+            ],
+            "codeExample": "// ❌ Cách cũ: beforeEach — chạy cho TẤT CẢ test, dù không cần\nlet loggedInPage: Page;\nbeforeEach(async ({ page }) => {\n  await page.goto('/login');\n  await page.fill('#email', 'user@test.com');\n  await page.fill('#password', 'secret');\n  await page.click('button[type=submit]');\n  loggedInPage = page; // biến shared → nguy hiểm khi chạy song song\n});\n\n// ✅ Cách mới: Fixture — chỉ chạy khi test nào REQUEST nó\nexport const test = base.extend<{ loggedInPage: Page }>({\n  loggedInPage: async ({ page }, use) => {\n    await page.goto('/login');\n    await page.fill('#email', 'user@test.com');\n    await page.fill('#password', 'secret');\n    await page.click('button[type=submit]');\n    await use(page);       // ← test chạy tại đây\n    // Tự cleanup sau khi test xong — không cần afterEach\n  },\n});\n\n// Test chỉ dùng fixture khi CẦN\ntest('view dashboard', async ({ loggedInPage }) => { /* ... */ });\ntest('check homepage', async ({ page }) => { /* không cần login */ });",
+            "note": "Fixture = lazy setup. Không khai báo = không chạy. Đây là lý do fixtures nhanh hơn beforeEach.",
+            "locales": {
+                "vi": {
+                    "title": "Fixtures: Tại Sao Cần? Vấn Đề Của beforeEach",
+                    "bulletPoints": [
+                        "beforeEach dùng biến shared → test song song dễ bị state leak, khó debug.",
+                        "beforeEach chạy cho MỌI test dù test đó không cần — setup thừa, chậm.",
+                        "Fixture: mỗi test khai báo chính xác cái nó cần, Playwright chỉ setup đúng cái đó.",
+                        "Fixture tự động teardown — không cần afterEach, không bao giờ quên dọn dẹp."
+                    ],
+                    "note": "Fixture = lazy setup. Không khai báo = không chạy. Đây là lý do fixtures nhanh hơn beforeEach."
+                }
+            }
+        },
+        {
+            "slideOrder": 7,
+            "title": "Fixtures: Scope, Override & Dependency Chain",
+            "bulletPoints": [
+                "Scope 'test' (mặc định): tạo mới cho mỗi test — an toàn khi chạy song song.",
+                "Scope 'worker': share 1 instance cho tất cả test trong cùng worker — dùng cho setup đắt tiền (DB seed, browser launch).",
+                "Fixture có thể dùng fixture khác — Playwright tự resolve dependency chain theo thứ tự đúng.",
+                "Override built-in fixture (page, context, browser) để thêm behavior mà không đổi test code."
+            ],
+            "codeExample": "import { test as base, expect } from '@playwright/test';\n\ntype Fixtures = {\n  authToken: string;      // worker scope — chỉ lấy token 1 lần\n  apiClient: ApiClient;   // test scope — fresh instance mỗi test\n  adminPage: Page;        // dùng authToken bên trong\n};\n\nexport const test = base.extend<Fixtures>({\n  // Worker scope: chạy 1 lần, share cho tất cả test trong worker\n  authToken: [async ({}, use) => {\n    const token = await fetchAuthToken('admin@test.com', 'pass');\n    await use(token);\n    // teardown: có thể revoke token nếu cần\n  }, { scope: 'worker' }],\n\n  // Test scope: dùng authToken (fixture khác) làm dependency\n  adminPage: async ({ page, authToken }, use) => {\n    await page.setExtraHTTPHeaders({ Authorization: `Bearer ${authToken}` });\n    await page.goto('/admin');\n    await use(page);\n  },\n\n  // Override built-in 'page' — inject cookie cho mọi test\n  page: async ({ page }, use) => {\n    await page.context().addCookies([{ name: 'locale', value: 'vi' }]);\n    await use(page); // page bây giờ luôn có cookie locale=vi\n  },\n});\n\ntest('admin sees dashboard', async ({ adminPage }) => {\n  await expect(adminPage.getByRole('heading', { name: 'Dashboard' })).toBeVisible();\n});",
+            "note": "Dependency chain: adminPage → authToken. Playwright tự gọi authToken trước, inject kết quả vào adminPage.",
+            "locales": {
+                "vi": {
+                    "title": "Fixtures: Scope, Override & Dependency Chain",
+                    "bulletPoints": [
+                        "Scope 'test' (mặc định): tạo mới mỗi test — an toàn khi chạy song song.",
+                        "Scope 'worker': share 1 instance cho tất cả test trong worker — dùng cho setup đắt tiền.",
+                        "Fixture có thể dùng fixture khác — Playwright tự resolve dependency chain đúng thứ tự.",
+                        "Override built-in fixture (page, context) để thêm behavior mà không đổi test code."
+                    ],
+                    "note": "Dependency chain: adminPage → authToken. Playwright tự gọi authToken trước, inject kết quả vào adminPage."
+                }
+            }
+        },
+        {
+            "slideOrder": 8,
+            "title": "Fixtures: Page Object Model Pattern",
+            "bulletPoints": [
+                "Page Object Model (POM): đóng gói selector và action của 1 trang vào 1 class — test code không biết CSS selector.",
+                "Khi UI thay đổi (selector đổi), chỉ cần sửa 1 chỗ trong Page Object — không phải sửa 50 test.",
+                "Kết hợp POM + Fixture: test nhận ngay page object đã sẵn sàng — sạch, đọc như ngôn ngữ tự nhiên.",
+                "Tổ chức: tạo thư mục fixtures/ với file riêng cho mỗi page (LoginPage, CartPage, CheckoutPage)."
+            ],
+            "codeExample": "// fixtures/LoginPage.ts — đóng gói toàn bộ login flow\nexport class LoginPage {\n  constructor(private page: Page) {}\n\n  async goto() {\n    await this.page.goto('/login');\n  }\n  async login(email: string, password: string) {\n    await this.page.getByLabel('Email').fill(email);\n    await this.page.getByLabel('Mật khẩu').fill(password);\n    await this.page.getByRole('button', { name: 'Đăng nhập' }).click();\n    await this.page.waitForURL('/dashboard'); // chờ redirect\n  }\n  async getErrorMessage() {\n    return this.page.getByRole('alert').textContent();\n  }\n}\n\n// fixtures/index.ts — kết hợp POM + Fixture\nimport { test as base } from '@playwright/test';\ntype MyFixtures = { loginPage: LoginPage };\n\nexport const test = base.extend<MyFixtures>({\n  loginPage: async ({ page }, use) => {\n    await use(new LoginPage(page));\n  },\n});\n\n// test/auth.spec.ts — test code đọc như tiếng Anh tự nhiên\ntest('login thành công', async ({ loginPage }) => {\n  await loginPage.goto();\n  await loginPage.login('user@test.com', 'Secret123');\n  // Không có selector nào ở đây — nếu UI thay đổi, chỉ sửa LoginPage.ts\n});\n\ntest('login thất bại với sai mật khẩu', async ({ loginPage }) => {\n  await loginPage.goto();\n  await loginPage.login('user@test.com', 'wrong');\n  expect(await loginPage.getErrorMessage()).toContain('Sai mật khẩu');\n});",
+            "note": "POM + Fixture là best practice cho Playwright E2E test ở scale. Test spec file chỉ chứa 'what to test', không chứa 'how to interact'.",
+            "locales": {
+                "vi": {
+                    "title": "Fixtures: Page Object Model Pattern",
+                    "bulletPoints": [
+                        "POM: đóng gói selector và action của 1 trang vào 1 class — test không biết CSS selector.",
+                        "Khi UI thay đổi, chỉ sửa 1 chỗ trong Page Object — không sửa 50 test.",
+                        "POM + Fixture: test nhận page object đã sẵn sàng — đọc như ngôn ngữ tự nhiên.",
+                        "Tổ chức: thư mục fixtures/ với file riêng cho từng page (LoginPage, CartPage...)."
+                    ],
+                    "note": "POM + Fixture = best practice cho Playwright E2E ở scale. Test spec chỉ chứa 'what', không chứa 'how'."
+                }
+            }
+        },
+        {
+            "slideOrder": 9,
+            "title": "Testing Next.js: RSC & Server Actions",
+            "bulletPoints": [
+                "Next.js App Router has two distinct rendering environments — Server Components (RSC) fetch data; Client Components handle interactivity.",
+                "Playwright tests the rendered HTML output — it doesn't know or care if a component is RSC or client; test user behavior, not implementation.",
+                "Server Actions (`'use server'`) can be tested via form submissions or button clicks — Playwright intercepts the resulting network request.",
+                "Use `page.route()` to mock `fetch()` calls made inside RSC on the server — intercept by URL pattern.",
+                "Test RSC loading states: wrap data-fetching RSC in `<Suspense>` — use `expect(page.getByTestId('skeleton')).toBeVisible()` before data arrives."
+            ],
+            "codeExample": "// Testing a Next.js RSC page with Suspense loading state\ntest('product page shows skeleton then data', async ({ page }) => {\n  // Slow down the API to catch the loading state\n  await page.route('*/**/api/products*', async route => {\n    await new Promise(r => setTimeout(r, 500)); // simulate latency\n    await route.fulfill({ json: { products: mockProducts } });\n  });\n\n  await page.goto('/products');\n\n  // Assert Suspense fallback (Skeleton) is shown first\n  await expect(page.getByTestId('product-skeleton')).toBeVisible();\n\n  // Then assert real data appears after fetch resolves\n  await expect(page.getByRole('heading', { name: 'MacBook Pro' })).toBeVisible();\n  await expect(page.getByTestId('product-skeleton')).not.toBeVisible();\n});\n\n// Testing a Server Action (form submit)\ntest('create product via Server Action', async ({ page }) => {\n  await page.goto('/products/new');\n  await page.getByLabel('Product Name').fill('New Item');\n  await page.getByLabel('Price').fill('99.99');\n\n  // Intercept the Server Action POST request\n  const actionRequest = page.waitForRequest(r => r.url().includes('/products/new'));\n  await page.getByRole('button', { name: 'Create' }).click();\n  await actionRequest;\n\n  // Assert redirect to product list after successful creation\n  await page.waitForURL('/products');\n  await expect(page.getByText('New Item')).toBeVisible();\n});",
+            "note": "Never test that something is a Server Component — test that the page renders correctly and behaves as expected from the user's perspective.",
+            "locales": {
+                "vi": {
+                    "title": "Testing Next.js: RSC & Server Actions",
+                    "bulletPoints": [
+                        "Next.js App Router có 2 môi trường render — RSC fetch data; Client Components xử lý tương tác.",
+                        "Playwright test output HTML — không quan tâm component là RSC hay client; test hành vi người dùng.",
+                        "Server Actions có thể test qua form submit hay button click — Playwright chặn network request kết quả.",
+                        "Dùng `page.route()` để mock `fetch()` trong RSC phía server — chặn theo URL pattern.",
+                        "Test RSC loading states: bọc RSC trong `<Suspense>` — kiểm tra skeleton trước khi data đến."
+                    ],
+                    "note": "Không test rằng component là Server Component — test rằng trang render đúng và hành xử đúng từ góc nhìn người dùng."
+                }
+            }
+        },
+        {
+            "slideOrder": 10,
+            "title": "Testing Next.js: Auth, Middleware & Protected Routes",
+            "bulletPoints": [
+                "Problem: every E2E test that needs auth reruns the full login flow — slow and brittle.",
+                "Solution: use `storageState` to save authenticated browser state (cookies + localStorage) once, reuse across all tests.",
+                "Pattern: `global-setup.ts` logs in once → saves to `auth/user.json` → tests load that state via `storageState` config.",
+                "Testing Next.js Middleware: verify redirects work — unauthenticated user hitting `/dashboard` should land at `/login`.",
+                "Multi-role testing: create separate storage state files (`admin.json`, `user.json`, `guest.json`) — each test picks its role."
+            ],
+            "codeExample": "// playwright.config.ts — global setup + storageState\nexport default defineConfig({\n  globalSetup: './global-setup.ts',\n  projects: [\n    { name: 'setup', testMatch: /global-setup.ts/ },\n    {\n      name: 'authenticated',\n      use: { storageState: 'playwright/.auth/user.json' },\n      dependencies: ['setup'],\n    },\n    {\n      name: 'admin',\n      use: { storageState: 'playwright/.auth/admin.json' },\n      dependencies: ['setup'],\n    },\n  ],\n});\n\n// global-setup.ts — login once, save state\nasync function globalSetup() {\n  const browser = await chromium.launch();\n\n  // Save regular user session\n  const userPage = await browser.newPage();\n  await userPage.goto('/login');\n  await userPage.getByLabel('Email').fill('user@test.com');\n  await userPage.getByLabel('Password').fill('secret');\n  await userPage.getByRole('button', { name: 'Login' }).click();\n  await userPage.waitForURL('/dashboard');\n  await userPage.context().storageState({ path: 'playwright/.auth/user.json' });\n\n  await browser.close();\n}\n\n// Test middleware redirect (no auth needed — no project dependency)\ntest('middleware redirects unauthenticated user', async ({ page }) => {\n  await page.goto('/dashboard');         // try to access protected route\n  await expect(page).toHaveURL('/login'); // middleware should redirect\n});",
+            "note": "storageState eliminates repeated logins — a 200-test suite runs in the same time as it took to login 200 times before.",
+            "locales": {
+                "vi": {
+                    "title": "Testing Next.js: Auth, Middleware & Protected Routes",
+                    "bulletPoints": [
+                        "Vấn đề: mỗi E2E test cần auth đều chạy lại toàn bộ login flow — chậm và dễ vỡ.",
+                        "Giải pháp: dùng `storageState` lưu trạng thái browser đã xác thực một lần, tái sử dụng cho tất cả test.",
+                        "Pattern: `global-setup.ts` login một lần → lưu vào `auth/user.json` → test load state đó qua config.",
+                        "Test Next.js Middleware: xác minh redirect hoạt động — user chưa auth vào `/dashboard` phải đến `/login`.",
+                        "Multi-role testing: tạo storage state riêng (`admin.json`, `user.json`) — mỗi test chọn role của mình."
+                    ],
+                    "note": "storageState loại bỏ login lặp lại — suite 200 test chạy nhanh như trước đây mất thời gian login 200 lần."
+                }
+            }
+        },
+        {
+            "slideOrder": 11,
+            "title": "Visual Testing: Screenshots & Snapshot Diffing",
+            "bulletPoints": [
+                "`toHaveScreenshot()`: captures a screenshot and compares it pixel-by-pixel against a stored baseline — fails if UI drifts.",
+                "First run generates baseline snapshots in `__screenshots__/` — commit them to git as the source of truth.",
+                "Use `--update-snapshots` flag to update baselines after intentional UI changes.",
+                "Mask dynamic regions (timestamps, avatars, ads) with `mask: [page.locator('.timestamp')]` to prevent false failures.",
+                "Component-level visual testing: navigate to a Storybook story URL or a dedicated `/test/components` page — snapshot individual components."
+            ],
+            "codeExample": "// playwright.config.ts — visual testing config\nexport default defineConfig({\n  expect: {\n    toHaveScreenshot: {\n      maxDiffPixels: 100,        // allow minor anti-aliasing differences\n      threshold: 0.2,            // 20% color difference tolerance per pixel\n      animations: 'disabled',    // freeze CSS animations for stable snapshots\n    },\n  },\n});\n\n// tests/visual/product-card.spec.ts\ntest('ProductCard matches snapshot', async ({ page }) => {\n  await page.goto('/products/1');\n\n  // Wait for all images to load before snapping\n  await page.waitForLoadState('networkidle');\n\n  // Mask dynamic content (price may change, date stamps)\n  await expect(page.getByTestId('product-card')).toHaveScreenshot(\n    'product-card.png',\n    {\n      mask: [\n        page.getByTestId('last-updated'),  // dynamic timestamp\n        page.getByTestId('stock-count'),   // changes with inventory\n      ],\n    }\n  );\n});\n\n// Full page visual regression\ntest('products listing page visual regression', async ({ page }) => {\n  await page.goto('/products');\n  await page.waitForLoadState('networkidle');\n  await expect(page).toHaveScreenshot('products-page.png', {\n    fullPage: true,\n    animations: 'disabled',\n  });\n});\n\n// Update baselines: npx playwright test --update-snapshots",
+            "note": "Visual tests catch CSS regressions that unit/integration tests can't — a changed z-index or overflow: hidden can break UX without breaking any assertion.",
+            "locales": {
+                "vi": {
+                    "title": "Visual Testing: Screenshots & Snapshot Diffing",
+                    "bulletPoints": [
+                        "`toHaveScreenshot()`: chụp screenshot và so sánh pixel-by-pixel với baseline — fail nếu UI thay đổi.",
+                        "Lần đầu chạy sẽ tạo baseline trong `__screenshots__/` — commit vào git làm source of truth.",
+                        "Dùng `--update-snapshots` để cập nhật baseline sau khi thay đổi UI có chủ ý.",
+                        "Mask vùng động (timestamps, avatars) với `mask: [page.locator('.timestamp')]` để tránh false failures.",
+                        "Visual testing cấp component: điều hướng đến Storybook story URL — snapshot từng component riêng lẻ."
+                    ],
+                    "note": "Visual test bắt CSS regression mà unit/integration test không thể — z-index sai hay overflow: hidden có thể phá UX mà không vỡ bất kỳ assertion nào."
+                }
+            }
+        },
+        {
+            "slideOrder": 12,
+            "title": "Visual Testing: Dark Mode & Responsive Breakpoints",
+            "bulletPoints": [
+                "Test dark mode: use `page.emulateMedia({ colorScheme: 'dark' })` — verify Tailwind `dark:` classes apply correctly.",
+                "Test responsive breakpoints: use `page.setViewportSize()` — test mobile (375px), tablet (768px), desktop (1440px) in one spec.",
+                "Combine with `toHaveScreenshot()` to create a visual matrix: each breakpoint × each color scheme = full coverage.",
+                "Use Playwright projects to run visual tests on multiple devices (iPhone 13, iPad, Desktop) via `devices` config.",
+                "React/Next.js specific: verify Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) render correctly at each breakpoint."
+            ],
+            "codeExample": "import { test, expect, devices } from '@playwright/test';\n\n// playwright.config.ts — multi-device projects\nexport default defineConfig({\n  projects: [\n    { name: 'desktop',  use: { viewport: { width: 1440, height: 900 } } },\n    { name: 'tablet',   use: { ...devices['iPad Pro'] } },\n    { name: 'mobile',   use: { ...devices['iPhone 13'] } },\n  ],\n});\n\n// tests/visual/responsive.spec.ts\ntest('navbar collapses to hamburger on mobile', async ({ page }) => {\n  // This test runs on all 3 projects above automatically\n  await page.goto('/products');\n  await page.waitForLoadState('networkidle');\n  await expect(page).toHaveScreenshot(`navbar-${page.viewportSize()?.width}.png`);\n});\n\n// Dark mode visual test\ntest('product card in dark mode', async ({ page }) => {\n  await page.emulateMedia({ colorScheme: 'dark' });\n  await page.goto('/products/1');\n  await page.waitForLoadState('networkidle');\n  await expect(page.getByTestId('product-card')).toHaveScreenshot(\n    'product-card-dark.png'\n  );\n});\n\n// Light vs Dark comparison\nfor (const scheme of ['light', 'dark'] as const) {\n  test(`checkout page in ${scheme} mode`, async ({ page }) => {\n    await page.emulateMedia({ colorScheme: scheme });\n    await page.goto('/checkout');\n    await expect(page).toHaveScreenshot(`checkout-${scheme}.png`, { fullPage: true });\n  });\n}",
+            "note": "Automating dark mode + responsive visual tests catches the most common Tailwind regression: a `dark:` class added to one component but missing from a related one.",
+            "locales": {
+                "vi": {
+                    "title": "Visual Testing: Dark Mode & Responsive Breakpoints",
+                    "bulletPoints": [
+                        "Test dark mode: dùng `page.emulateMedia({ colorScheme: 'dark' })` — xác minh các class `dark:` của Tailwind áp dụng đúng.",
+                        "Test responsive breakpoints: dùng `page.setViewportSize()` — test mobile (375px), tablet (768px), desktop (1440px) trong 1 spec.",
+                        "Kết hợp `toHaveScreenshot()` để tạo visual matrix: mỗi breakpoint × mỗi color scheme = coverage đầy đủ.",
+                        "Dùng Playwright projects để chạy visual test trên nhiều thiết bị (iPhone 13, iPad, Desktop) qua config `devices`.",
+                        "React/Next.js: xác minh các responsive prefix của Tailwind (`sm:`, `md:`, `lg:`) render đúng tại mỗi breakpoint."
+                    ],
+                    "note": "Tự động dark mode + responsive visual test bắt được regression Tailwind phổ biến nhất: class `dark:` thêm vào 1 component nhưng thiếu ở component liên quan."
+                }
+            }
+        },
+        {
+            "slideOrder": 13,
+            "title": "Parallel Execution & Sharding",
+            "bulletPoints": [
+                "Playwright runs tests in parallel by default — each test file gets its own browser worker, fully isolated.",
+                "`workers` config: set to `50%` (use half the CPU cores) locally; set to `1` on CI to avoid resource contention.",
+                "Sharding splits your test suite across multiple CI machines — `--shard=1/3` runs the first third of test files.",
+                "Merge sharded reports: each shard outputs a blob report → merge with `npx playwright merge-reports` for one unified HTML report.",
+                "Parallelism anti-pattern: tests that share a database without cleanup — use `test.describe.configure({ mode: 'serial' })` for dependent test groups."
+            ],
+            "codeExample": "// playwright.config.ts\nexport default defineConfig({\n  // Run test files in parallel (default). Each file = isolated worker.\n  fullyParallel: true,\n\n  // Use 50% of CPUs locally; override to 4 on CI via env var\n  workers: process.env.CI ? 4 : '50%',\n\n  // Retry flaky tests once on CI\n  retries: process.env.CI ? 1 : 0,\n});\n\n// --- Sharding on GitHub Actions ---\n# .github/workflows/playwright.yml\nstrategy:\n  matrix:\n    shard: [1, 2, 3]  # 3 parallel CI jobs\n\nsteps:\n  - name: Run Playwright (shard ${{ matrix.shard }}/3)\n    run: npx playwright test --shard=${{ matrix.shard }}/3\n         --reporter=blob  # each shard outputs blob\n\n  - uses: actions/upload-artifact@v4\n    with:\n      name: blob-report-${{ matrix.shard }}\n      path: blob-report/\n\n# Merge job (after all shards complete)\n  - name: Merge reports\n    run: npx playwright merge-reports --reporter=html ./all-blob-reports\n\n// Serial mode for dependent tests (e.g. create → edit → delete)\ntest.describe.configure({ mode: 'serial' });\ntest('create product', ...);\ntest('edit product',   ...);\ntest('delete product', ...);",
+            "note": "3 shards on CI: a 300-test suite that takes 10 minutes on 1 machine completes in ~3.5 minutes (accounting for startup overhead).",
+            "locales": {
+                "vi": {
+                    "title": "Parallel Execution & Sharding",
+                    "bulletPoints": [
+                        "Playwright chạy test song song mặc định — mỗi file test có worker browser riêng, hoàn toàn cô lập.",
+                        "Config `workers`: đặt `50%` (dùng nửa CPU) ở local; đặt số cố định trên CI để tránh resource contention.",
+                        "Sharding chia suite test qua nhiều CI machine — `--shard=1/3` chạy 1/3 đầu của các file test.",
+                        "Merge sharded reports: mỗi shard xuất blob report → merge bằng `npx playwright merge-reports`.",
+                        "Anti-pattern song song: test dùng chung database không cleanup — dùng `mode: 'serial'` cho group test phụ thuộc nhau."
+                    ],
+                    "note": "3 shards trên CI: suite 300 test mất 10 phút trên 1 máy hoàn thành trong ~3.5 phút (tính cả overhead khởi động)."
+                }
+            }
+        },
+        {
+            "slideOrder": 14,
+            "title": "CI/CD Integration: GitHub Actions",
+            "bulletPoints": [
+                "Official Playwright GitHub Action: installs browsers, caches them between runs, uploads HTML report as artifact.",
+                "Recommended CI strategy: run Playwright on `push` to `main` and on all PRs targeting `main`.",
+                "Use `next start` (production build) for E2E tests on CI — never test against `next dev`, which has different behavior.",
+                "Cache Playwright browsers with `actions/cache` keyed on Playwright version — saves ~30 seconds per run.",
+                "Fail fast: set `--reporter=github` to annotate the PR diff directly with failing test locations."
+            ],
+            "codeExample": "# .github/workflows/playwright.yml\nname: Playwright E2E Tests\n\non:\n  push:  { branches: [main] }\n  pull_request: { branches: [main] }\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n\n      - uses: pnpm/action-setup@v3\n        with: { version: 9 }\n\n      - uses: actions/setup-node@v4\n        with: { node-version: 20, cache: 'pnpm' }\n\n      - run: pnpm install --frozen-lockfile\n\n      # Cache Playwright browsers (saves ~30s per run)\n      - uses: actions/cache@v4\n        id: playwright-cache\n        with:\n          path: ~/.cache/ms-playwright\n          key: playwright-${{ runner.os }}-${{ hashFiles('**/package.json') }}\n\n      - run: pnpm exec playwright install --with-deps\n        if: steps.playwright-cache.outputs.cache-hit != 'true'\n\n      # Build Next.js for production-accurate E2E testing\n      - run: pnpm build\n      - run: pnpm exec playwright test\n             --reporter=github,html\n        env:\n          PORT: 3000\n          NODE_ENV: production\n\n      # Upload HTML report as PR artifact\n      - uses: actions/upload-artifact@v4\n        if: always()   # upload even on failure\n        with:\n          name: playwright-report\n          path: playwright-report/\n          retention-days: 14",
+            "note": "Always build with `next build` before E2E on CI — `next dev` has HMR overhead and different error boundaries that can cause false test failures.",
+            "locales": {
+                "vi": {
+                    "title": "CI/CD Integration: GitHub Actions",
+                    "bulletPoints": [
+                        "Official Playwright GitHub Action: cài browsers, cache giữa các run, upload HTML report làm artifact.",
+                        "Chiến lược CI khuyến nghị: chạy Playwright khi push lên `main` và trên tất cả PR nhắm vào `main`.",
+                        "Dùng `next start` (production build) cho E2E trên CI — không bao giờ test với `next dev`.",
+                        "Cache Playwright browsers với `actions/cache` key theo Playwright version — tiết kiệm ~30 giây mỗi run.",
+                        "Fail fast: dùng `--reporter=github` để annotate trực tiếp vào diff của PR vị trí test thất bại."
+                    ],
+                    "note": "Luôn build với `next build` trước E2E trên CI — `next dev` có HMR overhead và error boundaries khác có thể gây false failures."
+                }
+            }
+        },
+        {
+            "slideOrder": 15,
+            "title": "Tracing & Debugging: Playwright Inspector",
+            "bulletPoints": [
+                "Playwright Trace Viewer records every action, network request, console log, and DOM snapshot — replay failures like a DVR.",
+                "Enable traces on CI with `trace: 'on-first-retry'` — only records when a test fails, keeping storage costs low.",
+                "Local debugging: `PWDEBUG=1 npx playwright test` opens Playwright Inspector — step through actions with a visual timeline.",
+                "Use `page.pause()` inside a test to freeze execution — inspect the live DOM in the Inspector before continuing.",
+                "VS Code extension: run/debug individual tests with breakpoints directly in the editor — no terminal needed."
+            ],
+            "codeExample": "// playwright.config.ts — enable trace on retry\nexport default defineConfig({\n  use: {\n    // Record trace only when test retries (CI-friendly)\n    trace: 'on-first-retry',\n\n    // Screenshot on failure\n    screenshot: 'only-on-failure',\n\n    // Slow down actions for local debugging\n    // launchOptions: { slowMo: 500 },\n  },\n});\n\n// View trace after a CI failure:\n// 1. Download playwright-report artifact from GitHub Actions\n// 2. Run: npx playwright show-report playwright-report/\n// 3. Click the failing test → open trace viewer\n\n// Debug a flaky test locally:\n// Option A: Playwright Inspector (step-by-step)\n// PWDEBUG=1 npx playwright test tests/checkout.spec.ts\n\n// Option B: pause inside the test at a specific point\ntest('debug checkout flow', async ({ page }) => {\n  await page.goto('/checkout');\n  await page.getByRole('button', { name: 'Add to Cart' }).click();\n\n  await page.pause(); // ← FREEZES here, open Inspector to inspect DOM\n\n  await page.getByRole('button', { name: 'Checkout' }).click();\n});\n\n// Option C: headed mode with slow-mo\n// npx playwright test --headed --slow-mo=500",
+            "note": "Trace Viewer is the most powerful debugging tool in the Playwright ecosystem — use it before reaching for console.log().",
+            "locales": {
+                "vi": {
+                    "title": "Tracing & Debugging: Playwright Inspector",
+                    "bulletPoints": [
+                        "Playwright Trace Viewer ghi lại mọi action, network request, console log, DOM snapshot — replay thất bại như DVR.",
+                        "Bật trace trên CI với `trace: 'on-first-retry'` — chỉ ghi khi test fail, giữ chi phí lưu trữ thấp.",
+                        "Debug local: `PWDEBUG=1 npx playwright test` mở Playwright Inspector — step qua actions với visual timeline.",
+                        "Dùng `page.pause()` trong test để đóng băng thực thi — kiểm tra DOM trực tiếp trong Inspector trước khi tiếp tục.",
+                        "VS Code extension: chạy/debug từng test với breakpoints ngay trong editor — không cần terminal."
+                    ],
+                    "note": "Trace Viewer là công cụ debug mạnh nhất trong Playwright — dùng nó trước khi với tới console.log()."
+                }
+            }
+        },
+        {
+            "slideOrder": 16,
+            "title": "Tracing & Debugging: Diagnosing Flaky Tests",
+            "bulletPoints": [
+                "Flaky test = passes and fails non-deterministically — root causes: timing issues, shared state, network variance, animation interference.",
+                "Rule 1: Never use `page.waitForTimeout()` (hardcoded sleep) — replace with `expect(locator).toBeVisible()` which auto-retries.",
+                "Rule 2: Isolate shared state — each test must set up and tear down its own data; never depend on test execution order.",
+                "Rule 3: Disable animations in tests (`animations: 'disabled'` in config) — CSS transitions cause screenshot diff failures.",
+                "Rule 4: Use `expect.soft()` for non-critical assertions — test continues even if soft assertion fails, collecting all failures at once."
+            ],
+            "codeExample": "// ❌ Anti-patterns that cause flaky tests\ntest('flaky — hardcoded sleep', async ({ page }) => {\n  await page.click('#submit');\n  await page.waitForTimeout(2000); // ← NEVER do this — arbitrary, slow\n  expect(await page.textContent('#result')).toBe('Success');\n});\n\n// ✅ Fix: use auto-retrying assertion\ntest('stable — auto-retry', async ({ page }) => {\n  await page.click('#submit');\n  await expect(page.getByText('Success')).toBeVisible(); // retries until visible\n});\n\n// ❌ Anti-pattern: test depends on previous test's data\ntest('flaky — order dependent', async ({ page }) => {\n  await page.goto('/products'); // assumes test before created a product\n  await expect(page.getByText('New Item')).toBeVisible();\n});\n\n// ✅ Fix: each test creates its own data\ntest('stable — self-contained', async ({ page, request }) => {\n  // Create data via API (faster than UI)\n  await request.post('/api/products', { data: { name: 'Test Item' } });\n  await page.goto('/products');\n  await expect(page.getByText('Test Item')).toBeVisible();\n  // Cleanup: delete the product after test\n  await request.delete('/api/products/test-item');\n});\n\n// expect.soft() — collect multiple failures in 1 run\ntest('dashboard metrics', async ({ page }) => {\n  await page.goto('/dashboard');\n  await expect.soft(page.getByTestId('revenue')).toBeVisible();    // continues even if fails\n  await expect.soft(page.getByTestId('user-count')).toBeVisible(); // continues\n  await expect.soft(page.getByTestId('orders')).toBeVisible();     // continues\n  // Report ALL soft failures at the end\n});",
+            "note": "If a test is flaky, add `test.only` and run 20 times with `--repeat-each=20` to reliably reproduce the failure before fixing it.",
+            "locales": {
+                "vi": {
+                    "title": "Tracing & Debugging: Chẩn Đoán Flaky Tests",
+                    "bulletPoints": [
+                        "Flaky test = pass và fail không nhất quán — nguyên nhân: timing, shared state, network variance, animation.",
+                        "Quy tắc 1: Không dùng `page.waitForTimeout()` (sleep cứng) — thay bằng `expect(locator).toBeVisible()` tự retry.",
+                        "Quy tắc 2: Cô lập shared state — mỗi test tự setup và teardown data; không phụ thuộc thứ tự chạy.",
+                        "Quy tắc 3: Tắt animation trong test (`animations: 'disabled'`) — CSS transition gây screenshot diff failures.",
+                        "Quy tắc 4: Dùng `expect.soft()` cho assertion không quan trọng — test tiếp tục để thu thập tất cả failures cùng lúc."
+                    ],
+                    "note": "Khi test flaky, thêm `test.only` và chạy 20 lần với `--repeat-each=20` để tái tạo thất bại đáng tin cậy trước khi sửa."
+                }
+            }
+        }
+    ]
+}

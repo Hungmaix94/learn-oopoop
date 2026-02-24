@@ -3,45 +3,193 @@
     "slides": [
         {
             "slideOrder": 1,
-            "title": "Mocking Providers & Context",
+            "title": "Mocking Providers & Context — Vấn Đề Thực Tế",
             "bulletPoints": [
-                "Many components rely on Contexts (Theme, Auth, Redux, React Query).",
-                "They will crash if rendered directly without their providers.",
-                "The solution is to use the 'wrapper' option in the 'render' function."
+                "Component dùng useContext, Redux, React Query, i18n... sẽ crash nếu render trực tiếp không có Provider.",
+                "Giải pháp đơn giản: truyền wrapper vào render() — một component bọc tất cả Provider cần thiết.",
+                "Tốt hơn: tạo custom renderWithProviders() trong test/utils.tsx để tái sử dụng ở mọi test file.",
+                "Custom render cho phép override từng Provider cho từng test case — ví dụ test với user khác nhau."
             ],
-            "codeExample": "import { render, screen } from '@testing-library/react';\nimport { ThemeProvider } from './ThemeContext';\nimport UserProfile from './UserProfile';\n\nconst AllTheProviders = ({ children }) => {\n  return (\n    <ThemeProvider theme=\"dark\">\n      {children}\n    </ThemeProvider>\n  );\n};\n\ntest('renders wrapped component without crashing', () => {\n  render(<UserProfile />, { wrapper: AllTheProviders });\n  expect(screen.getByText('Dark Mode User Profile')).toBeVisible();\n});",
-            "note": "For large apps, create a custom 'render' function in a setup file that automatically wraps all components in necessary providers.",
+            "codeExample": "// test/utils.tsx — custom render dùng cho toàn dự án\nimport { render, RenderOptions } from '@testing-library/react';\nimport { QueryClient, QueryClientProvider } from '@tanstack/react-query';\nimport { AuthProvider } from '@/context/AuthContext';\n\ninterface CustomRenderOptions extends RenderOptions {\n  initialUser?: { name: string; role: string };\n}\n\nexport function renderWithProviders(\n  ui: React.ReactElement,\n  { initialUser = { name: 'Test User', role: 'user' }, ...options }: CustomRenderOptions = {}\n) {\n  const queryClient = new QueryClient({\n    defaultOptions: { queries: { retry: false } }, // không retry trong test\n  });\n\n  function Wrapper({ children }: { children: React.ReactNode }) {\n    return (\n      <QueryClientProvider client={queryClient}>\n        <AuthProvider initialUser={initialUser}>\n          {children}\n        </AuthProvider>\n      </QueryClientProvider>\n    );\n  }\n\n  return render(ui, { wrapper: Wrapper, ...options });\n}\n\n// Dùng trong test\ntest('admin thấy nút xóa', () => {\n  renderWithProviders(<UserCard userId=\"1\" />, {\n    initialUser: { name: 'Admin', role: 'admin' },\n  });\n  expect(screen.getByRole('button', { name: /xóa/i })).toBeInTheDocument();\n});",
+            "note": "Đặt retry: false trong QueryClient test — không muốn test chờ 3 lần retry mới fail, làm test chậm.",
             "locales": {
                 "vi": {
-                    "title": "Giả Lập Providers & Context",
+                    "title": "Mocking Providers & Context",
                     "bulletPoints": [
-                        "Nhiều component dựa vào Context (Theme, Auth, Redux, React Query).",
-                        "Chúng sẽ crash nếu render trực tiếp mà không có provider.",
-                        "Giải pháp là dùng tùy chọn 'wrapper' trong hàm 'render'."
+                        "Component dùng Context/Redux/React Query crash khi render không có Provider.",
+                        "wrapper option trong render() — bọc Provider cần thiết.",
+                        "Custom renderWithProviders() tái sử dụng ở mọi test file.",
+                        "Override từng Provider cho từng test case — test với user/role khác nhau."
                     ],
-                    "note": "Với app lớn, hãy tạo hàm 'render' tùy chỉnh trong file setup để tự động bọc tất cả components với các provider cần thiết."
+                    "note": "QueryClient test: đặt retry: false — không muốn chờ 3 lần retry mới fail."
                 }
             }
         },
         {
             "slideOrder": 2,
-            "title": "Mocking APIs with MSW",
+            "title": "Mock Service Worker (MSW) — Setup & Cách Hoạt Động",
             "bulletPoints": [
-                "Mocking 'fetch' or 'axios' manually is brittle and hard to maintain.",
-                "Mock Service Worker (MSW) intercepts requests at the network level in Node/jsdom.",
-                "Your application code (like React Query or useEffect) operates exactly as if hitting a real server."
+                "MSW intercept HTTP request ở tầng network (Service Worker trong browser, Node interceptor trong test) — không cần sửa code application.",
+                "Định nghĩa handlers: http.get/post/put/delete với URL pattern và response → dùng lại trong nhiều test.",
+                "server.resetHandlers() trong afterEach — xóa override của test trước, tránh state leak.",
+                "Override handler cho 1 test cụ thể: server.use(http.get(...)) — chỉ active trong test đó."
             ],
-            "codeExample": "import { setupServer } from 'msw/node';\nimport { http, HttpResponse } from 'msw';\n\n// Define network stub\nconst server = setupServer(\n  http.get('https://api.example.com/user', () => {\n    return HttpResponse.json({ name: 'Jane Mocked' });\n  })\n);\n\n// Standard test runner hooks\nbeforeAll(() => server.listen());\nafterEach(() => server.resetHandlers());\nafterAll(() => server.close());\n\ntest('displays user from mocked API', async () => {\n  render(<UserDashboard />);\n  \n  // Use findBy to wait for async resolution\n  const userName = await screen.findByText('Jane Mocked');\n  expect(userName).toBeVisible();\n});",
-            "note": "MSW is widely considered the industry standard for testing frontend applications connecting to REST or GraphQL APIs.",
+            "codeExample": "// test/mocks/handlers.ts — định nghĩa response mặc định\nimport { http, HttpResponse } from 'msw';\n\nexport const handlers = [\n  http.get('/api/products', () => {\n    return HttpResponse.json([\n      { id: 1, name: 'Áo thun', price: 150000 },\n      { id: 2, name: 'Quần jean', price: 450000 },\n    ]);\n  }),\n  http.post('/api/cart', async ({ request }) => {\n    const body = await request.json();\n    return HttpResponse.json({ success: true, item: body }, { status: 201 });\n  }),\n];\n\n// test/mocks/server.ts\nimport { setupServer } from 'msw/node';\nimport { handlers } from './handlers';\nexport const server = setupServer(...handlers);\n\n// test/setup.ts\nimport { server } from './mocks/server';\nbeforeAll(() => server.listen({ onUnhandledRequest: 'error' }));\nafterEach(() => server.resetHandlers()); // reset override\nafterAll(() => server.close());\n\n// Test override cho trường hợp lỗi\ntest('hiển thị empty state khi không có sản phẩm', async () => {\n  server.use(\n    http.get('/api/products', () => HttpResponse.json([]))\n  );\n  render(<ProductList />);\n  expect(await screen.findByText('Chưa có sản phẩm')).toBeInTheDocument();\n});",
+            "note": "onUnhandledRequest: 'error' — test sẽ fail nếu component gọi API không có handler. Giúp phát hiện API call không mong muốn.",
             "locales": {
                 "vi": {
-                    "title": "Giả Lập API với MSW",
+                    "title": "Mock Service Worker — Setup & Cách Hoạt Động",
                     "bulletPoints": [
-                        "Giả lập 'fetch' hay 'axios' thủ công dễ vỡ và khó bảo trì.",
-                        "Mock Service Worker (MSW) chặn request ở tầng mạng trong Node/jsdom.",
-                        "Code ứng dụng (như React Query hay useEffect) hoạt động y hệt như đang gọi server thực."
+                        "MSW intercept ở tầng network — không cần sửa code application.",
+                        "Handlers: http.get/post với URL pattern và response — dùng lại nhiều test.",
+                        "server.resetHandlers() trong afterEach — tránh state leak giữa các test.",
+                        "server.use() override handler cho 1 test cụ thể — test error state."
                     ],
-                    "note": "MSW được xem là chuẩn công nghiệp để test ứng dụng frontend kết nối REST hoặc GraphQL APIs."
+                    "note": "onUnhandledRequest: 'error' — test fail nếu gọi API không có handler. Phát hiện API call không mong muốn."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "jest.fn() & vi.fn() — Mock Functions",
+            "bulletPoints": [
+                "jest.fn() / vi.fn() tạo mock function: tracking số lần gọi, arguments, return value.",
+                "mockReturnValue() / mockResolvedValue(): kiểm soát giá trị trả về — sync và async.",
+                "jest.spyOn(): mock method của object có sẵn — có thể restore về original sau test.",
+                "Assertions: toHaveBeenCalled(), toHaveBeenCalledWith(), toHaveBeenCalledTimes()."
+            ],
+            "codeExample": "import { vi, expect } from 'vitest'; // hoặc jest.*\n\n// 1. Mock function đơn giản\nconst onSubmit = vi.fn();\nrender(<Form onSubmit={onSubmit} />);\nawait userEvent.click(screen.getByRole('button', { name: /gửi/i }));\n\nexpect(onSubmit).toHaveBeenCalledTimes(1);\nexpect(onSubmit).toHaveBeenCalledWith({\n  name: 'Nguyễn Văn An',\n  email: 'an@example.com',\n});\n\n// 2. Mock async function\nconst fetchUser = vi.fn().mockResolvedValue({ id: 1, name: 'Test User' });\n\n// 3. Mock return khác nhau mỗi lần gọi\nconst generateId = vi.fn()\n  .mockReturnValueOnce('id-001')\n  .mockReturnValueOnce('id-002');\n\n// 4. vi.spyOn — mock method của module/object\nimport * as authModule from '@/lib/auth';\nconst spy = vi.spyOn(authModule, 'getCurrentUser')\n  .mockReturnValue({ id: '1', name: 'Admin', role: 'admin' });\n\n// ... run test ...\n\n// Restore về original sau test\nspy.mockRestore();\n\n// 5. Clear giữa các test\nafterEach(() => vi.clearAllMocks()); // reset calls/results nhưng giữ implementation",
+            "note": "vi.clearAllMocks() reset số lần gọi. vi.resetAllMocks() xóa cả implementation. vi.restoreAllMocks() restore spy về original.",
+            "locales": {
+                "vi": {
+                    "title": "jest.fn() & vi.fn() — Mock Functions",
+                    "bulletPoints": [
+                        "vi.fn() tạo mock function — tracking số lần gọi, arguments, return value.",
+                        "mockResolvedValue(): kiểm soát giá trị trả về của async function.",
+                        "vi.spyOn(): mock method của object có sẵn, restore về original sau test.",
+                        "toHaveBeenCalledWith(): assert arguments đúng không."
+                    ],
+                    "note": "clearAllMocks() reset calls. resetAllMocks() xóa implementation. restoreAllMocks() restore spy."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "vi.mock() — Mock Toàn Bộ Module",
+            "bulletPoints": [
+                "vi.mock('module-path') thay thế toàn bộ module bằng mock — tất cả exports trở thành vi.fn().",
+                "Mock module được hoist lên đầu file tự động — chạy trước cả import statement.",
+                "vi.mock() với factory function: kiểm soát chính xác từng export của module.",
+                "Dùng khi cần mock: custom hooks, utility functions, third-party SDKs (firebase, supabase...)."
+            ],
+            "codeExample": "// Mock custom hook — useAuth trả về user giả\nvi.mock('@/hooks/useAuth', () => ({\n  useAuth: vi.fn().mockReturnValue({\n    user: { id: '1', name: 'Test User', role: 'admin' },\n    isLoading: false,\n    logout: vi.fn(),\n  }),\n}));\n\n// Mock router Next.js\nvi.mock('next/navigation', () => ({\n  useRouter: vi.fn().mockReturnValue({\n    push: vi.fn(),\n    replace: vi.fn(),\n    back: vi.fn(),\n  }),\n  usePathname: vi.fn().mockReturnValue('/dashboard'),\n}));\n\n// Test component dùng useAuth\ntest('admin thấy dashboard link', () => {\n  render(<Navbar />);\n  expect(screen.getByRole('link', { name: /quản trị/i })).toBeInTheDocument();\n});\n\n// Override mock cho 1 test cụ thể\ntest('ẩn dashboard link khi không phải admin', () => {\n  const { useAuth } = await import('@/hooks/useAuth');\n  (useAuth as ReturnType<typeof vi.fn>).mockReturnValueOnce({\n    user: { id: '2', name: 'User', role: 'user' },\n    isLoading: false,\n    logout: vi.fn(),\n  });\n  render(<Navbar />);\n  expect(screen.queryByRole('link', { name: /quản trị/i })).not.toBeInTheDocument();\n});",
+            "note": "vi.mock() được hoist — không thể dùng biến ngoài scope trong factory function (sẽ là undefined). Dùng vi.fn() trực tiếp thay vì biến.",
+            "locales": {
+                "vi": {
+                    "title": "vi.mock() — Mock Toàn Bộ Module",
+                    "bulletPoints": [
+                        "vi.mock() thay toàn bộ module — tất cả exports trở thành vi.fn().",
+                        "Mock được hoist lên đầu file — chạy trước import statement.",
+                        "Factory function: kiểm soát chính xác từng export.",
+                        "Dùng cho: custom hooks, router, third-party SDKs (firebase, supabase...)."
+                    ],
+                    "note": "vi.mock() hoist — không dùng biến ngoài scope trong factory (sẽ undefined). Dùng vi.fn() trực tiếp."
+                }
+            }
+        },
+        {
+            "slideOrder": 5,
+            "title": "Testing React Query — Async Data Fetching",
+            "bulletPoints": [
+                "React Query component cần QueryClientProvider — tạo fresh QueryClient cho mỗi test (không share state).",
+                "Kết hợp MSW + React Query: MSW intercept fetch → React Query nhận response thật → test giống production.",
+                "Dùng waitFor hoặc findBy để chờ query hoàn thành trước khi assert.",
+                "Test loading/error/success states bằng cách control MSW response."
+            ],
+            "codeExample": "import { QueryClient, QueryClientProvider } from '@tanstack/react-query';\nimport { server } from '../mocks/server';\nimport { http, HttpResponse } from 'msw';\n\n// Helper: fresh QueryClient không retry\nfunction createTestQueryClient() {\n  return new QueryClient({\n    defaultOptions: {\n      queries: { retry: false, gcTime: 0 },\n    },\n  });\n}\n\nfunction renderWithQuery(ui: React.ReactElement) {\n  const queryClient = createTestQueryClient();\n  return render(\n    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>\n  );\n}\n\n// Test success state\ntest('hiển thị danh sách sản phẩm', async () => {\n  // MSW đã setup: GET /api/products trả về 2 sản phẩm\n  renderWithQuery(<ProductList />);\n\n  // Loading state\n  expect(screen.getByText(/đang tải/i)).toBeInTheDocument();\n\n  // Success state sau khi fetch xong\n  expect(await screen.findByText('Áo thun')).toBeInTheDocument();\n  expect(screen.getByText('Quần jean')).toBeInTheDocument();\n});\n\n// Test error state\ntest('hiển thị lỗi khi API fail', async () => {\n  server.use(\n    http.get('/api/products', () =>\n      HttpResponse.json({ message: 'Server Error' }, { status: 500 })\n    )\n  );\n  renderWithQuery(<ProductList />);\n  expect(await screen.findByText(/lỗi kết nối/i)).toBeInTheDocument();\n});",
+            "note": "gcTime: 0 trong test QueryClient — xóa cache ngay sau khi unmount, tránh state leak giữa các test.",
+            "locales": {
+                "vi": {
+                    "title": "Testing React Query",
+                    "bulletPoints": [
+                        "Fresh QueryClient cho mỗi test — không share state giữa tests.",
+                        "MSW + React Query: intercept fetch → nhận response thật → giống production.",
+                        "findBy/waitFor để chờ query hoàn thành trước khi assert.",
+                        "Test loading/error/success bằng cách control MSW response."
+                    ],
+                    "note": "gcTime: 0 — xóa cache ngay sau unmount, tránh state leak."
+                }
+            }
+        },
+        {
+            "slideOrder": 6,
+            "title": "Testing với Zustand / Redux Store",
+            "bulletPoints": [
+                "Zustand: reset store giữa các test để tránh state leak — dùng store.setState() hoặc tạo fresh store.",
+                "Redux: tạo fresh store với preloadedState trong renderWithProviders — kiểm soát initial state cho mỗi test.",
+                "Không mock store — test với store thật, data giả. Component + store behavior được test cùng nhau.",
+                "Kiểm tra side effects: dispatch action → assert DOM update → assert store state."
+            ],
+            "codeExample": "// --- Zustand ---\nimport { useCartStore } from '@/store/cartStore';\n\n// Reset store sau mỗi test\nafterEach(() => {\n  useCartStore.setState({ items: [], total: 0 }); // reset về initial state\n});\n\ntest('thêm sản phẩm vào giỏ hàng', async () => {\n  const user = userEvent.setup();\n  render(<ProductCard product={{ id: 1, name: 'Áo thun', price: 150000 }} />);\n\n  await user.click(screen.getByRole('button', { name: /thêm vào giỏ/i }));\n\n  // Assert DOM\n  expect(screen.getByText('Đã thêm vào giỏ hàng')).toBeInTheDocument();\n\n  // Assert store state\n  expect(useCartStore.getState().items).toHaveLength(1);\n  expect(useCartStore.getState().items[0].id).toBe(1);\n});\n\n// --- Redux ---\nimport { configureStore } from '@reduxjs/toolkit';\nimport cartReducer from '@/store/cartSlice';\n\nfunction renderWithRedux(ui, preloadedState = {}) {\n  const store = configureStore({\n    reducer: { cart: cartReducer },\n    preloadedState,\n  });\n  return render(<Provider store={store}>{ui}</Provider>);\n}\n\ntest('giỏ hàng rỗng hiển thị message', () => {\n  renderWithRedux(<CartPage />, { cart: { items: [] } });\n  expect(screen.getByText('Giỏ hàng trống')).toBeInTheDocument();\n});",
+            "note": "Zustand: useStore.setState() reset toàn bộ state, bao gồm cả actions nếu dùng cùng object. Tạo hàm resetStore() riêng để tiện dùng.",
+            "locales": {
+                "vi": {
+                    "title": "Testing với Zustand / Redux Store",
+                    "bulletPoints": [
+                        "Zustand: reset store sau mỗi test bằng setState — tránh state leak.",
+                        "Redux: tạo fresh store với preloadedState — kiểm soát initial state.",
+                        "Test với store thật, data giả — component + store behavior được test cùng.",
+                        "Dispatch action → assert DOM update → assert store state."
+                    ],
+                    "note": "Tạo hàm resetStore() riêng cho Zustand — gọi trong afterEach để tránh quên."
+                }
+            }
+        },
+        {
+            "slideOrder": 7,
+            "title": "Testing Custom Hooks — renderHook()",
+            "bulletPoints": [
+                "Custom hooks không thể test trực tiếp — cần React environment để useState/useEffect hoạt động.",
+                "renderHook() từ RTL cung cấp minimal wrapper để test hook tách biệt khỏi component.",
+                "result.current: giá trị hiện tại trả về từ hook — access state, functions, etc.",
+                "act() bọc bất kỳ action nào làm hook update — gọi function, trigger event."
+            ],
+            "codeExample": "import { renderHook, act } from '@testing-library/react';\nimport { useCounter } from '@/hooks/useCounter';\nimport { useDebounce } from '@/hooks/useDebounce';\n\n// Test hook đơn giản\ntest('useCounter tăng/giảm đúng', () => {\n  const { result } = renderHook(() => useCounter(0));\n\n  expect(result.current.count).toBe(0);\n\n  act(() => result.current.increment());\n  expect(result.current.count).toBe(1);\n\n  act(() => result.current.decrement());\n  expect(result.current.count).toBe(0);\n});\n\n// Test hook nhận arguments\ntest('useCounter bắt đầu từ initialValue', () => {\n  const { result } = renderHook((props) => useCounter(props.initial), {\n    initialProps: { initial: 10 },\n  });\n  expect(result.current.count).toBe(10);\n});\n\n// Test async hook (fetch data)\ntest('useUserData fetch và trả về user', async () => {\n  // MSW đã setup handler cho /api/users/1\n  const { result } = renderHook(() => useUserData('1'));\n\n  expect(result.current.isLoading).toBe(true);\n\n  // Chờ async operation hoàn thành\n  await waitFor(() => expect(result.current.isLoading).toBe(false));\n\n  expect(result.current.data?.name).toBe('Nguyễn Văn An');\n});",
+            "note": "renderHook() là lớp wrapper mỏng — bên trong tạo một component dummy chứa hook. result.current cập nhật sau mỗi re-render.",
+            "locales": {
+                "vi": {
+                    "title": "Testing Custom Hooks — renderHook()",
+                    "bulletPoints": [
+                        "Custom hook cần React environment — không test function trực tiếp.",
+                        "renderHook() cung cấp wrapper minimal để test hook tách biệt.",
+                        "result.current: giá trị hiện tại của hook — state, functions.",
+                        "act() bọc action làm hook update — gọi function, trigger event."
+                    ],
+                    "note": "result.current cập nhật sau mỗi re-render — luôn đọc result.current sau act()."
+                }
+            }
+        },
+        {
+            "slideOrder": 8,
+            "title": "Cheatsheet: Toàn Bộ Testing Stack",
+            "bulletPoints": [
+                "Unit test component: RTL render + userEvent + jest-dom matchers.",
+                "API mocking: MSW handlers + server.use() override + resetHandlers() cleanup.",
+                "Module mocking: vi.mock() cho hooks/router/SDKs + vi.fn() cho callbacks.",
+                "Store testing: fresh store per test + act() bọc state changes."
+            ],
+            "codeExample": "// ── SETUP (test/setup.ts) ─────────────────────────────────\nimport '@testing-library/jest-dom';\nimport { server } from './mocks/server';\nbeforeAll(() => server.listen({ onUnhandledRequest: 'error' }));\nafterEach(() => server.resetHandlers());\nafterAll(() => server.close());\n\n// ── TYPICAL TEST FILE ─────────────────────────────────────\nimport { renderWithProviders } from '@/test/utils'; // custom render\nimport userEvent from '@testing-library/user-event';\nimport { server } from '@/test/mocks/server';\nimport { http, HttpResponse } from 'msw';\n\ndescribe('CheckoutPage', () => {\n  const user = userEvent.setup();\n\n  it('hiển thị form thanh toán', () => {\n    renderWithProviders(<CheckoutPage />);\n    expect(screen.getByLabelText('Số thẻ')).toBeInTheDocument();\n  });\n\n  it('thanh toán thành công', async () => {\n    renderWithProviders(<CheckoutPage />);\n    await user.type(screen.getByLabelText('Số thẻ'), '4111111111111111');\n    await user.click(screen.getByRole('button', { name: /thanh toán/i }));\n    expect(await screen.findByText('Thanh toán thành công!')).toBeVisible();\n  });\n\n  it('hiển thị lỗi khi card bị từ chối', async () => {\n    server.use(\n      http.post('/api/checkout', () =>\n        HttpResponse.json({ error: 'Card bị từ chối' }, { status: 402 })\n      )\n    );\n    renderWithProviders(<CheckoutPage />);\n    await user.click(screen.getByRole('button', { name: /thanh toán/i }));\n    expect(await screen.findByRole('alert')).toHaveTextContent('Card bị từ chối');\n  });\n});",
+            "note": "Testing pyramid: nhiều unit test nhỏ + vài integration test (component + store + MSW) + ít E2E test (Playwright). RTL nằm ở tầng giữa.",
+            "locales": {
+                "vi": {
+                    "title": "Cheatsheet: Testing Stack Đầy Đủ",
+                    "bulletPoints": [
+                        "Component: RTL render + userEvent + jest-dom matchers.",
+                        "API: MSW handlers + server.use() override + resetHandlers().",
+                        "Module: vi.mock() cho hooks/router/SDKs + vi.fn() cho callbacks.",
+                        "Store: fresh store mỗi test + act() bọc state changes."
+                    ],
+                    "note": "Testing pyramid: nhiều unit → vài integration (component+store+MSW) → ít E2E (Playwright). RTL ở tầng giữa."
                 }
             }
         }

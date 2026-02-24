@@ -5,43 +5,143 @@
             "slideOrder": 1,
             "title": "The RTL Philosophy",
             "bulletPoints": [
-                "React Testing Library (RTL) is built on a very simple premise:",
-                "'The more your tests resemble the way your software is used, the more confidence they can give you.'",
-                "RTL encourages you not to test implementation details like state values or internal instance methods."
+                "React Testing Library (RTL) được xây dựng trên nguyên tắc: 'Test càng giống cách user dùng phần mềm → test càng đáng tin cậy.'",
+                "RTL không test implementation details như state values, lifecycle methods, hay internal instance — chúng thay đổi mà không ảnh hưởng user.",
+                "RTL render component vào DOM ảo (jsdom) — không cần browser thật, test chạy nhanh trong Node.js.",
+                "So sánh: Enzyme test internals (setState, wrapper.instance()) → dễ vỡ khi refactor. RTL test UI output → refactor thoải mái."
             ],
-            "codeExample": "// Instead of testing component state (implementation detail)\nexpect(wrapper.state('isOpen')).toBe(true);\n\n// Test what the user actually sees\nexpect(screen.getByText('Hello World')).toBeVisible();\nexpect(screen.getByRole('dialog')).toBeInTheDocument();",
-            "note": "RTL renders components into a virtual DOM via jsdom, avoiding the overhead of a real browser while still behaving like one.",
+            "codeExample": "// ❌ Enzyme style — test implementation detail\nconst wrapper = shallow(<Counter />);\nwrapper.instance().setState({ count: 5 });\nexpect(wrapper.state('count')).toBe(5); // breaks nếu đổi sang useReducer\n\n// ✅ RTL style — test điều user thấy\nrender(<Counter />);\nawait userEvent.click(screen.getByRole('button', { name: /tăng/i }));\nawait userEvent.click(screen.getByRole('button', { name: /tăng/i }));\nexpect(screen.getByText('Count: 2')).toBeInTheDocument();\n// test vẫn pass dù đổi từ useState → useReducer → Zustand",
+            "note": "Quy tắc ngón tay cái: nếu bạn refactor component (không đổi behavior) mà test vẫn pass → test tốt. Nếu refactor → test fail → test đang kiểm tra implementation.",
             "locales": {
                 "vi": {
-                    "title": "Triết Lý RTL",
+                    "title": "Triết Lý RTL — Test Như User",
                     "bulletPoints": [
-                        "React Testing Library (RTL) được xây dựng trên một tiền đề rất đơn giản:",
-                        "'Test càng giống cách phần mềm được sử dụng, test càng đáng tin cậy hơn.'",
-                        "RTL khuyến khích không test chi tiết triển khai như giá trị state hay instance method nội bộ."
+                        "Test càng giống cách user dùng phần mềm → test càng đáng tin cậy.",
+                        "Không test state, lifecycle, instance method — chúng thay đổi mà user không biết.",
+                        "RTL render vào jsdom — không cần browser, chạy nhanh trong Node.js.",
+                        "Enzyme test internals → vỡ khi refactor. RTL test UI output → refactor thoải mái."
                     ],
-                    "note": "RTL render component vào DOM ảo qua jsdom, tránh overhead của browser thực trong khi vẫn hoạt động như một browser."
+                    "note": "Refactor mà test vẫn pass → test tốt. Refactor → test fail → đang test implementation detail."
                 }
             }
         },
         {
             "slideOrder": 2,
-            "title": "Rendering Components",
+            "title": "Setup: Cài Đặt RTL + Vitest/Jest",
             "bulletPoints": [
-                "The 'render' function from '@testing-library/react' is used to mount your component.",
-                "It attaches the component to document.body and provides cleanup utilities.",
-                "Combine this with test runners like Vitest or Jest."
+                "Với Vite project: dùng Vitest + @testing-library/react + jsdom — nhanh hơn Jest, config đơn giản hơn.",
+                "Với CRA/Next.js: Jest đã được cài sẵn, chỉ cần thêm @testing-library/react và @testing-library/user-event.",
+                "@testing-library/jest-dom cung cấp custom matchers: toBeInTheDocument(), toBeVisible(), toHaveValue()...",
+                "setupFilesAfterEach: import '@testing-library/jest-dom' để matchers available trong mọi test file."
             ],
-            "codeExample": "import { render, screen } from '@testing-library/react';\nimport App from './App';\nimport { describe, test, expect } from 'vitest';\n\ndescribe('App Component', () => {\n  test('renders the welcome heading', () => {\n    // 1. Render the component\n    render(<App />);\n    \n    // 2. Query the DOM\n    const heading = screen.getByRole('heading', { name: /welcome/i });\n    \n    // 3. Assert\n    expect(heading).toBeInTheDocument();\n  });\n});",
-            "note": "Always use 'screen' rather than destructuring queries from 'render'. 'screen' lets you query any element in document.body globally.",
+            "codeExample": "# Với Vite + Vitest\nnpm install -D vitest @vitest/ui jsdom\nnpm install -D @testing-library/react @testing-library/user-event\nnpm install -D @testing-library/jest-dom\n\n// vite.config.ts\nexport default defineConfig({\n  plugins: [react()],\n  test: {\n    globals: true,          // không cần import describe/test/expect\n    environment: 'jsdom',   // DOM APIs available\n    setupFiles: ['./src/test/setup.ts'],\n  },\n});\n\n// src/test/setup.ts\nimport '@testing-library/jest-dom'; // thêm toBeInTheDocument() etc.\n\n// Chạy test\nnpx vitest              # watch mode\nnpx vitest run          # run once (CI)\nnpx vitest --ui         # web UI đẹp",
+            "note": "Vitest nhanh hơn Jest ~2-10x nhờ dùng lại Vite's esbuild transform. Với dự án mới, hãy chọn Vitest.",
             "locales": {
                 "vi": {
-                    "title": "Render Components Trong Test",
+                    "title": "Setup: Cài Đặt RTL + Vitest",
                     "bulletPoints": [
-                        "Hàm 'render' từ '@testing-library/react' được dùng để mount component.",
-                        "Nó gắn component vào document.body và cung cấp tiện ích dọn dẹp.",
-                        "Kết hợp với test runner như Vitest hoặc Jest."
+                        "Vite project: dùng Vitest + jsdom — nhanh hơn Jest, config đơn giản.",
+                        "CRA/Next.js: Jest sẵn, thêm @testing-library/react và @testing-library/user-event.",
+                        "@testing-library/jest-dom: matchers toBeInTheDocument(), toBeVisible(), toHaveValue()...",
+                        "setupFiles: import jest-dom để matchers available trong mọi test file."
                     ],
-                    "note": "Luôn dùng 'screen' thay vì destructure queries từ 'render'. 'screen' cho phép query bất kỳ phần tử nào trong document.body toàn cục."
+                    "note": "Vitest nhanh hơn Jest 2-10x. Dự án mới → chọn Vitest."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "Cấu Trúc Test File — describe, it, beforeEach",
+            "bulletPoints": [
+                "describe() nhóm các test liên quan — tạo scope rõ ràng, output dễ đọc khi fail.",
+                "test() hoặc it() định nghĩa 1 test case — tên phải đủ rõ để không cần đọc code bên trong.",
+                "beforeEach(): chạy trước mỗi test trong describe block — setup mock, render component chung.",
+                "afterEach(): RTL tự cleanup DOM sau mỗi test — thường không cần gọi cleanup() thủ công."
+            ],
+            "codeExample": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport { LoginForm } from './LoginForm';\n\ndescribe('LoginForm', () => {\n  // Chạy trước MỖI test trong describe này\n  beforeEach(() => {\n    // Reset mocks nếu cần\n    jest.clearAllMocks();\n  });\n\n  describe('khi form trống', () => {\n    it('hiển thị placeholder trong các input', () => {\n      render(<LoginForm />);\n      expect(screen.getByLabelText('Email')).toHaveValue('');\n      expect(screen.getByLabelText('Mật khẩu')).toHaveValue('');\n    });\n\n    it('nút đăng nhập bị disabled', () => {\n      render(<LoginForm />);\n      expect(screen.getByRole('button', { name: /đăng nhập/i })).toBeDisabled();\n    });\n  });\n\n  describe('khi nhập email hợp lệ', () => {\n    it('cho phép submit', async () => {\n      const user = userEvent.setup();\n      render(<LoginForm />);\n      await user.type(screen.getByLabelText('Email'), 'a@b.com');\n      await user.type(screen.getByLabelText('Mật khẩu'), '123456');\n      expect(screen.getByRole('button', { name: /đăng nhập/i })).toBeEnabled();\n    });\n  });\n});",
+            "note": "Đặt tên test theo format: 'khi [điều kiện] → [kết quả mong đợi]'. Ví dụ: 'khi nhập email sai format → hiển thị thông báo lỗi'.",
+            "locales": {
+                "vi": {
+                    "title": "Cấu Trúc Test — describe, it, beforeEach",
+                    "bulletPoints": [
+                        "describe() nhóm test liên quan — scope rõ, output dễ đọc khi fail.",
+                        "test()/it() định nghĩa 1 test case — tên đủ rõ không cần đọc code bên trong.",
+                        "beforeEach(): chạy trước mỗi test — setup mock, render component chung.",
+                        "RTL tự cleanup DOM sau mỗi test — không cần cleanup() thủ công."
+                    ],
+                    "note": "Đặt tên: 'khi [điều kiện] → [kết quả]'. Ví dụ: 'khi email sai format → hiển thị lỗi'."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "render() và screen — Công Cụ Cốt Lõi",
+            "bulletPoints": [
+                "render(<Component />) mount component vào DOM ảo và trả về queries + utilities.",
+                "screen là global object cho phép query bất kỳ element nào trong document — không cần destructure từ render.",
+                "screen.debug() in ra HTML hiện tại của DOM — cực kỳ hữu ích khi test fail và cần xem cấu trúc.",
+                "rerender() cập nhật props mà không unmount — dùng để test khi props thay đổi."
+            ],
+            "codeExample": "import { render, screen } from '@testing-library/react';\n\ntest('hiển thị greeting theo tên', () => {\n  // 1. Render\n  const { rerender } = render(<Greeting name=\"An\" />);\n\n  // 2. Query + Assert\n  expect(screen.getByText('Xin chào, An!')).toBeInTheDocument();\n\n  // 3. In DOM để debug khi bí\n  // screen.debug(); // → <div>Xin chào, An!</div>\n\n  // 4. Rerender với props mới — không remount\n  rerender(<Greeting name=\"Bình\" />);\n  expect(screen.getByText('Xin chào, Bình!')).toBeInTheDocument();\n  expect(screen.queryByText('Xin chào, An!')).not.toBeInTheDocument();\n});\n\n// Render component trong specific container\ntest('render vào container cụ thể', () => {\n  const container = document.createElement('section');\n  render(<Header />, { container: document.body.appendChild(container) });\n  expect(container.querySelector('h1')).toHaveTextContent('Trang chủ');\n});",
+            "note": "Luôn dùng screen thay vì destructure { getByText } từ render. screen cho phép access mọi element, không bị giới hạn scope.",
+            "locales": {
+                "vi": {
+                    "title": "render() và screen — Công Cụ Cốt Lõi",
+                    "bulletPoints": [
+                        "render() mount component vào DOM ảo, trả về queries + utilities.",
+                        "screen là global object query bất kỳ element — không cần destructure từ render.",
+                        "screen.debug() in HTML hiện tại — xem khi test fail không biết DOM trông như nào.",
+                        "rerender() cập nhật props không remount — test khi props thay đổi."
+                    ],
+                    "note": "Dùng screen thay vì destructure từ render — screen không bị giới hạn scope."
+                }
+            }
+        },
+        {
+            "slideOrder": 5,
+            "title": "Custom Matchers — @testing-library/jest-dom",
+            "bulletPoints": [
+                "jest-dom thêm matchers semantic hơn so với Jest/Vitest thuần: toBeInTheDocument, toBeVisible, toHaveValue...",
+                "toBeInTheDocument(): element có tồn tại trong DOM không (khác với toBeDefined — value không null).",
+                "toBeVisible(): element tồn tại VÀ không bị ẩn (display:none, visibility:hidden, opacity:0, hidden attr).",
+                "toHaveValue(v): input/select/textarea có value đúng không — tốt hơn expect(input.value).toBe(v)."
+            ],
+            "codeExample": "// Sau khi import '@testing-library/jest-dom' trong setupFiles\n\n// Phổ biến nhất:\nexpect(element).toBeInTheDocument();     // tồn tại trong DOM\nexpect(element).not.toBeInTheDocument(); // không tồn tại\nexpect(element).toBeVisible();           // visible, không bị ẩn\nexpect(element).toBeDisabled();          // button/input bị disabled\nexpect(element).toBeEnabled();           // button/input enabled\nexpect(element).toBeChecked();           // checkbox/radio đã check\nexpect(element).toHaveFocus();           // element đang được focus\n\n// Form inputs:\nexpect(input).toHaveValue('user@example.com');\nexpect(select).toHaveValue('hanoi');\nexpect(textarea).toHaveValue('nội dung...');\nexpect(input).toHaveDisplayValue('Hiển thị cho user');\n\n// CSS classes & attributes:\nexpect(element).toHaveClass('active', 'selected');\nexpect(element).toHaveAttribute('aria-expanded', 'true');\nexpect(element).toHaveStyle({ color: 'red', display: 'flex' });\n\n// Text content:\nexpect(element).toHaveTextContent('Chào mừng');\nexpect(element).toHaveTextContent(/chào mừng/i); // regex",
+            "note": "toBeVisible() nghiêm ngặt hơn toBeInTheDocument() — element trong DOM nhưng display:none sẽ pass toBeInTheDocument nhưng fail toBeVisible.",
+            "locales": {
+                "vi": {
+                    "title": "Custom Matchers — jest-dom",
+                    "bulletPoints": [
+                        "jest-dom thêm matchers semantic: toBeInTheDocument, toBeVisible, toHaveValue...",
+                        "toBeInTheDocument(): tồn tại trong DOM (khác toBeDefined).",
+                        "toBeVisible(): tồn tại VÀ không bị ẩn (display:none, hidden...).",
+                        "toHaveValue(v): input/select có value đúng — tốt hơn input.value === v."
+                    ],
+                    "note": "toBeVisible nghiêm hơn toBeInTheDocument — display:none pass cái sau nhưng fail cái trước."
+                }
+            }
+        },
+        {
+            "slideOrder": 6,
+            "title": "Testing Async Components — Loading States",
+            "bulletPoints": [
+                "Component gọi API trong useEffect: render lần đầu hiển thị loading state, sau đó hiển thị data.",
+                "Dùng findBy* để chờ element xuất hiện sau async operation — không dùng setTimeout hay arbitrary wait.",
+                "act() bọc bất kỳ code nào làm state update — RTL tự động gọi act trong hầu hết trường hợp.",
+                "Mock fetch/axios trong test để kiểm soát response — không gọi API thật từ unit test."
+            ],
+            "codeExample": "// Component cần test\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetch(`/api/users/${userId}`)\n      .then(r => r.json())\n      .then(data => { setUser(data); setLoading(false); });\n  }, [userId]);\n\n  if (loading) return <div role=\"progressbar\">Đang tải...</div>;\n  return <div>{user.name}</div>;\n}\n\n// Test với mock fetch\nbeforeEach(() => {\n  global.fetch = jest.fn().mockResolvedValue({\n    json: () => Promise.resolve({ name: 'Nguyễn Văn An' }),\n  });\n});\n\ntest('hiển thị loading rồi user name', async () => {\n  render(<UserProfile userId=\"1\" />);\n\n  // Kiểm tra loading state\n  expect(screen.getByRole('progressbar')).toBeInTheDocument();\n\n  // Chờ data load xong\n  const name = await screen.findByText('Nguyễn Văn An');\n  expect(name).toBeInTheDocument();\n  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();\n});",
+            "note": "Dùng MSW thay vì mock fetch thủ công cho production tests — MSW interceptor mức network chính xác và dễ maintain hơn.",
+            "locales": {
+                "vi": {
+                    "title": "Test Async Component — Loading States",
+                    "bulletPoints": [
+                        "useEffect gọi API: lần đầu loading state, sau đó hiển thị data.",
+                        "findBy* chờ element sau async — không dùng setTimeout hay arbitrary wait.",
+                        "act() bọc code làm state update — RTL tự gọi trong hầu hết trường hợp.",
+                        "Mock fetch trong test — không gọi API thật từ unit test."
+                    ],
+                    "note": "Dùng MSW thay mock fetch thủ công cho production tests — chính xác và dễ maintain hơn."
                 }
             }
         }

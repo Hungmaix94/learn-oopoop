@@ -37,6 +37,17 @@
         },
         {
             "slideOrder": 4,
+            "title": "So Sánh Code: SQL vs NoSQL (Cùng bài toán lưu đơn hàng)",
+            "bulletPoints": [
+                "SQL (PostgreSQL): Dữ liệu tách biệt, JOIN lúc truy vấn — đảm bảo toàn vẹn, tránh trùng lặp.",
+                "MongoDB: Nhúng (embed) toàn bộ items vào document — đọc 1 lần, không cần JOIN.",
+                "Đánh đổi: SQL dễ cập nhật giá riêng lẻ, MongoDB đọc đơn hàng nhanh hơn."
+            ],
+            "codeExample": "-- PostgreSQL: Chuẩn hóa, dùng JOIN\nCREATE TABLE orders   (id BIGINT, user_id BIGINT, total DECIMAL);\nCREATE TABLE order_items (order_id BIGINT, sku_id BIGINT, qty INT, unit_price DECIMAL);\n\nSELECT o.id, oi.sku_id, oi.qty\nFROM orders o JOIN order_items oi ON oi.order_id = o.id\nWHERE o.id = 42;\n\n// MongoDB: Denormalize, nhúng items vào document\ndb.orders.insertOne({\n  _id: 42,\n  user_id: 7,\n  total: 350000,\n  items: [\n    { sku_id: 'AT-M-RED', qty: 2, unit_price: 120000 },\n    { sku_id: 'QT-L-BLK', qty: 1, unit_price: 110000 }\n  ]\n});\n\ndb.orders.findOne({ _id: 42 }); // Đọc 1 lần, không JOIN",
+            "note": "Cùng 1 bài toán, 2 cách mô hình hóa khác nhau — không có cái nào tốt hơn tuyệt đối."
+        },
+        {
+            "slideOrder": 5,
             "title": "Phân Tích Yêu Cầu & Thiết Kế Ý Tưởng",
             "bulletPoints": [
                 "Phân tích: Xác định Yêu cầu Chức năng, Phi Chức Năng (Concurrency, Consistency, Latency), Yêu cầu Dữ liệu.",
@@ -47,7 +58,7 @@
             "note": "Bước đầu tiên của 4 giai đoạn thiết kế CSDL."
         },
         {
-            "slideOrder": 5,
+            "slideOrder": 6,
             "title": "Logic & Vật Lý (Logical & Physical Design)",
             "bulletPoints": [
                 "Thiết Kế Logic: Chuẩn hóa dữ liệu (3NF), xác định PK/FK và Ràng buộc (Constraints, Unique, Check).",
@@ -58,7 +69,7 @@
             "note": "Tối ưu hiệu năng trực tiếp trên CSDL."
         },
         {
-            "slideOrder": 6,
+            "slideOrder": 7,
             "title": "Schema Cốt Lõi: Users & Catalog",
             "bulletPoints": [
                 "Users: Tách bảng 'users' (auth) và 'user_profiles' (thông tin) tăng tốc login và bảo mật.",
@@ -70,7 +81,7 @@
             "note": "Normalization cho Orders, Denormalization (JSONB) cho Catalog."
         },
         {
-            "slideOrder": 7,
+            "slideOrder": 8,
             "title": "Schema Đơn Hàng (Orders)",
             "bulletPoints": [
                 "Lưu ý quan trọng: Luôn copy dữ liệu giá (unit_price) tại thời điểm mua vào bảng order_items.",
@@ -80,29 +91,105 @@
             "note": "Tính bền vững và đóng băng dữ liệu giao dịch."
         },
         {
-            "slideOrder": 8,
-            "title": "Bài Toán Hóc Búa: Concurrency Control",
-            "bulletPoints": [
-                "Tránh bán quá số lượng (Overselling) khi hàng ngàn người mua cùng lúc.",
-                "Pessimistic Locking (Khóa Bi Quan): 'FOR UPDATE'. An toàn tuyệt đối, khóa dòng lại khi đọc.",
-                "Optimistic Locking (Khóa Lạc Quan): Dùng cột 'version'. Nhanh nhưng phải handle retry cho user bị lỗi."
-            ],
-            "codeExample": "UPDATE skus SET stock_quantity = stock_quantity - 1, version = version + 1 WHERE id = 100 AND version = 5;",
-            "note": "Kỹ thuật tối thượng xử lý Flash Sale."
-        },
-        {
             "slideOrder": 9,
-            "title": "Bài Toán Hóc Búa: Product Filtering",
+            "title": "Bài Toán Overselling: 1000 Người Mua 1 Cái Áo",
             "bulletPoints": [
-                "LIKE '%text%' cực chậm vì quét toàn bảng (Full Table Scan).",
-                "Sử dụng Inverted Index (Elasticsearch hoặc PostgreSQL Full Text Search).",
-                "Tạo cột TSVECTOR và đánh GIN Index để tìm kiếm hàng triệu sp trong tích tắc."
+                "Tình huống: 1000 request đồng thời, tồn kho chỉ còn 1. Không xử lý đúng → bán 50 cái dù chỉ có 1.",
+                "Nguyên nhân: Mỗi request đều đọc stock=1, tính toán, rồi cùng ghi stock=0 → race condition.",
+                "Giải pháp 1 — Pessimistic Lock: Khóa dòng ngay khi đọc (FOR UPDATE), chắc chắn nhưng chậm hơn.",
+                "Giải pháp 2 — Optimistic Lock: Không khóa khi đọc, kiểm tra version khi ghi, nhanh hơn nhưng cần retry."
             ],
-            "codeExample": "CREATE INDEX idx_products_search ON products USING GIN(text_search);\nSELECT * FROM products WHERE text_search @@ to_tsquery('apple');",
-            "note": "Chuyển từ O(N) sang O(1)."
+            "codeExample": "-- Race condition KHÔNG được xử lý (SAI):\nSELECT stock FROM skus WHERE id = 1;  -- cả 1000 req đọc: stock = 1\n-- ... xử lý ...\nUPDATE skus SET stock = stock - 1 WHERE id = 1;  -- cả 1000 req ghi → stock = -999 !!",
+            "note": "Đây là lỗi kinh điển trong Flash Sale. Cả 2 giải pháp đều đúng — chọn theo use case."
         },
         {
             "slideOrder": 10,
+            "title": "Pessimistic Lock: Khóa Hàng Trước, Đọc Sau",
+            "bulletPoints": [
+                "FOR UPDATE: SQL khóa dòng đó lại ngay khi SELECT — các request khác phải chờ.",
+                "Luồng: Request A khóa dòng → đọc stock=1 → giảm stock → commit → Request B mới được vào.",
+                "Ưu điểm: Tuyệt đối an toàn, không bao giờ oversell.",
+                "Nhược điểm 1: Request xếp hàng tuần tự → throughput thấp khi Flash Sale lượng lớn.",
+                "Nhược điểm 2 (nguy hiểm hơn): Deadlock — 2 transaction cùng chờ nhau, cả 2 bị treo mãi mãi."
+            ],
+            "codeExample": "-- Bước 1: Bắt đầu transaction\nBEGIN;\n\n-- Bước 2: Đọc VÀ khóa dòng lại (các req khác sẽ block ở đây)\nSELECT stock_quantity\nFROM skus\nWHERE id = 100\nFOR UPDATE;\n\n-- Bước 3: Kiểm tra tồn kho\n-- Nếu stock_quantity >= 1 thì tiếp tục\nUPDATE skus\n   SET stock_quantity = stock_quantity - 1\n WHERE id = 100;\n\n-- Bước 4: Tạo đơn hàng\nINSERT INTO orders (user_id, sku_id) VALUES (7, 100);\n\nCOMMIT;  -- Lúc này lock mới được giải phóng",
+            "note": "Dùng cho hàng limited edition, vé concert — nơi tính đúng quan trọng hơn tốc độ. Nhưng PHẢI phòng deadlock!"
+        },
+        {
+            "slideOrder": 11,
+            "title": "Deadlock: Cái Bẫy Chết Người Của Pessimistic Lock",
+            "bulletPoints": [
+                "Deadlock xảy ra khi: Transaction A giữ lock sku_id=1, chờ lock sku_id=2. Transaction B giữ lock sku_id=2, chờ lock sku_id=1 → cả 2 chờ nhau mãi mãi.",
+                "Phòng tránh: Luôn khóa nhiều dòng theo THỨ TỰ CỐ ĐỊNH (ORDER BY id) — nếu mọi transaction đều khóa id nhỏ trước, deadlock không thể xảy ra.",
+                "Phòng tránh: Dùng NOWAIT — nếu không lấy được lock ngay, báo lỗi luôn thay vì chờ vô tận.",
+                "Phòng tránh: Dùng LOCK TIMEOUT — giới hạn thời gian chờ tối đa (vd: 3 giây).",
+                "PostgreSQL tự detect deadlock và kill 1 transaction — nhưng đó là lưới an toàn cuối cùng, không nên dựa vào."
+            ],
+            "codeExample": "-- SAI: Khóa không theo thứ tự → dễ deadlock\n-- Transaction A: FOR UPDATE sku_id=1, rồi sku_id=2\n-- Transaction B: FOR UPDATE sku_id=2, rồi sku_id=1  ← deadlock!\n\n-- ĐÚNG: Luôn khóa theo thứ tự id tăng dần\nSELECT * FROM skus\nWHERE id = ANY(ARRAY[1, 2])\nORDER BY id          -- ← cả 2 transaction đều khóa id=1 trước → Transaction B phải chờ, không deadlock\nFOR UPDATE;\n\n-- Hoặc dùng NOWAIT: thất bại ngay nếu bị block\nSELECT * FROM skus WHERE id = 100 FOR UPDATE NOWAIT;\n-- → ERROR: could not obtain lock on row → app retry hoặc báo 'Thử lại'\n\n-- Hoặc giới hạn timeout\nSET lock_timeout = '3s';\nSELECT * FROM skus WHERE id = 100 FOR UPDATE;",
+            "note": "Quy tắc vàng: Nếu cần khóa nhiều dòng, LUÔN khóa theo thứ tự id tăng dần."
+        },
+        {
+            "slideOrder": 12,
+            "title": "Optimistic Lock: Tin Tưởng Trước, Kiểm Tra Sau",
+            "bulletPoints": [
+                "Thêm cột 'version' (số nguyên tăng dần) vào bảng skus.",
+                "Luồng: Đọc (stock=1, version=5) → UPDATE kèm WHERE version=5 → nếu 0 rows affected = người khác đã mua trước.",
+                "Ưu điểm: Không khóa khi đọc → 1000 req đọc đồng thời OK, chỉ 1 req ghi thành công.",
+                "Nhược điểm: Phải viết logic retry — thông báo user 'Hết hàng, thử lại' khi version không khớp."
+            ],
+            "codeExample": "-- Bước 1: Đọc bình thường, KHÔNG khóa\nSELECT stock_quantity, version\nFROM skus WHERE id = 100;\n-- Giả sử đọc được: stock=1, version=5\n\n-- Bước 2: Ghi kèm điều kiện version phải khớp\nUPDATE skus\n   SET stock_quantity = stock_quantity - 1,\n       version        = version + 1        -- tăng version lên 6\n WHERE id      = 100\n   AND version = 5;   -- ← chìa khóa: nếu ai đó đã update trước, version đã là 6, WHERE này = false\n\n-- Bước 3: Kiểm tra kết quả\n-- affected_rows = 1 → thành công, tạo order\n-- affected_rows = 0 → hết hàng hoặc bị người khác mua trước → báo lỗi cho user",
+            "note": "Dùng cho Flash Sale lượng lớn (Shopee, Tiki) — throughput cao hơn Pessimistic vì không block đọc."
+        },
+        {
+            "slideOrder": 14,
+            "title": "Bài Toán Product Search: Tại Sao LIKE Chậm?",
+            "bulletPoints": [
+                "LIKE '%iphone%' không dùng được B-Tree index — DB phải quét toàn bộ bảng (Full Table Scan O(N)).",
+                "LIKE 'iphone%' (prefix) dùng được B-Tree index, nhưng chỉ tìm được đầu chuỗi — không đủ cho search.",
+                "Giải pháp: Inverted Index — tách văn bản thành từng từ, index từng từ riêng → tìm theo từ khóa O(1).",
+                "3 lựa chọn: MySQL FULLTEXT Index (built-in, đơn giản), PostgreSQL GIN+TSVECTOR (mạnh hơn), Elasticsearch (chuyên dụng, scale lớn)."
+            ],
+            "codeExample": "-- ❌ CHẬM: Full Table Scan, không dùng index\nSELECT * FROM products WHERE name LIKE '%iphone 15%';\n-- EXPLAIN: Seq Scan on products (cost=0.00..8500.00 rows=500000)\n\n-- ✅ NHANH: Inverted Index — tìm theo từ, không phải quét chuỗi\n-- Thời gian: ~2ms thay vì ~3000ms cho bảng 1 triệu sản phẩm",
+            "note": "LIKE '%text%' là kẻ thù của performance. Chỉ dùng được khi bảng < 10,000 rows."
+        },
+        {
+            "slideOrder": 15,
+            "title": "MySQL FULLTEXT Index — Giải Pháp Built-in",
+            "bulletPoints": [
+                "MySQL hỗ trợ FULLTEXT index cho cột TEXT/VARCHAR — không cần cài thêm gì.",
+                "MATCH...AGAINST dùng natural language mode (mặc định) hoặc boolean mode (cho phép +/- operators).",
+                "Giới hạn: Từ ngắn hơn ft_min_word_len (mặc định 4 ký tự) bị bỏ qua — 'áo', 'giày' có thể không index được.",
+                "Giới hạn: Không hỗ trợ tốt tiếng Việt — tokenizer chỉ tách theo khoảng trắng, không hiểu ngữ nghĩa."
+            ],
+            "codeExample": "-- Bước 1: Tạo FULLTEXT index\nALTER TABLE products\n  ADD FULLTEXT INDEX idx_ft_search (name, description);\n\n-- Bước 2: Tìm kiếm — Natural Language Mode (mặc định)\nSELECT *, MATCH(name, description) AGAINST('iphone 15 pro') AS score\nFROM products\nWHERE MATCH(name, description) AGAINST('iphone 15 pro')\nORDER BY score DESC\nLIMIT 20;\n\n-- Bước 3: Boolean Mode — kiểm soát chính xác hơn\nSELECT * FROM products\nWHERE MATCH(name, description)\n  AGAINST('+iphone +15 -\"second hand\"' IN BOOLEAN MODE);\n-- +iphone: BẮT BUỘC có từ 'iphone'\n-- +15: BẮT BUỘC có '15'\n-- -\"second hand\": KHÔNG được có cụm 'second hand'",
+            "note": "MySQL FULLTEXT đủ dùng cho app vừa (<1M sản phẩm). Khi scale lên → chuyển sang Elasticsearch."
+        },
+        {
+            "slideOrder": 16,
+            "title": "PostgreSQL GIN+TSVECTOR — Mạnh Hơn MySQL FULLTEXT",
+            "bulletPoints": [
+                "TSVECTOR: PostgreSQL chuyển văn bản thành vector các 'lexeme' (từ gốc) — 'running' và 'runs' đều về 'run'.",
+                "GIN Index (Generalized Inverted Index): index TSVECTOR, tra cứu O(log N).",
+                "to_tsvector('english', text): stemming tiếng Anh. Tiếng Việt cần extension 'pg_trgm' hoặc unaccent.",
+                "pg_trgm: tìm kiếm theo trigram (3 ký tự liên tiếp) — hỗ trợ tốt hơn cho tiếng Việt và fuzzy search."
+            ],
+            "codeExample": "-- Cách 1: TSVECTOR column (nhanh nhất)\nALTER TABLE products\n  ADD COLUMN text_search TSVECTOR\n    GENERATED ALWAYS AS (\n      to_tsvector('english', name || ' ' || COALESCE(description, ''))\n    ) STORED;\n\nCREATE INDEX idx_gin_search ON products USING GIN(text_search);\n\nSELECT * FROM products\nWHERE text_search @@ to_tsquery('english', 'iphone & pro')\nORDER BY ts_rank(text_search, to_tsquery('iphone & pro')) DESC;\n\n-- Cách 2: pg_trgm — tốt cho tiếng Việt & LIKE fuzzy\nCREATE EXTENSION IF NOT EXISTS pg_trgm;\nCREATE INDEX idx_trgm_name ON products USING GIN(name gin_trgm_ops);\n\n-- Giờ LIKE '%iphone%' DÙNG ĐƯỢC index!\nSELECT * FROM products WHERE name ILIKE '%điện thoại%';",
+            "note": "pg_trgm là giải pháp thực tế nhất cho tiếng Việt trên PostgreSQL — vừa hỗ trợ LIKE vừa có index."
+        },
+        {
+            "slideOrder": 17,
+            "title": "So Sánh 3 Giải Pháp: MySQL vs PostgreSQL vs Elasticsearch",
+            "bulletPoints": [
+                "MySQL FULLTEXT: Đơn giản, built-in, đủ cho <1M sản phẩm. Yếu với tiếng Việt.",
+                "PostgreSQL GIN/pg_trgm: Mạnh hơn, hỗ trợ fuzzy search, tiếng Việt OK với pg_trgm. Vẫn trong DB.",
+                "Elasticsearch: Chuyên dụng cho search, hỗ trợ mọi ngôn ngữ, faceted search, autocomplete. Cần infra riêng.",
+                "Chiến lược thực tế: Dùng MySQL/PG FULLTEXT cho MVP → chuyển Elasticsearch khi >1M products hoặc cần advanced search."
+            ],
+            "codeExample": "-- MYSQL FULLTEXT (built-in, đơn giản)\nMATCH(name) AGAINST('iphone' IN BOOLEAN MODE)\n-- ✅ Đơn giản  ❌ Tiếng Việt kém  ❌ Scale giới hạn\n\n-- POSTGRESQL pg_trgm (flexible, trong DB)\nWHERE name ILIKE '%điện thoại%'  -- dùng được GIN index\n-- ✅ Tiếng Việt OK  ✅ LIKE có index  ❌ Không bằng ES về relevance\n\n-- ELASTICSEARCH (production-grade search)\n// Node.js client\nconst results = await es.search({\n  index: 'products',\n  body: {\n    query: {\n      multi_match: {\n        query: 'điện thoại samsung',\n        fields: ['name^3', 'description'],  // name ưu tiên gấp 3\n        fuzziness: 'AUTO'  // 'samsug' vẫn tìm được 'samsung'\n      }\n    }\n  }\n});\n// ✅ Tiếng Việt  ✅ Fuzzy  ✅ Scale  ❌ Cần sync data từ DB",
+            "note": "Luôn cần sync DB → Elasticsearch (dùng CDC/Debezium hoặc dual-write). Data trong ES là bản copy để search, không phải source of truth."
+        },
+        {
+            "slideOrder": 18,
             "title": "Chiến Lược Indexing: Best Practices",
             "bulletPoints": [
                 "Đánh Index cho MỌI Khóa ngoại (user_id, product_id) để JOIN nhanh.",
@@ -113,7 +200,7 @@
             "note": "Index làm chậm viết, tăng tốc đọc. Hãy dùng tiết kiệm."
         },
         {
-            "slideOrder": 11,
+            "slideOrder": 19,
             "title": "Bảo Mật CSDL Tối Thượng",
             "bulletPoints": [
                 "Chống SQL Injection bằng Parameterized Queries.",

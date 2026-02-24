@@ -25,23 +25,73 @@
         },
         {
             "slideOrder": 2,
-            "title": "Playwright Test Fixtures",
+            "title": "Fixtures: Tại Sao Cần? Vấn Đề Của beforeEach",
             "bulletPoints": [
-                "Fixtures establish an environment for each test, providing everything it needs.",
-                "They isolate tests: each gets a brand new page, context, or custom object.",
-                "Fixtures can encapsulate setup (e.g., logging in a user) and teardown logic."
+                "Vấn đề: beforeEach/afterEach dùng biến shared → test song song dễ bị state leak, khó debug.",
+                "Vấn đề: beforeEach chạy cho MỌI test trong file dù test đó không cần — setup thừa, chậm.",
+                "Fixture giải quyết: mỗi test khai báo chính xác cái nó cần, Playwright chỉ setup đúng cái đó.",
+                "Fixture tự động teardown — không cần gọi afterEach thủ công, không bao giờ quên dọn dẹp."
             ],
-            "codeExample": "import { test as base } from '@playwright/test';\n\n// Extend base test to include a custom 'todoPage' fixture\nexport const test = base.extend({\n  todoPage: async ({ page }, use) => {\n    const todoPage = new TodoPage(page);\n    await todoPage.goto();\n    await todoPage.addToDo('item1');\n    \n    // Pass the fixture to the test\n    await use(todoPage);\n    \n    // Teardown (if necessary) runs after the test\n    await todoPage.removeAll();\n  },\n});",
-            "note": "Fixtures are the modern replacement for global beforeAll/afterEach blocks, preventing state leakage between parallel tests.",
+            "codeExample": "// ❌ Cách cũ: beforeEach — chạy cho TẤT CẢ test, dù không cần\nlet loggedInPage: Page;\nbeforeEach(async ({ page }) => {\n  await page.goto('/login');\n  await page.fill('#email', 'user@test.com');\n  await page.fill('#password', 'secret');\n  await page.click('button[type=submit]');\n  loggedInPage = page; // biến shared → nguy hiểm khi chạy song song\n});\n\n// ✅ Cách mới: Fixture — chỉ chạy khi test nào REQUEST nó\nexport const test = base.extend<{ loggedInPage: Page }>({\n  loggedInPage: async ({ page }, use) => {\n    await page.goto('/login');\n    await page.fill('#email', 'user@test.com');\n    await page.fill('#password', 'secret');\n    await page.click('button[type=submit]');\n    await use(page);       // ← test chạy tại đây\n    // Tự cleanup sau khi test xong — không cần afterEach\n  },\n});\n\n// Test chỉ dùng fixture khi CẦN\ntest('view dashboard', async ({ loggedInPage }) => { /* ... */ });\ntest('check homepage', async ({ page }) => { /* không cần login */ });",
+            "note": "Fixture = lazy setup. Không khai báo = không chạy. Đây là lý do fixtures nhanh hơn beforeEach.",
             "locales": {
                 "vi": {
-                    "title": "Playwright Test Fixtures",
+                    "title": "Fixtures: Tại Sao Cần? Vấn Đề Của beforeEach",
                     "bulletPoints": [
-                        "Fixtures thiết lập môi trường cho mỗi test, cung cấp mọi thứ cần thiết.",
-                        "Chúng tách biệt các test: mỗi test nhận một page, context hoặc object tùy chỉnh mới hoàn toàn.",
-                        "Fixtures có thể đóng gói logic setup (ví dụ đăng nhập người dùng) và teardown."
+                        "beforeEach dùng biến shared → test song song dễ bị state leak, khó debug.",
+                        "beforeEach chạy cho MỌI test dù test đó không cần — setup thừa, chậm.",
+                        "Fixture: mỗi test khai báo chính xác cái nó cần, Playwright chỉ setup đúng cái đó.",
+                        "Fixture tự động teardown — không cần afterEach, không bao giờ quên dọn dẹp."
                     ],
-                    "note": "Fixtures là thay thế hiện đại cho các block beforeAll/afterEach toàn cục, ngăn rò rỉ trạng thái giữa các test song song."
+                    "note": "Fixture = lazy setup. Không khai báo = không chạy. Đây là lý do fixtures nhanh hơn beforeEach."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "Fixtures: Scope, Override & Dependency Chain",
+            "bulletPoints": [
+                "Scope 'test' (mặc định): tạo mới cho mỗi test — an toàn khi chạy song song.",
+                "Scope 'worker': share 1 instance cho tất cả test trong cùng worker — dùng cho setup đắt tiền (DB seed, browser launch).",
+                "Fixture có thể dùng fixture khác — Playwright tự resolve dependency chain theo thứ tự đúng.",
+                "Override built-in fixture (page, context, browser) để thêm behavior mà không đổi test code."
+            ],
+            "codeExample": "import { test as base, expect } from '@playwright/test';\n\ntype Fixtures = {\n  authToken: string;      // worker scope — chỉ lấy token 1 lần\n  apiClient: ApiClient;   // test scope — fresh instance mỗi test\n  adminPage: Page;        // dùng authToken bên trong\n};\n\nexport const test = base.extend<Fixtures>({\n  // Worker scope: chạy 1 lần, share cho tất cả test trong worker\n  authToken: [async ({}, use) => {\n    const token = await fetchAuthToken('admin@test.com', 'pass');\n    await use(token);\n    // teardown: có thể revoke token nếu cần\n  }, { scope: 'worker' }],\n\n  // Test scope: dùng authToken (fixture khác) làm dependency\n  adminPage: async ({ page, authToken }, use) => {\n    await page.setExtraHTTPHeaders({ Authorization: `Bearer ${authToken}` });\n    await page.goto('/admin');\n    await use(page);\n  },\n\n  // Override built-in 'page' — inject cookie cho mọi test\n  page: async ({ page }, use) => {\n    await page.context().addCookies([{ name: 'locale', value: 'vi' }]);\n    await use(page); // page bây giờ luôn có cookie locale=vi\n  },\n});\n\ntest('admin sees dashboard', async ({ adminPage }) => {\n  await expect(adminPage.getByRole('heading', { name: 'Dashboard' })).toBeVisible();\n});",
+            "note": "Dependency chain: adminPage → authToken. Playwright tự gọi authToken trước, inject kết quả vào adminPage.",
+            "locales": {
+                "vi": {
+                    "title": "Fixtures: Scope, Override & Dependency Chain",
+                    "bulletPoints": [
+                        "Scope 'test' (mặc định): tạo mới mỗi test — an toàn khi chạy song song.",
+                        "Scope 'worker': share 1 instance cho tất cả test trong worker — dùng cho setup đắt tiền.",
+                        "Fixture có thể dùng fixture khác — Playwright tự resolve dependency chain đúng thứ tự.",
+                        "Override built-in fixture (page, context) để thêm behavior mà không đổi test code."
+                    ],
+                    "note": "Dependency chain: adminPage → authToken. Playwright tự gọi authToken trước, inject kết quả vào adminPage."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "Fixtures: Page Object Model Pattern",
+            "bulletPoints": [
+                "Page Object Model (POM): đóng gói selector và action của 1 trang vào 1 class — test code không biết CSS selector.",
+                "Khi UI thay đổi (selector đổi), chỉ cần sửa 1 chỗ trong Page Object — không phải sửa 50 test.",
+                "Kết hợp POM + Fixture: test nhận ngay page object đã sẵn sàng — sạch, đọc như ngôn ngữ tự nhiên.",
+                "Tổ chức: tạo thư mục fixtures/ với file riêng cho mỗi page (LoginPage, CartPage, CheckoutPage)."
+            ],
+            "codeExample": "// fixtures/LoginPage.ts — đóng gói toàn bộ login flow\nexport class LoginPage {\n  constructor(private page: Page) {}\n\n  async goto() {\n    await this.page.goto('/login');\n  }\n  async login(email: string, password: string) {\n    await this.page.getByLabel('Email').fill(email);\n    await this.page.getByLabel('Mật khẩu').fill(password);\n    await this.page.getByRole('button', { name: 'Đăng nhập' }).click();\n    await this.page.waitForURL('/dashboard'); // chờ redirect\n  }\n  async getErrorMessage() {\n    return this.page.getByRole('alert').textContent();\n  }\n}\n\n// fixtures/index.ts — kết hợp POM + Fixture\nimport { test as base } from '@playwright/test';\ntype MyFixtures = { loginPage: LoginPage };\n\nexport const test = base.extend<MyFixtures>({\n  loginPage: async ({ page }, use) => {\n    await use(new LoginPage(page));\n  },\n});\n\n// test/auth.spec.ts — test code đọc như tiếng Anh tự nhiên\ntest('login thành công', async ({ loginPage }) => {\n  await loginPage.goto();\n  await loginPage.login('user@test.com', 'Secret123');\n  // Không có selector nào ở đây — nếu UI thay đổi, chỉ sửa LoginPage.ts\n});\n\ntest('login thất bại với sai mật khẩu', async ({ loginPage }) => {\n  await loginPage.goto();\n  await loginPage.login('user@test.com', 'wrong');\n  expect(await loginPage.getErrorMessage()).toContain('Sai mật khẩu');\n});",
+            "note": "POM + Fixture là best practice cho Playwright E2E test ở scale. Test spec file chỉ chứa 'what to test', không chứa 'how to interact'.",
+            "locales": {
+                "vi": {
+                    "title": "Fixtures: Page Object Model Pattern",
+                    "bulletPoints": [
+                        "POM: đóng gói selector và action của 1 trang vào 1 class — test không biết CSS selector.",
+                        "Khi UI thay đổi, chỉ sửa 1 chỗ trong Page Object — không sửa 50 test.",
+                        "POM + Fixture: test nhận page object đã sẵn sàng — đọc như ngôn ngữ tự nhiên.",
+                        "Tổ chức: thư mục fixtures/ với file riêng cho từng page (LoginPage, CartPage...)."
+                    ],
+                    "note": "POM + Fixture = best practice cho Playwright E2E ở scale. Test spec chỉ chứa 'what', không chứa 'how'."
                 }
             }
         }

@@ -3,45 +3,193 @@
     "slides": [
         {
             "slideOrder": 1,
-            "title": "Priority of Queries",
+            "title": "Priority of Queries — Tại Sao Thứ Tự Quan Trọng?",
             "bulletPoints": [
-                "RTL provides multiple ways to query elements: getBy, queryBy, findBy.",
-                "Guiding principle: Use queries that reflect the experience of visual/assistive users.",
-                "1. getByRole (Best)\n2. getByLabelText\n3. getByPlaceholderText\n4. getByText\n5. getByTestId (Fallback)"
+                "RTL có 3 nhóm query: getBy (throw nếu không thấy), queryBy (trả null), findBy (async/Promise).",
+                "Nguyên tắc cốt lõi: Query càng giống user thực sự nhìn/dùng → test càng có giá trị.",
+                "Thứ tự ưu tiên: getByRole > getByLabelText > getByPlaceholderText > getByText > getByDisplayValue > getByAltText > getByTitle > getByTestId.",
+                "getByRole và getByLabelText kiểm tra cả accessibility — nếu test pass, screen reader cũng dùng được."
             ],
-            "codeExample": "// BEST: Accessible queries\nconst button = screen.getByRole('button', { name: 'Submit' });\nconst input = screen.getByLabelText('Email Address');\n\n// OKAY: Text/visual queries\nconst message = screen.getByText('Success!');\n\n// LAST RESORT: data-testid attributes\nconst icon = screen.getByTestId('custom-icon');",
-            "note": "'getBy' throws an error if not found. 'queryBy' returns null (good for asserting non-existence). 'findBy' returns a Promise (good for async updates).",
+            "codeExample": "// ✅ BEST — kiểm tra cả chức năng lẫn accessibility\nscreen.getByRole('button', { name: /submit/i });\nscreen.getByLabelText('Email Address');\n\n// ✅ OK — khi không có role/label phù hợp\nscreen.getByText('Đăng nhập thành công');\nscreen.getByPlaceholderText('Nhập email...');\n\n// ⚠️ LAST RESORT — dùng khi không còn cách nào khác\n// data-testid không phản ánh gì về UX thực tế\nscreen.getByTestId('submit-btn');",
+            "note": "Test bằng getByRole giống như đang test từ góc nhìn người dùng — nếu role sai, test fail ngay cả khi UI trông ổn.",
             "locales": {
                 "vi": {
-                    "title": "Thứ Tự Ưu Tiên Của Queries",
+                    "title": "Thứ Tự Ưu Tiên Của Queries — Tại Sao Quan Trọng?",
                     "bulletPoints": [
-                        "RTL cung cấp nhiều cách query phần tử: getBy, queryBy, findBy.",
-                        "Nguyên tắc: Dùng query phản ánh trải nghiệm của người dùng thị giác/hỗ trợ.",
-                        "1. getByRole (Tốt nhất)\n2. getByLabelText\n3. getByPlaceholderText\n4. getByText\n5. getByTestId (Fallback)"
+                        "RTL có 3 nhóm query: getBy (throw nếu không thấy), queryBy (trả null), findBy (async/Promise).",
+                        "Nguyên tắc cốt lõi: Query càng giống user thực sự nhìn/dùng → test càng có giá trị.",
+                        "Thứ tự ưu tiên: getByRole > getByLabelText > getByPlaceholderText > getByText > getByTestId.",
+                        "getByRole và getByLabelText kiểm tra cả accessibility — nếu test pass, screen reader cũng dùng được."
                     ],
-                    "note": "'getBy' ném lỗi nếu không tìm thấy. 'queryBy' trả về null (tốt để kiểm tra không tồn tại). 'findBy' trả về Promise (tốt cho async)."
+                    "note": "Test bằng getByRole giống như đang test từ góc nhìn người dùng — nếu role sai, test fail ngay cả khi UI trông ổn."
                 }
             }
         },
         {
             "slideOrder": 2,
-            "title": "User Events Integration",
+            "title": "getByRole — Query Mạnh Nhất, Dùng Nhiều Nhất",
             "bulletPoints": [
-                "Always prefer '@testing-library/user-event' over 'fireEvent'.",
-                "user-event simulates full interactions (e.g., typing triggers keydown, keypress, keyup, change).",
-                "Since it simulates real browsing, the API is async."
+                "getByRole tìm element theo ARIA role — button, textbox, heading, checkbox, combobox, link, img, list...",
+                "Option { name } match accessible name — thường là label, aria-label, hoặc text bên trong element.",
+                "Option { level } cho heading: getByRole('heading', { level: 2 }) → tìm <h2>.",
+                "Option { checked }, { selected }, { expanded } để query theo state của element."
             ],
-            "codeExample": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport ContactForm from './ContactForm';\n\ntest('typing in the input field', async () => {\n  // Setup user-event instance\n  const user = userEvent.setup();\n  \n  render(<ContactForm />);\n  \n  const input = screen.getByRole('textbox', { name: 'Name' });\n  \n  // Simulate a real user typing\n  await user.type(input, 'John Doe');\n  \n  // Wait for and assert the change\n  expect(input).toHaveValue('John Doe');\n});",
-            "note": "Always setup userEvent before rendering your component to initialize the state cleanly.",
+            "codeExample": "// <button>Đăng ký</button>\nscreen.getByRole('button', { name: 'Đăng ký' });\n\n// <input type=\"checkbox\" aria-label=\"Đồng ý điều khoản\" />\nscreen.getByRole('checkbox', { name: /đồng ý/i });\n\n// <h2>Giỏ hàng của bạn</h2>\nscreen.getByRole('heading', { level: 2, name: /giỏ hàng/i });\n\n// <select> với options\nscreen.getByRole('combobox', { name: 'Tỉnh/Thành phố' });\n\n// Kiểm tra state: checkbox đã checked chưa\nscreen.getByRole('checkbox', { name: 'Ghi nhớ đăng nhập', checked: true });\n\n// Tất cả ARIA roles: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles",
+            "note": "Nếu không tìm được element bằng getByRole, đó là dấu hiệu component thiếu accessibility — hãy thêm aria-label hoặc sửa HTML semantic.",
             "locales": {
                 "vi": {
-                    "title": "Tích Hợp User Events",
+                    "title": "getByRole — Query Mạnh Nhất, Dùng Nhiều Nhất",
                     "bulletPoints": [
-                        "Luôn ưu tiên '@testing-library/user-event' hơn 'fireEvent'.",
-                        "user-event mô phỏng toàn bộ tương tác (ví dụ gõ phím kích hoạt keydown, keypress, keyup, change).",
-                        "Vì mô phỏng duyệt web thực, API là async."
+                        "getByRole tìm element theo ARIA role: button, textbox, heading, checkbox, combobox, link...",
+                        "Option { name } match accessible name — thường là label, aria-label, hoặc text bên trong.",
+                        "Option { level } cho heading: getByRole('heading', { level: 2 }) → tìm <h2>.",
+                        "Option { checked }, { selected }, { expanded } để query theo state của element."
                     ],
-                    "note": "Luôn setup userEvent trước khi render component để khởi tạo trạng thái sạch."
+                    "note": "Không tìm được bằng getByRole = component thiếu accessibility. Hãy thêm aria-label hoặc dùng HTML semantic đúng."
+                }
+            }
+        },
+        {
+            "slideOrder": 3,
+            "title": "getByLabelText & getByPlaceholderText — Query Form Inputs",
+            "bulletPoints": [
+                "getByLabelText: tìm input được liên kết với <label> — qua htmlFor/id, aria-label, hoặc aria-labelledby.",
+                "getByPlaceholderText: tìm input theo placeholder — dùng khi không có label (ít phổ biến hơn).",
+                "getByDisplayValue: tìm input/select/textarea theo giá trị hiện tại đang hiển thị.",
+                "Ưu tiên getByLabelText hơn getByPlaceholderText — placeholder không phải label thực sự."
+            ],
+            "codeExample": "// HTML: <label htmlFor=\"email\">Địa chỉ email</label>\n//       <input id=\"email\" type=\"email\" />\nscreen.getByLabelText('Địa chỉ email');\n\n// HTML: <input aria-label=\"Tìm kiếm sản phẩm\" />\nscreen.getByLabelText('Tìm kiếm sản phẩm');\n\n// HTML: <input placeholder=\"Nhập số điện thoại\" />\nscreen.getByPlaceholderText('Nhập số điện thoại');\n\n// Tìm input đang có giá trị cụ thể\n// HTML: <input value=\"user@example.com\" />\nscreen.getByDisplayValue('user@example.com');\n\n// HTML: <select><option selected>Hà Nội</option></select>\nscreen.getByDisplayValue('Hà Nội');",
+            "note": "getByLabelText là cách query form tốt nhất — nó đảm bảo label được liên kết đúng với input, giúp screen reader đọc được.",
+            "locales": {
+                "vi": {
+                    "title": "getByLabelText & getByPlaceholderText — Query Form Inputs",
+                    "bulletPoints": [
+                        "getByLabelText: tìm input liên kết với <label> — qua htmlFor/id, aria-label, hoặc aria-labelledby.",
+                        "getByPlaceholderText: tìm input theo placeholder — khi không có label.",
+                        "getByDisplayValue: tìm input/select/textarea theo giá trị đang hiển thị.",
+                        "Ưu tiên getByLabelText — placeholder không phải label thực sự."
+                    ],
+                    "note": "getByLabelText đảm bảo label liên kết đúng với input — screen reader đọc được."
+                }
+            }
+        },
+        {
+            "slideOrder": 4,
+            "title": "getBy vs queryBy vs findBy — Chọn Cái Nào?",
+            "bulletPoints": [
+                "getBy*: throw Error ngay nếu không tìm thấy — dùng khi element PHẢI tồn tại.",
+                "queryBy*: trả về null nếu không thấy, không throw — dùng để assert element KHÔNG tồn tại.",
+                "findBy*: trả về Promise, chờ element xuất hiện (timeout mặc định 1000ms) — dùng cho async render.",
+                "getAllBy / queryAllBy / findAllBy: trả về mảng — dùng khi có nhiều element cùng loại."
+            ],
+            "codeExample": "// getBy — element phải có mặt ngay\nconst title = screen.getByText('Chào mừng'); // throw nếu không thấy\n\n// queryBy — kiểm tra element KHÔNG tồn tại\nexpect(screen.queryByText('Lỗi kết nối')).not.toBeInTheDocument();\n// Nếu dùng getBy ở đây → throw Error thay vì fail gọn\n\n// findBy — chờ element xuất hiện sau async operation\ntest('hiển thị danh sách sau khi load', async () => {\n  render(<ProductList />);\n  // fetch đang chạy, chờ tối đa 1 giây\n  const items = await screen.findAllByRole('listitem');\n  expect(items).toHaveLength(5);\n});\n\n// Sai: dùng getBy cho async → flaky test\n// const items = screen.getAllByRole('listitem'); // fail ngay trước khi fetch xong",
+            "note": "Quy tắc nhớ: Có mặt ngay → getBy. Không được có mặt → queryBy. Xuất hiện sau async → findBy.",
+            "locales": {
+                "vi": {
+                    "title": "getBy vs queryBy vs findBy — Chọn Cái Nào?",
+                    "bulletPoints": [
+                        "getBy*: throw Error nếu không tìm thấy — dùng khi element PHẢI tồn tại.",
+                        "queryBy*: trả null, không throw — dùng để assert element KHÔNG tồn tại.",
+                        "findBy*: trả Promise, chờ element xuất hiện — dùng cho async render.",
+                        "getAllBy / queryAllBy / findAllBy: trả mảng — khi có nhiều element cùng loại."
+                    ],
+                    "note": "Có mặt ngay → getBy. Không được có mặt → queryBy. Xuất hiện sau async → findBy."
+                }
+            }
+        },
+        {
+            "slideOrder": 5,
+            "title": "User Events — Mô Phỏng Hành Động Thực Của User",
+            "bulletPoints": [
+                "userEvent.setup() tạo instance mô phỏng browser environment đầy đủ — pointer, keyboard, clipboard.",
+                "user.type() mô phỏng gõ từng ký tự: kích hoạt focus, keydown, keypress, input, keyup, change.",
+                "fireEvent chỉ dispatch 1 DOM event — bỏ qua toàn bộ browser behavior → test kém thực tế hơn.",
+                "Luôn await vì userEvent API là async — quên await = event chưa chạy xong, assertion fail."
+            ],
+            "codeExample": "import userEvent from '@testing-library/user-event';\n\ntest('submit form với dữ liệu hợp lệ', async () => {\n  const user = userEvent.setup(); // ← setup trước render\n  const onSubmit = jest.fn();\n  render(<LoginForm onSubmit={onSubmit} />);\n\n  // Gõ vào input — mô phỏng đúng như user thực\n  await user.type(screen.getByLabelText('Email'), 'test@example.com');\n  await user.type(screen.getByLabelText('Mật khẩu'), 'Secret123');\n\n  // Click button\n  await user.click(screen.getByRole('button', { name: /đăng nhập/i }));\n\n  expect(onSubmit).toHaveBeenCalledWith({\n    email: 'test@example.com',\n    password: 'Secret123',\n  });\n});\n\n// Các actions khác:\n// await user.clear(input)        — xóa giá trị input\n// await user.selectOptions(select, 'Hà Nội')  — chọn option\n// await user.keyboard('{Enter}') — nhấn phím Enter\n// await user.tab()               — nhấn Tab để di chuyển focus",
+            "note": "userEvent v14+ không cần setup() nhưng vẫn nên dùng để kiểm soát tốt hơn. Luôn await mọi user action.",
+            "locales": {
+                "vi": {
+                    "title": "User Events — Mô Phỏng Hành Động Thực Của User",
+                    "bulletPoints": [
+                        "userEvent.setup() tạo instance mô phỏng browser environment đầy đủ.",
+                        "user.type() mô phỏng gõ từng ký tự: focus, keydown, keypress, input, keyup, change.",
+                        "fireEvent chỉ dispatch 1 DOM event — bỏ qua browser behavior → kém thực tế hơn.",
+                        "Luôn await userEvent — quên await = event chưa xong, assertion fail."
+                    ],
+                    "note": "Luôn await mọi user action. userEvent mô phỏng đúng hơn fireEvent."
+                }
+            }
+        },
+        {
+            "slideOrder": 6,
+            "title": "waitFor & Async Testing — Xử Lý Bất Đồng Bộ",
+            "bulletPoints": [
+                "waitFor(): chờ callback không throw nữa — dùng khi assertion cần đợi state update.",
+                "findBy* = waitFor + getBy* — nên ưu tiên findBy thay vì waitFor + getBy.",
+                "waitForElementToBeRemoved(): chờ element biến mất — test loading spinner, toast message.",
+                "Không dùng waitFor để bọc userEvent — userEvent đã tự xử lý, thêm waitFor gây flaky test."
+            ],
+            "codeExample": "import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';\n\n// Chờ element xuất hiện sau fetch\ntest('load và hiển thị products', async () => {\n  render(<ProductList />);\n\n  // Cách 1: findBy (gọn hơn)\n  const items = await screen.findAllByRole('listitem');\n  expect(items).toHaveLength(3);\n\n  // Cách 2: waitFor + getBy (dùng khi cần assert nhiều thứ)\n  await waitFor(() => {\n    expect(screen.getByText('Áo thun xanh')).toBeInTheDocument();\n    expect(screen.getByText('Quần jean đen')).toBeInTheDocument();\n  });\n});\n\n// Chờ loading spinner biến mất\ntest('ẩn spinner sau khi load xong', async () => {\n  render(<ProductList />);\n  await waitForElementToBeRemoved(() =>\n    screen.getByRole('progressbar')\n  );\n  expect(screen.getByText('Tải xong!')).toBeInTheDocument();\n});",
+            "note": "waitFor retry callback mỗi 50ms cho đến khi pass hoặc timeout (1000ms mặc định). Tăng timeout nếu cần: waitFor(..., { timeout: 3000 }).",
+            "locales": {
+                "vi": {
+                    "title": "waitFor & Async Testing — Xử Lý Bất Đồng Bộ",
+                    "bulletPoints": [
+                        "waitFor(): chờ callback không throw — dùng khi assertion cần đợi state update.",
+                        "findBy* = waitFor + getBy* — ưu tiên findBy thay vì waitFor + getBy.",
+                        "waitForElementToBeRemoved(): chờ element biến mất — test spinner, toast.",
+                        "Không bọc userEvent trong waitFor — gây flaky test."
+                    ],
+                    "note": "waitFor retry mỗi 50ms đến khi pass hoặc timeout 1000ms. Tăng nếu cần: waitFor(..., { timeout: 3000 })."
+                }
+            }
+        },
+        {
+            "slideOrder": 7,
+            "title": "Common Mistakes — Những Lỗi Hay Gặp Nhất",
+            "bulletPoints": [
+                "Dùng getBy cho async element → test fail ngay trước khi data load xong. Fix: dùng findBy.",
+                "Dùng queryBy khi element phải tồn tại → lỗi khó debug vì trả null thay vì throw. Fix: dùng getBy.",
+                "Quên await userEvent → action chưa hoàn thành, assertion chạy sớm. Fix: await mọi user action.",
+                "Dùng container.querySelector() → gắn chặt vào DOM structure. Fix: dùng screen.getByRole."
+            ],
+            "codeExample": "// ❌ SAI: getBy cho async data\nconst items = screen.getAllByRole('listitem'); // fail ngay!\n// ✅ ĐÚNG:\nconst items = await screen.findAllByRole('listitem');\n\n// ❌ SAI: queryBy khi element phải có\nconst btn = screen.queryByRole('button', { name: 'Lưu' });\nbtn.click(); // TypeError: Cannot read properties of null\n// ✅ ĐÚNG:\nconst btn = screen.getByRole('button', { name: 'Lưu' });\n\n// ❌ SAI: quên await userEvent\nuser.click(screen.getByRole('button', { name: 'Gửi' })); // thiếu await!\nexpect(screen.getByText('Thành công')).toBeInTheDocument(); // fail\n// ✅ ĐÚNG:\nawait user.click(screen.getByRole('button', { name: 'Gửi' }));\n\n// ❌ SAI: dùng querySelector\nconst { container } = render(<Form />);\ncontainer.querySelector('input[type=email]').value; // brittle!\n// ✅ ĐÚNG:\nscreen.getByRole('textbox', { name: 'Email' });",
+            "note": "Nếu test bị flaky (lúc pass lúc fail) thường do thiếu await hoặc dùng getBy thay vì findBy cho async.",
+            "locales": {
+                "vi": {
+                    "title": "Những Lỗi Hay Gặp Nhất",
+                    "bulletPoints": [
+                        "getBy cho async → fail ngay trước khi data load. Fix: dùng findBy.",
+                        "queryBy khi element phải có → null thay vì throw, khó debug. Fix: dùng getBy.",
+                        "Quên await userEvent → action chưa xong, assertion sai. Fix: await mọi action.",
+                        "Dùng querySelector → test gắn chặt DOM structure. Fix: dùng getByRole."
+                    ],
+                    "note": "Test flaky (lúc pass lúc fail) thường do thiếu await hoặc dùng getBy thay findBy cho async."
+                }
+            }
+        },
+        {
+            "slideOrder": 8,
+            "title": "Cheatsheet: Chọn Query Nào Cho Tình Huống Nào",
+            "bulletPoints": [
+                "Button, link, heading, input, checkbox → getByRole (luôn thử cái này trước).",
+                "Form input có label → getByLabelText.",
+                "Assert 'element này không được xuất hiện' → queryBy + .not.toBeInTheDocument().",
+                "Sau fetch/setTimeout/state update → findBy hoặc waitFor."
+            ],
+            "codeExample": "// TÓM TẮT: Map tình huống → query\n\n// Element có ARIA role (button, input, heading...)\nscreen.getByRole('button', { name: /lưu/i });\n\n// Form input có <label>\nscreen.getByLabelText('Họ và tên');\n\n// Text hiển thị trên màn hình\nscreen.getByText(/thành công/i);\n\n// Assert KHÔNG tồn tại\nexpect(screen.queryByText('Lỗi')).not.toBeInTheDocument();\n\n// Sau async (fetch, setTimeout, animation)\nawait screen.findByText('Dữ liệu đã tải');\n\n// Nhiều element cùng loại\nconst rows = screen.getAllByRole('row');\nexpect(rows).toHaveLength(6); // 5 data rows + 1 header\n\n// Element có test-id (last resort)\nscreen.getByTestId('map-container');",
+            "note": "Khi không biết dùng query nào: mở DevTools → Elements → tìm role của element → dùng getByRole. 90% trường hợp là đủ.",
+            "locales": {
+                "vi": {
+                    "title": "Cheatsheet: Chọn Query Nào?",
+                    "bulletPoints": [
+                        "Button, link, heading, input, checkbox → getByRole (thử trước tiên).",
+                        "Form input có label → getByLabelText.",
+                        "Assert 'không được xuất hiện' → queryBy + .not.toBeInTheDocument().",
+                        "Sau fetch/setTimeout/state update → findBy hoặc waitFor."
+                    ],
+                    "note": "Không biết dùng gì: mở DevTools → tìm role của element → dùng getByRole. 90% trường hợp là đủ."
                 }
             }
         }

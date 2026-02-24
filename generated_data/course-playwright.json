@@ -4,22 +4,10 @@
         "description": "Learn End-to-End (E2E) testing for modern web applications using Playwright. Covers locators, assertions, network mocking, and CI/CD integration.",
         "lessons": [
             {
-                "lessonId": "playwright-intro",
-                "lessonTitle": "Introduction to Playwright",
-                "summary": "Setup, Configuration, and the First Test",
+                "lessonId": "playwright-all",
+                "lessonTitle": "Playwright: From Zero to Advanced",
+                "summary": "Setup, Locators, Assertions, Network Mocking, Fixtures & Page Object Model — all in one lesson.",
                 "order": 1
-            },
-            {
-                "lessonId": "playwright-core",
-                "lessonTitle": "Locators & Assertions",
-                "summary": "Finding elements efficiently and writing robust assertions.",
-                "order": 2
-            },
-            {
-                "lessonId": "playwright-advanced",
-                "lessonTitle": "Advanced Playwright",
-                "summary": "Network Mocking, Fixtures, and CI/CD Pipelines.",
-                "order": 3
             }
         ]
     }

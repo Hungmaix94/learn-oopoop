@@ -48,3 +48,41 @@
   outline: none;
   background: rgba(255, 255, 255, 0.08);
 }
+
+/* ── Highlight.js — github-dark theme (customized for slide dark bg) ── */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  background: transparent;
+  color: #e6edf3;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+.hljs-comment,
+.hljs-punctuation { color: #8b949e; font-style: italic; }
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag { color: #ff7b72; }
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-type { color: #ffa657; }
+.hljs-string,
+.hljs-attr,
+.hljs-addition { color: #a5d6ff; }
+.hljs-number,
+.hljs-literal { color: #79c0ff; }
+.hljs-variable,
+.hljs-template-variable,
+.hljs-name { color: #ffa657; }
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.function_,
+.hljs-function { color: #d2a8ff; }
+.hljs-params { color: #e6edf3; }
+.hljs-property { color: #79c0ff; }
+.hljs-operator,
+.hljs-meta { color: #79c0ff; }
+.hljs-regexp { color: #a5d6ff; }
+.hljs-section { color: #1f6feb; font-weight: bold; }
+.hljs-deletion { color: #ff7b72; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: bold; }
